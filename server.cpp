@@ -1,15 +1,17 @@
 
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <unistd.h> //close
+#include <iostream>
+#include <string>
+#include <strings.h>
 #include <arpa/inet.h> //close
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <sys/time.h> //FD_SET, FD_ISSET, FD_ZERO macros
+#include <unistd.h>
+#include <stdlib.h>
+#include <cstdio>
+#include <cerrno>
 
 #define PORT 8080
 
@@ -156,44 +158,37 @@ int main(int argc, char *argv[])
 
 */
 	
-#define TRUE 1
-#define FALSE 0
-	
 int main(int argc , char *argv[])
 {
 	(void)argc;
-	int opt = TRUE;
+	int opt = true;
 	int master_socket , addrlen , new_socket , client_socket[30] ,
 		max_clients = 30 , activity, i , valread , sd, portno;
 	int max_sd;
 	struct sockaddr_in address;
 		
-	char buffer[1025]; //data buffer of 1K
+	char buffer[1025];
 		
 	//set of socket descriptors
 	fd_set readfds;
 		
 	//a message
-	char *message = "Welcome to our firest server !!!!!!!! \n YOU ARE CONNECTED \n";
+	std::string message = "Welcome to our firest server !!!!!!!! \n YOU ARE CONNECTED \n";
 	
 	//initialise all client_socket[] to 0 so not checked
-	for (i = 0; i < max_clients; i++)
-	{
+	for (i = 0; i < max_clients; i++) {
 		client_socket[i] = 0;
 	}
 		
 	//create a master socket
-	if( (master_socket = socket(AF_INET , SOCK_STREAM , 0)) == 0)
-	{
+	if( (master_socket = socket(AF_INET , SOCK_STREAM , 0)) == 0) {
 		perror("socket failed");
 		exit(EXIT_FAILURE);
 	}
 	
 	//set master socket to allow multiple connections ,
 	//this is just a good habit, it will work without this
-	if( setsockopt(master_socket, SOL_SOCKET, SO_REUSEADDR, (char *)&opt,
-		sizeof(opt)) < 0 )
-	{
+	if( setsockopt(master_socket, SOL_SOCKET, SO_REUSEADDR, (char *)&opt, sizeof(opt)) < 0 ) {
 		perror("setsockopt");
 		exit(EXIT_FAILURE);
 	}
@@ -205,16 +200,14 @@ int main(int argc , char *argv[])
 	address.sin_port = htons( portno );
 		
 	//bind the socket to localhost port 8888
-	if (bind(master_socket, (struct sockaddr *)&address, sizeof(address))<0)
-	{
+	if (bind(master_socket, (struct sockaddr *)&address, sizeof(address))<0) {
 		perror("bind failed");
 		exit(EXIT_FAILURE);
 	}
-	printf("Listener on port %d \n", portno);
+	std::cout << "Listener on port " <<  portno << std::endl;
 		
 	//try to specify maximum of 3 pending connections for the master socket
-	if (listen(master_socket, 3) < 0)
-	{
+	if (listen(master_socket, 3) < 0) {
 		perror("listen");
 		exit(EXIT_FAILURE);
 	}
@@ -223,8 +216,7 @@ int main(int argc , char *argv[])
 	addrlen = sizeof(address);
 	puts("Waiting for connections ...");
 		
-	while(TRUE)
-	{
+	while (true) {
 		//clear the socket set
 		FD_ZERO(&readfds);
 	
@@ -233,8 +225,7 @@ int main(int argc , char *argv[])
 		max_sd = master_socket;
 			
 		//add child sockets to set
-		for ( i = 0 ; i < max_clients ; i++)
-		{
+		for ( i = 0 ; i < max_clients ; i++) {
 			//socket descriptor
 			sd = client_socket[i];
 				
@@ -252,59 +243,48 @@ int main(int argc , char *argv[])
 		activity = select( max_sd + 1 , &readfds , NULL , NULL , NULL);
 	
 		if ((activity < 0) && (errno!=EINTR))
-		{
-			printf("select error");
-		}
+			std::cout << "select error" << std::endl;
 			
 		//If something happened on the master socket ,
 		//then its an incoming connection
-		if (FD_ISSET(master_socket, &readfds))
-		{
+		if (FD_ISSET(master_socket, &readfds)) {
 			if ((new_socket = accept(master_socket,
-					(struct sockaddr *)&address, (socklen_t*)&addrlen))<0)
-			{
+					(struct sockaddr *)&address, (socklen_t*)&addrlen))<0) {
 				perror("accept");
 				exit(EXIT_FAILURE);
 			}
 			
 			//inform user of socket number - used in send and receive commands
-			printf("New connection , socket fd is %d , ip is : %s , port : %d \n" , new_socket , inet_ntoa(address.sin_addr) , ntohs(address.sin_port));
+			std::cout << "New connection , socket fd is " << new_socket << ", ip is: " << inet_ntoa(address.sin_addr) << ", port : " << ntohs(address.sin_port) << std::endl;
 		
 			//send new connection greeting message
-			if( send(new_socket, message, strlen(message), 0) != (ssize_t)strlen(message) )
-			{
+			if(send(new_socket, message.c_str(), message.length(), 0) != (ssize_t)message.length()) {
 				perror("send");
 			}
 				
 			puts("Welcome message sent successfully");
 				
 			//add new socket to array of sockets
-			for (i = 0; i < max_clients; i++)
-			{
+			for (i = 0; i < max_clients; i++) {
 				//if position is empty
-				if( client_socket[i] == 0 )
-				{
+				if( client_socket[i] == 0 ) {
 					client_socket[i] = new_socket;
-					printf("Adding to list of sockets as %d\n" , i);
-						
+					std::cout << "Adding to list of sockets as " << i << std::endl;
 					break;
 				}
 			}
 		}
 			
 		//else its some IO operation on some other socket
-		for (i = 0; i < max_clients; i++)
-		{
+		for (i = 0; i < max_clients; i++) {
 			sd = client_socket[i];
 				
-			if (FD_ISSET( sd , &readfds))
-			{
+			if (FD_ISSET( sd , &readfds)) {
 
-				
 				//incoming message
-				bzero(buffer,1025);
-				valread = read( sd , buffer, 1024);
-				printf("\033[31m%s\n\033[0m",buffer);
+				bzero(buffer, 1025);
+				valread = read(sd, buffer, 1024);
+				std::cout << "\033[31m" << buffer << "\n\033[0m";
 				if (valread == 0)
 				{
 					//Somebody disconnected , get his details and print
@@ -327,7 +307,7 @@ int main(int argc , char *argv[])
 					//of the data read
 					buffer[valread] = '\0';
 					//send(sd , buffer , strlen(buffer) , 0 );
-					send(sd , "message bien recu\n" , strlen("message bien recu\n") , 0 );
+					send(sd , "message bien recu\n" , 19, 0 );
 				}
 			}
 		}
