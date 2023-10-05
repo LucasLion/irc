@@ -174,7 +174,7 @@ int main(int argc , char *argv[])
 	fd_set readfds;
 		
 	//a message
-	char *message = (char *)"Message from server";
+	char *message = "Welcome to our firest server !!!!!!!! \n YOU ARE CONNECTED \n";
 	
 	//initialise all client_socket[] to 0 so not checked
 	for (i = 0; i < max_clients; i++)
@@ -300,12 +300,15 @@ int main(int argc , char *argv[])
 			if (FD_ISSET( sd , &readfds))
 			{
 
+				
 				//incoming message
-				if ((valread = read( sd , buffer, 1024)) == 0)
+				bzero(buffer,1025);
+				valread = read( sd , buffer, 1024);
+				printf("\033[31m%s\n\033[0m",buffer);
+				if (valread == 0)
 				{
 					//Somebody disconnected , get his details and print
-					printf("valread: %d\n", valread);
-					printf("Here is the message: %s\n",buffer);
+					
 					getpeername(sd , (struct sockaddr*)&address , \
 						(socklen_t*)&addrlen);
 					printf("Host disconnected , ip %s , port %d \n" ,
@@ -323,7 +326,8 @@ int main(int argc , char *argv[])
 					//set the string terminating NULL byte on the end
 					//of the data read
 					buffer[valread] = '\0';
-					send(sd , buffer , strlen(buffer) , 0 );
+					//send(sd , buffer , strlen(buffer) , 0 );
+					send(sd , "message bien recu\n" , strlen("message bien recu\n") , 0 );
 				}
 			}
 		}
