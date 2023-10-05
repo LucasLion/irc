@@ -1,7 +1,7 @@
 
 
 #include <stdio.h>
-#include <string.h> //strlen
+#include <string.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <unistd.h> //close
@@ -161,6 +161,7 @@ int main(int argc, char *argv[])
 	
 int main(int argc , char *argv[])
 {
+	(void)argc;
 	int opt = TRUE;
 	int master_socket , addrlen , new_socket , client_socket[30] ,
 		max_clients = 30 , activity, i , valread , sd, portno;
@@ -267,11 +268,10 @@ int main(int argc , char *argv[])
 			}
 			
 			//inform user of socket number - used in send and receive commands
-			printf("New connection , socket fd is %d , ip is : %s , port : %d \n" , new_socket , inet_ntoa(address.sin_addr) , ntohs
-				(address.sin_port));
+			printf("New connection , socket fd is %d , ip is : %s , port : %d \n" , new_socket , inet_ntoa(address.sin_addr) , ntohs(address.sin_port));
 		
 			//send new connection greeting message
-			if( send(new_socket, message, strlen(message), 0) != strlen(message) )
+			if( send(new_socket, message, strlen(message), 0) != (ssize_t)strlen(message) )
 			{
 				perror("send");
 			}
