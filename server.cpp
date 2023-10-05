@@ -274,7 +274,10 @@ int main(int argc , char *argv[])
 				}
 			}
 		}
+
+		int i = bind(master_socket, (struct sockaddr *)&address, sizeof(address));
 			
+		(void)i;
 		//else its some IO operation on some other socket
 		for (i = 0; i < max_clients; i++) {
 			sd = client_socket[i];
