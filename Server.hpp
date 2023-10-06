@@ -21,11 +21,11 @@ class Server {
 public:
 
 						Server( void );
-						Server( char *port);
-	int					createSocket();
-	void				handle_connections();
-	void				new_connection();
-	void				loop();
+						Server( char *port );
+	int					createSocket( void );
+	void				handleConnections( void );
+	void				newConnection( void );
+	void				loop( void );
 
 private:
 	
@@ -36,7 +36,8 @@ private:
 	int					_addrLen;
 	int					_masterSocket;
 	fd_set				_readfds;
-	char				buffer[1025];
+	//char				_buffer[1025];
+	std::string			_buffer;
 	int					_max_sd;
 
 };
