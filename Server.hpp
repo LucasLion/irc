@@ -6,7 +6,7 @@
 /*   By: llion@student.42mulhouse.fr <marvin@42.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/06 12:05:19 by llion@student     #+#    #+#             */
-/*   Updated: 2023/10/06 13:33:14 by llion@student    ###   ########.fr       */
+/*   Updated: 2023/10/06 13:59:43 by llion@student    ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,17 +25,21 @@
 #include <stdlib.h>
 #include <cstdio>
 #include <cerrno>
+#include <vector>
 
 class Server {
 
 public:
 
-	int		createSocket( int argc, char** argv );
-	void	loop( int agrc, char**argv );
+						Server( void );
+	int					createSocket( int argc, char** argv );
+	void				loop( int agrc, char**argv );
+	void				setPort( char * port );
 
 private:
 	
-	const int	_maxClients = 30;
-	int			_clientSockets[];	
+	int					_maxClients;
+	int					_portno;
+	std::vector<int>	_clientSockets;
 
 };
