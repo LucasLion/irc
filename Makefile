@@ -6,7 +6,7 @@
 #    By: llion <llion@student.42mulhouse.fr>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/05/06 01:09:23 by llion             #+#    #+#              #
-#    Updated: 2023/10/05 14:30:12 by llion@student    ###   ########.fr        #
+#    Updated: 2023/10/06 12:33:42 by llion@student    ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ NAME	= ircserv
 CXX		= c++
 CXXFLAGS= -ggdb3 -Wall -Wextra -Werror -std=c++98 -Wshadow
 RM		= rm -f
-SRC		= server.cpp
+SRC		= main.cpp Server.cpp Parser.cpp
 OBJ		= $(SRC:.cpp=.o)
 
 all: $(NAME)
