@@ -1,14 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Server.hpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: llion@student.42mulhouse.fr <marvin@42.fr  +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/06 12:05:19 by llion@student     #+#    #+#             */
-/*   Updated: 2023/10/06 13:59:43 by llion@student    ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
 #pragma once
 
@@ -32,8 +21,10 @@ class Server {
 public:
 
 						Server( void );
-	int					createSocket( int argc, char** argv );
-	void				loop( int agrc, char**argv );
+						Server( char *port);
+	//int					createSocket( int argc, char** argv );
+	int					createSocket();
+	void				loop();
 	void				setPort( char * port );
 
 private:
@@ -41,5 +32,8 @@ private:
 	int					_maxClients;
 	int					_portno;
 	std::vector<int>	_clientSockets;
+	struct sockaddr_in	_address;
+	int					_addrLen;
+	int					_masterSocket;
 
 };
