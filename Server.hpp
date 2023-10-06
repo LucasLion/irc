@@ -22,10 +22,10 @@ public:
 
 						Server( void );
 						Server( char *port);
-	//int					createSocket( int argc, char** argv );
 	int					createSocket();
+	void				handle_connections();
+	void				new_connection();
 	void				loop();
-	void				setPort( char * port );
 
 private:
 	
@@ -35,5 +35,8 @@ private:
 	struct sockaddr_in	_address;
 	int					_addrLen;
 	int					_masterSocket;
+	fd_set				_readfds;
+	char				buffer[1025];
+	int					_max_sd;
 
 };

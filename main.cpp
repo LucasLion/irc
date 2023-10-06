@@ -5,13 +5,8 @@
 
 int main(int argc , char *argv[])
 {
-	static_cast<void>(argc);
-	Server	server(argv[1]);
-	
-	//server.setPort(argv[1]);
-	server.loop();
-	
-	
+	if (argc == 2) 
+		Server	server(argv[1]);
 	return 0;
 }
 
