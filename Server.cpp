@@ -6,13 +6,20 @@
 /*   By: llion@student.42mulhouse.fr <marvin@42.fr  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/06 12:05:45 by llion@student     #+#    #+#             */
-/*   Updated: 2023/10/06 13:34:12 by llion@student    ###   ########.fr       */
+/*   Updated: 2023/10/06 14:09:58 by llion@student    ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 #include <sys/socket.h>
+
 	
+Server::Server( void ) : _maxClients(30) {
+	_clientSockets.resize(_maxClients, 0);
+}
+
+void	Server::setPort( char * port ) { _portno = atoi(port); }
+
 static struct sockaddr_in initAddress(char **argv) {
 
 	struct sockaddr_in address;
@@ -24,28 +31,12 @@ static struct sockaddr_in initAddress(char **argv) {
 	return (address);
 }
 
-static int[] initClientsSocket( void ) {
-	int max_clients = 30;
-	int client_socket[30];
-	for (int i = 0; i < max_clients; i++) {
-		client_socket[i] = 0;
-	}
-}
-
 int	Server::createSocket( int argc, char** argv ) {
 
 	static_cast<void>(argc);
 	int opt = true;
-	int master_socket, portno;
-	int max_clients = 30;
-	int client_socket = initClientsSocket();
+	int master_socket;
 	struct sockaddr_in address = initAddress(argv);
-		
-
-		
-		
-	
-	//initialise all client_socket[] to 0 so not checked
 		
 	//create a master socket
 	if( (master_socket = socket(AF_INET , SOCK_STREAM , 0)) == 0) {
@@ -53,6 +44,7 @@ int	Server::createSocket( int argc, char** argv ) {
 		exit(EXIT_FAILURE);
 	}
 	
+	std::cout << "master socket : " << master_socket << std::endl;
 	//set master socket to allow multiple connections ,
 	//this is just a good habit, it will work without this
 	if( setsockopt(master_socket, SOL_SOCKET, SO_REUSEADDR, (char *)&opt, sizeof(opt)) < 0 ) {
@@ -61,11 +53,11 @@ int	Server::createSocket( int argc, char** argv ) {
 	}
 	
 	//bind the socket to localhost port 8888
-	if (bind(master_socket, (struct sockaddr *)&address, sizeof(address))<0) {
+	if (bind(master_socket, (struct sockaddr *)&address, sizeof(address)) < 0) {
 		perror("bind failed");
 		exit(EXIT_FAILURE);
 	}
-	std::cout << "Listener on port " <<  portno << std::endl;
+	std::cout << "Listener on port " <<  _portno << std::endl;
 		
 	//try to specify maximum of 3 pending connections for the master socket
 	if (listen(master_socket, 3) < 0) {
@@ -83,9 +75,8 @@ void Server::loop( int argc, char** argv) {
 
 	fd_set readfds;
 	int max_sd, sd, new_socket, activity;
-	int max_clients = 30;
 	std::string message = "Welcome to our firest server !!!!!!!! \n YOU ARE CONNECTED \n";
-	struct sockaddr_in address = init_address(argv);
+	struct sockaddr_in address = initAddress(argv);
 
 	int addrlen = sizeof(address);
 	int master_socket = createSocket(argc, argv);
@@ -100,7 +91,7 @@ void Server::loop( int argc, char** argv) {
 		max_sd = master_socket;
 			
 		//add child sockets to set
-		for ( int i = 0 ; i < max_clients ; i++) {
+		for ( int i = 0 ; i < _maxClients ; i++) {
 			//socket descriptor
 			sd = _clientSockets[i];
 				
@@ -140,7 +131,7 @@ void Server::loop( int argc, char** argv) {
 			puts("Welcome message sent successfully");
 				
 			//add new socket to array of sockets
-			for (int i = 0; i < max_clients; i++) {
+			for (int i = 0; i < _maxClients; i++) {
 				//if position is empty
 				if( _clientSockets[i] == 0 ) {
 					_clientSockets[i] = new_socket;
@@ -151,7 +142,7 @@ void Server::loop( int argc, char** argv) {
 		}
 			
 		//else its some IO operation on some other socket
-		for (int i = 0; i < max_clients; i++) {
+		for (int i = 0; i < _maxClients; i++) {
 			sd = _clientSockets[i];
 				
 			if (FD_ISSET( sd , &readfds)) {
