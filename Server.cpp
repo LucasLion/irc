@@ -132,8 +132,10 @@ void Server::handleConnections( void )
 
 void Server::loop( void ) {
 
-	int sd;
-	int valRead;
+	int				sd;
+	int				valRead;
+	char			buffer[1025];
+
 
 	while (true) {
 		handleConnections();
@@ -145,9 +147,10 @@ void Server::loop( void ) {
 			if (FD_ISSET(sd, &_readfds)) {
 
 				//incoming message
-				bzero(_buffer, 1025);
-				valRead = read(sd, _buffer, 1024);
-				std::cout << "\033[31m" << _buffer << "\n\033[0m";
+				bzero(buffer, 1025);
+				valRead = read(sd, buffer, 1024);
+				std::string datareceived(buffer);
+				std::cout << "\033[31m" << datareceived << "\n\033[0m";
 
 
 				// valRead = read(sd, (void *)_buffer.c_str(), _buffer.length());
