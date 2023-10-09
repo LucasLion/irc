@@ -1,15 +1,16 @@
+
+#include "Server.hpp"
 #include "User.hpp"
+#include "Command.hpp"
 #include <string.h>
 
-	User::User(){}
+User::User() { }
 
-	User::User(int num) : _num(num){}
+User::User(int num) : _num(num) { }
 
-void    User::addBuffer(char *Buf){
+void    User::addBuffer( char *Buf ) {
     _buffer.assign(Buf, strlen(Buf));
 }
-
-
 
 void	User::parseBuffer(){
 
@@ -19,6 +20,7 @@ void	User::parseBuffer(){
 
     while ((crlfPos = _buffer.find("\r\n", start)) != std::string::npos) {
         cmd.raw_message = (_buffer.substr(start, crlfPos - start));
+		cmd.parseInput();
         messages.push_back(cmd);
         messagesString.push_back(_buffer.substr(start, crlfPos - start));
         start = crlfPos + 2;

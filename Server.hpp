@@ -15,11 +15,8 @@
 #include <cstdio>
 #include <cerrno>
 #include <vector>
-#include "Parser.hpp"
+#include "Command.hpp"
 #include "User.hpp"
-
-
-class User;
 
 class Server {
 
@@ -45,6 +42,6 @@ private:
 	std::string			_buffer;
 	int					_max_sd;
 	std::string			_passwd;
-	std::vector<User>			_users;
+	std::vector<User>	_users;
 
 };
