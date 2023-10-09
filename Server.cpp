@@ -2,11 +2,9 @@
 #include "Server.hpp"
 #include <sys/socket.h>
 
-	
 Server::Server( void ) : _maxClients(30) {
 	_clientSockets.resize(_maxClients, 0);
 }
-
 
 Server::Server( char *port, char *passwd ) : _maxClients(30)
 {
@@ -128,16 +126,12 @@ void Server::handleConnections( void )
 
 }
 
-
-
 void Server::loop( void ) {
 
 	int				sd;
 	int				valRead;
 	char			buffer[1025];
 	
-
-
 	while (true) {
 		handleConnections();
 			
@@ -150,9 +144,9 @@ void Server::loop( void ) {
 				//incoming message
 				bzero(buffer, 1025);
 				valRead = read(sd, buffer, 1024);
-				_user[i].addBuffer(buffer);
-				_user[i].parseBuffer();
-				_user[i].printMessages();
+				_users[i].addBuffer(buffer);
+				_users[i].parseBuffer();
+				_users[i].printMessages();
 				//std::string datareceived(buffer);
 				//std::cout << "\033[31m" << datareceived << "\n\033[0m";
 

@@ -1,17 +1,18 @@
 #include "User.hpp"
 #include <string.h>
 
-	User::User(){}
+User::User( void ) { }
 
-	User::User(int num) : _num(num){}
+User::User( int num ) : _num(num) { }
 
-void    User::addBuffer(char *Buf){
-    _buffer.assign(Buf, strlen(Buf));
+void    User::addBuffer( char *buf ){
+	std::cout << "len: " << strlen(buf) << std::endl;
+	std::cout << "str: " << buf << std::endl;
+    //_buffer.assign(buf, strlen(buf));
+    _buffer.assign(buf, 6);
 }
 
-
-
-void	User::parseBuffer(){
+void	User::parseBuffer( void ){
 
 	size_t	                start = 0;
     size_t	                crlfPos;
@@ -30,7 +31,7 @@ void	User::parseBuffer(){
 }
 
 
-void User::printMessages() {
+void User::printMessages( void ) {
     std::vector<std::string>::const_iterator it;
     
     for (it = messagesString.begin(); it != messagesString.end(); ++it) {
