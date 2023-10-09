@@ -1,7 +1,11 @@
 
 #include "Command.hpp"
 
-void    Command::printCommand( void ){
+void	Command::parseInput( void ) {
+	std::cout << "Raw message: " << raw_message << std::endl;
+}
+
+void    Command::printCommand( void ) {
 
     std::vector<std::string>::const_iterator it;
     
@@ -11,6 +15,6 @@ void    Command::printCommand( void ){
     std::cout << "COMMAND ==> " <<  _command << "/n";
     
     for (it = _param.begin(); it != _param.end(); ++it) {
-        std::cout << "PARAM ==> " *it << "\n";   
+        std::cout << "PARAM ==> " << *it << "\n";   
     }
 }

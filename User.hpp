@@ -1,10 +1,10 @@
 
 #pragma once
 
-
 #include <vector>
 #include <string>
-#include "Command.hpp"
+
+class Command;
 
 class User{
 
