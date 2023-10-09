@@ -13,9 +13,10 @@ class User{
                                 User();
                                 User(int num);
     void                        addBuffer(char * buf);
-    void                        parseBuffer();
-    int							generateResponse();
-    void						printMessages();
+    void                        parseBuffer( void );
+    int							generateResponse( void );
+    void						printMessages( void );
+    void                        printCommands( void );
 
     private : 
     std::string                 _realName;

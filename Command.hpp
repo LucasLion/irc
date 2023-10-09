@@ -9,14 +9,14 @@ class Command{
     
     public :
 
-    void                        parseIpnut();
-    char*                       generateResponse();
-    void                        printCommand();
+    void                        parseIpnut( void );
+    char*                       generateResponse( void );
+    void                        printCommand( void );
     std::string                 raw_message;
 
     private : 
-    std::string                 tag;
-    std::string                 source;
-    std::string                 command;
-    std::vector<std::string>    param; 
+    std::string                 _tag;
+    std::string                 _source;
+    std::string                 _command;
+    std::vector<std::string>    _param; 
 };
