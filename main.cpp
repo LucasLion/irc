@@ -5,8 +5,10 @@
 
 int main(int argc , char *argv[])
 {
-	if (argc == 2) 
-		Server	server(argv[1]);
+	if (argc == 3) 
+		Server	server(argv[1], argv[2]);
+	else 
+		std::cout << "wrong number of args" << std::endl;
 	return 0;
 }
 

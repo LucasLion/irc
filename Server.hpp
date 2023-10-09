@@ -15,13 +15,14 @@
 #include <cstdio>
 #include <cerrno>
 #include <vector>
+#include "Parser.hpp"
 
 class Server {
 
 public:
 
 						Server( void );
-						Server( char *port );
+						Server( char *port, char *passwd );
 	int					createSocket( void );
 	void				handleConnections( void );
 	void				newConnection( void );
@@ -39,5 +40,6 @@ private:
 	//char				_buffer[1025];
 	std::string			_buffer;
 	int					_max_sd;
+	std::string			_passwd;
 
 };

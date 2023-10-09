@@ -8,7 +8,7 @@ Server::Server( void ) : _maxClients(30) {
 }
 
 
-Server::Server( char *port ) : _maxClients(30)
+Server::Server( char *port, char *passwd ) : _maxClients(30)
 {
 	_clientSockets.resize(_maxClients, 0);
 	_address.sin_family = AF_INET;
@@ -18,6 +18,7 @@ Server::Server( char *port ) : _maxClients(30)
 	_addrLen = sizeof(_address);
 	_masterSocket = createSocket();
 	_max_sd = _masterSocket;
+	_passwd = passwd;
 	loop();
 }
 
@@ -131,8 +132,11 @@ void Server::handleConnections( void )
 
 void Server::loop( void ) {
 
-	int sd;
-	int valRead;
+	int				sd;
+	int				valRead;
+	char			buffer[1025];
+	
+
 
 	while (true) {
 		handleConnections();
@@ -144,9 +148,15 @@ void Server::loop( void ) {
 			if (FD_ISSET(sd, &_readfds)) {
 
 				//incoming message
-				//bzero((void *)_buffer.c_str(), 1025);
-				valRead = read(sd, (void *)_buffer.c_str(), _buffer.length());
-				std::cout << "\033[31m" << _buffer << "\n\033[0m";
+				bzero(buffer, 1025);
+				valRead = read(sd, buffer, 1024);
+				Parser parse(buffer);
+				parse.parseInput();
+				parse.printMessages();
+				//std::string datareceived(buffer);
+				//std::cout << "\033[31m" << datareceived << "\n\033[0m";
+
+
 
 				if (valRead == 0) {
 					//Somebody disconnected , get his details and print
@@ -161,13 +171,13 @@ void Server::loop( void ) {
 					
 				//Echo back the message that came in
 				else {
-					//set the string terminating NULL byte on the end
-					//of the data read
+					//set the string terminating NULL byte on the end of the data read
 					_buffer[valRead] = '\0';
-					//send(sd , _buffer , strlen(_buffer) , 0 );
 					send(sd, "message bien recu\n", 19, 0 );
 				}
 			}
 		}
 	}
 }
+
+
