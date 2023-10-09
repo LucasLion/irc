@@ -4,18 +4,20 @@
 #include <vector>
 #include <string>
 
-class Command{
+class Command {
     
-    public :
+	public :
 
-    void                        parseIpnut();
-    char*                       generateResponse();
-    void                        printCommand();
-    std::string                 raw_message;
+		void                        parseInput( void );
+		char*                       generateResponse();
+		void                        printCommand();
+		std::string                 raw_message;
 
-    private : 
-    std::string                 tag;
-    std::string                 source;
-    std::string                 command;
-    std::vector<std::string>    param; 
+	private : 
+
+		std::string                 _tag;
+		std::string                 _source;
+		std::string                 _command;
+		std::vector<std::string>    _param; 
+
 };

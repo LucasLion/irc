@@ -1,4 +1,7 @@
+
+#include "Server.hpp"
 #include "User.hpp"
+#include "Command.hpp"
 #include <string.h>
 
 User::User( void ) { }
@@ -20,6 +23,7 @@ void	User::parseBuffer( void ){
 
     while ((crlfPos = _buffer.find("\r\n", start)) != std::string::npos) {
         cmd.raw_message = (_buffer.substr(start, crlfPos - start));
+		cmd.parseInput();
         messages.push_back(cmd);
         messagesString.push_back(_buffer.substr(start, crlfPos - start));
         start = crlfPos + 2;
@@ -39,6 +43,14 @@ void User::printMessages( void ) {
         if (it != messagesString.end() - 1) {
             std::cout << "\n";
         }
+    }
+}
+
+void User::printCommands( void ) {
+    std::vector<std::string>::const_iterator it;
+    
+    for (it = messages.begin(); it != messages.end(); ++it) {
+        *it.printCommand();
     }
 }
 
