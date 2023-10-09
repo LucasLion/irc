@@ -135,6 +135,7 @@ void Server::loop( void ) {
 	int				sd;
 	int				valRead;
 	char			buffer[1025];
+	
 
 
 	while (true) {
@@ -149,12 +150,12 @@ void Server::loop( void ) {
 				//incoming message
 				bzero(buffer, 1025);
 				valRead = read(sd, buffer, 1024);
-				std::string datareceived(buffer);
-				std::cout << "\033[31m" << datareceived << "\n\033[0m";
+				Parser parse(buffer);
+				parse.parseInput();
+				parse.printMessages();
+				//std::string datareceived(buffer);
+				//std::cout << "\033[31m" << datareceived << "\n\033[0m";
 
-
-				// valRead = read(sd, (void *)_buffer.c_str(), _buffer.length());
-				// std::cout << "\033[31m" << _buffer << "\n\033[0m";
 
 
 				if (valRead == 0) {

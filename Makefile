@@ -21,7 +21,7 @@ leaks: $(OBJ)
 
 debug: $(OBJ)
 	$(CXX) $(CXXFLAGS) -fsanitize=address -o $(NAME) $(OBJ)
-	@./$(NAME)
+	@./$(NAME) 6667 test
 
 run: $(OBJ)
 	$(CXX) $(CXXFLAGS) -o $(NAME) $(OBJ)

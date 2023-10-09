@@ -4,13 +4,10 @@
 
 
 
-class message{
+
+
+class input{
     public :
 
-    std::string                 raw_input;
-    std::string                 tag;
-    std::string                 source;
-    std::string                 command;
-    std::vector<std::string>    param; 
-
+    std::string
 }
