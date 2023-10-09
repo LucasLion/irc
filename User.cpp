@@ -12,7 +12,7 @@ void    User::addBuffer( char *Buf ) {
     _buffer.assign(Buf, strlen(Buf));
 }
 
-void	User::parseBuffer(){
+void	User::parseBuffer( void ){
 
 	size_t	                start = 0;
     size_t	                crlfPos;
@@ -32,7 +32,7 @@ void	User::parseBuffer(){
 }
 
 
-void User::printMessages() {
+void User::printMessages( void ) {
     std::vector<std::string>::const_iterator it;
     
     for (it = messagesString.begin(); it != messagesString.end(); ++it) {
@@ -40,6 +40,14 @@ void User::printMessages() {
         if (it != messagesString.end() - 1) {
             std::cout << "\n";
         }
+    }
+}
+
+void User::printCommands( void ) {
+    std::vector<std::string>::const_iterator it;
+    
+    for (it = messages.begin(); it != messages.end(); ++it) {
+        *it.printCommand();
     }
 }
 
