@@ -150,9 +150,9 @@ void Server::loop( void ) {
 				//incoming message
 				bzero(buffer, 1025);
 				valRead = read(sd, buffer, 1024);
-				Parser parse(buffer);
-				parse.parseInput();
-				parse.printMessages();
+				_user[i].addBuffer(buffer);
+				_user[i].parseBuffer();
+				_user[i].printMessages();
 				//std::string datareceived(buffer);
 				//std::cout << "\033[31m" << datareceived << "\n\033[0m";
 
