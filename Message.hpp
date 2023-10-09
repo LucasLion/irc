@@ -2,8 +2,9 @@
 #include <string>
 #include <vector>
 
-class input{
+class input {
+
     public :
 
-    std::string
+	private:
 };
