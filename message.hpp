@@ -4,6 +4,4 @@
 
 class input{
     public :
-
-    std::string
 };

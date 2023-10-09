@@ -3,8 +3,7 @@
 
 #include <vector>
 #include <string>
-
-class Command;
+#include "Command.hpp"
 
 class User{
 
@@ -16,7 +15,7 @@ class User{
     void                        parseBuffer( void );
     int							generateResponse( void );
     void						printMessages( void );
-    void                        printCommands( void );
+//    void                        printCommands( void );
 
     private : 
     std::string                 _realName;
