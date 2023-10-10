@@ -10,19 +10,16 @@ class User{
 
                                 User();
                                 User(int num);
-    void                        addBuffer(char * buf);
-    void                        parseBuffer( void );
+    void                        getBuffer( char * buf );
     int							generateResponse( void );
-    void						printMessages( void );
+
     void                        printCommands( void );
 
     private : 
     std::string                 _realName;
     std::string                 _nickName;
     std::string                 _buffer;
-    std::vector<Command>	    messages;
-	std::vector<std::string>	messagesString;
-	std::string 				cap( std::string command );
+    std::vector<Command>	    _messages;
     int                         _num;
 	
 

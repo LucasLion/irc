@@ -56,8 +56,6 @@ void	Command::parseInput( void ) {
 		for (int i = 1; i < static_cast<int>(commands.size()) - commandPos; i++) {
 			_param.push_back(commands[commandPos + i]);
 		}
-		parseArgs();
-		printCommand();
 	}
 }
 
