@@ -7,18 +7,29 @@ User::User( void ) { }
 
 User::User( int num ) : _num(num) { }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 71868aa411005ce7de4845a43f40695b318e8223
 void	User::getBuffer( char *buf ) {
 
 	size_t	                start = 0;
     size_t	                crlfPos;
     Command                 cmd;
 
+<<<<<<< HEAD
      _buffer.assign(buf, strlen(buf));
     
     while ((crlfPos = _buffer.find("\n", start)) != std::string::npos) {
         cmd.rawMessage = (_buffer.substr(start, crlfPos - start));
         cmd.parseInput();
+=======
+    _buffer.assign(buf, strlen(buf));
+
+    while ((crlfPos = _buffer.find("\n", start)) != std::string::npos) {
+        cmd.rawMessage = (_buffer.substr(start, crlfPos - start));
+		cmd.parseInput();
+>>>>>>> 71868aa411005ce7de4845a43f40695b318e8223
         _messages.push_back(cmd);
         start = crlfPos + 2;
     }
@@ -27,7 +38,6 @@ void	User::getBuffer( char *buf ) {
         _buffer = _buffer.substr(start);
     }
 }
-
 
 void User::printCommands( void ) {
     std::vector<Command>::iterator it;
@@ -38,4 +48,3 @@ void User::printCommands( void ) {
 	if (_messages.size() > 0)
 		_messages.pop_back();
 }
-

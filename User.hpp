@@ -12,7 +12,6 @@ class User{
                                 User(int num);
     void                        getBuffer( char * buf );
     int							generateResponse( void );
-
     void                        printCommands( void );
 
     private : 
