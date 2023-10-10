@@ -7,7 +7,6 @@
 #include <strings.h>
 #include <string.h>
 
-
 class Command {
     
 	public :

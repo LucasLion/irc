@@ -5,7 +5,7 @@ void	Command::parseInput( void ) {
 	std::cout << "Raw message: " << raw_message << std::endl;
 }
 
-void    Command::printCommand( void ){
+void    Command::printCommand( void ) {
 
     std::vector<std::string>::iterator it;
     
