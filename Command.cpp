@@ -22,7 +22,7 @@ void	Command::parseInput( void ) {
 	int					commandPos;
 
 	size_t position = 0;
-	while ((position = rawMessage.find(" ")) != pos) {
+	while ((position = rawMessage.find(" ")) != std::string::npos) {
 		command = rawMessage.substr(0, position);
 		std::cout << "-------> " << command << std::endl;
 		commands.push_back(command);
