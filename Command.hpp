@@ -1,22 +1,27 @@
 #pragma once
 
-#include "Server.hpp"
 #include <vector>
 #include <string>
+#include <iostream>
+#include <string>
+#include <strings.h>
+#include <string.h>
 
 
-class Command{
+class Command {
     
-    public :
+	public :
 
-    void                        parseIpnut( void );
-    char*                       generateResponse( void );
-    void                        printCommand( void );
-    std::string                 raw_message;
+		void                        parseInput( void );
+		char*                       generateResponse();
+		void                        printCommand();
+		std::string                 raw_message;
 
-    private : 
-    std::string                 _tag;
-    std::string                 _source;
-    std::string                 _command;
-    std::vector<std::string>    _param; 
+	private : 
+
+		std::string                 _tag;
+		std::string                 _source;
+		std::string                 _command;
+		std::vector<std::string>    _param; 
+
 };

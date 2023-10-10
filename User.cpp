@@ -6,7 +6,7 @@
 	User::User(int num) : _num(num){}
 
 void    User::addBuffer(char *Buf){
-    _buffer.assign(Buf, strlen(Buf));
+    _buffer = static_cast<std::string> (Buf);
 }
 
 
@@ -42,12 +42,14 @@ void User::printMessages( void ) {
 }
 
 void User::printCommands( void ) {
-    std::vector<std::string>::const_iterator it;
+    std::vector<Command>::iterator it;
     
-    for (it = messages.begin(); it != message.end(); ++it) {
-        *it.printCommand();
+    for (it = messages.begin(); it != messages.end(); ++it) {
+        //it->printCommand();
+        it->parseInput();
     }
 }
+
 
 std::string User::cap( std::string str ) {
 	std::cout << "On parse à cet endroit" << std::endl;
