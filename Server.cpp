@@ -106,6 +106,7 @@ void Server::handleConnections( void )
 				
 	//if valid socket descriptor then add to read list
 		if(sd > 0)
+
 			FD_SET(sd, &_readfds);
 	//highest file descriptor number, need it for the select function
 		if(sd > _max_sd)
@@ -129,7 +130,7 @@ void Server::loop( void ) {
 
 	int				sd;
 	int				valRead;
-	char			buffer[1025];
+	char			buffer[4608];
 	
 	while (true) {
 		handleConnections();
