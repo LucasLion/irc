@@ -7,7 +7,7 @@ void	Command::parseInput( void ) {
 
 void    Command::printCommand( void ) {
 
-    std::vector<std::string>::const_iterator it;
+    std::vector<std::string>::iterator it;
     
     std::cout << "raw_message :  " <<  raw_message << "/n";
     std::cout << " TAG ==> " <<  _tag << "/n";

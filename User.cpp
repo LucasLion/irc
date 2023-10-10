@@ -8,11 +8,8 @@ User::User( void ) { }
 
 User::User( int num ) : _num(num) { }
 
-void    User::addBuffer( char *buf ){
-	std::cout << "len: " << strlen(buf) << std::endl;
-	std::cout << "str: " << buf << std::endl;
-    //_buffer.assign(buf, strlen(buf));
-    _buffer.assign(buf, 6);
+void    User::addBuffer(char *Buf){
+    _buffer = static_cast<std::string> (Buf);
 }
 
 void	User::parseBuffer( void ){
@@ -46,13 +43,15 @@ void User::printMessages( void ) {
     }
 }
 
-//void User::printCommands( void ) {
-//    std::vector<std::string>::const_iterator it;
-//    
-//    for (it = messages.begin(); it != messages.end(); ++it) {
-//        *it.printCommand();
-//    }
-//}
+void User::printCommands( void ) {
+    std::vector<Command>::iterator it;
+    
+    for (it = messages.begin(); it != messages.end(); ++it) {
+        //it->printCommand();
+        it->parseInput();
+    }
+}
+
 
 std::string User::cap( std::string str ) {
 	std::cout << "On parse à cet endroit" << std::endl;

@@ -146,7 +146,7 @@ void Server::loop( void ) {
 				valRead = read(sd, buffer, 1024);
 				_users[i].addBuffer(buffer);
 				_users[i].parseBuffer();
-				_users[i].printMessages();
+				_users[i].printCommands();
 				//std::string datareceived(buffer);
 				//std::cout << "\033[31m" << datareceived << "\n\033[0m";
 
