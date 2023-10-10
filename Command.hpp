@@ -1,29 +1,17 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Command.hpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: llion@student.42mulhouse.fr <marvin@42.fr  +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/10 10:44:00 by llion@student     #+#    #+#             */
-/*   Updated: 2023/10/10 10:47:02 by llion@student    ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 
 #pragma once
 
 #include "header.hpp"
-#include "Command.hpp"
 
 class Command {
     
 	public :
 
 		void                        parseInput( void );
-		char*                       generateResponse();
-		void                        printCommand();
-		std::string                 raw_message;
+		void                        parseArgs( void );
+		char*                       generateResponse( void );
+		void                        printCommand( void );
+		std::string                 rawMessage;
 
 	private : 
 
