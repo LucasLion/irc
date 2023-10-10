@@ -15,3 +15,4 @@
 #include <cstdio>
 #include <cerrno>
 #include <vector>
+#include <sstream>

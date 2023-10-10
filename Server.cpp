@@ -106,6 +106,7 @@ void Server::handleConnections( void )
 				
 	//if valid socket descriptor then add to read list
 		if(sd > 0)
+
 			FD_SET(sd, &_readfds);
 	//highest file descriptor number, need it for the select function
 		if(sd > _max_sd)
@@ -129,7 +130,7 @@ void Server::loop( void ) {
 
 	int				sd;
 	int				valRead;
-	char			buffer[1025];
+	char			buffer[4608];
 	
 	while (true) {
 		handleConnections();
@@ -145,7 +146,7 @@ void Server::loop( void ) {
 				valRead = read(sd, buffer, 1024);
 				_users[i].addBuffer(buffer);
 				_users[i].parseBuffer();
-				//_users[i].printCommands();
+				_users[i].printCommands();
 				//std::string datareceived(buffer);
 				//std::cout << "\033[31m" << datareceived << "\n\033[0m";
 
@@ -166,7 +167,7 @@ void Server::loop( void ) {
 				else {
 					//set the string terminating NULL byte on the end of the data read
 					_buffer[valRead] = '\0';
-					send(sd, "message bien recu\n", 19, 0 );
+					//send(sd, "message bien recu\n", 19, 0 );
 				}
 			}
 		}
