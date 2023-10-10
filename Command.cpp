@@ -1,5 +1,4 @@
 
-#include "Command.hpp"
 #include "Server.hpp"
 
 //static void printVector( std::vector<std::string> commands ) {
@@ -13,22 +12,24 @@
 //@id=234AB :dan!d@localhost PRIVMSG #chan :Hey what's up!
 
 void	Command::parseArgs( void ) {
-	
-	for (int i = 0; i < static_cast<int>(_param.size()); i++) {
-		std::cout << "Params: " << _param[i] << std::endl;
-	}
+	return;	
 }
 
 void	Command::parseInput( void ) {
 
 	std::vector<std::string> commands;
-	std::istringstream	iss(rawMessage);
 	std::string			command;
 	int					commandPos;
-	
-	while (iss >> command) {
+
+	size_t position = 0;
+	while ((position = rawMessage.find(" ")) != pos) {
+		command = rawMessage.substr(0, position);
+		std::cout << "-------> " << command << std::endl;
 		commands.push_back(command);
+		rawMessage.erase(0, position + 1);
 	}
+	commands.push_back(command);
+
 
 	if (!commands.empty()) {
 		if (commands[0][0] == '@') {
@@ -53,11 +54,11 @@ void	Command::parseInput( void ) {
 			commandPos = 0;
 		}
 
-		for (int i = 1; i < static_cast<int>(commands.size()) - commandPos; i++) {
+		for (int i = 1; i < static_cast<int>(commands.size()) - commandPos; ++i) {
 			_param.push_back(commands[commandPos + i]);
 		}
-		parseArgs();
-		printCommand();
+		//parseArgs();
+		//printCommand();
 	}
 }
 
