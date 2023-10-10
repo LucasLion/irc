@@ -1,11 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   Command.hpp                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: llion@student.42mulhouse.fr <marvin@42.fr  +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/10/10 10:44:00 by llion@student     #+#    #+#             */
+/*   Updated: 2023/10/10 10:45:40 by llion@student    ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+
 #pragma once
 
-#include <vector>
-#include <string>
-#include <iostream>
-#include <string>
-#include <strings.h>
-#include <string.h>
+#include "header.hpp"
+#include "Command.hpp"
 
 class Command {
     

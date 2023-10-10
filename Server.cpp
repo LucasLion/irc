@@ -1,6 +1,5 @@
 
 #include "Server.hpp"
-#include <sys/socket.h>
 
 Server::Server( void ) : _maxClients(30) {
 	_clientSockets.resize(_maxClients, 0);
