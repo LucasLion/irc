@@ -1,13 +1,8 @@
 
 #pragma once
 
-#include <vector>
-#include <string>
+#include "header.hpp"
 #include "Command.hpp"
-#include <iostream>
-#include <string>
-#include <strings.h>
-#include <string.h>
 
 class User{
 
@@ -19,7 +14,7 @@ class User{
     void                        parseBuffer( void );
     int							generateResponse( void );
     void						printMessages( void );
-//    void                        printCommands( void );
+   // void                        printCommands( void );
 
     private : 
     std::string                 _realName;

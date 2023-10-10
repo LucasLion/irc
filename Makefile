@@ -3,7 +3,7 @@ NAME	= ircserv
 CXX		= c++
 CXXFLAGS= -ggdb3 -Wall -Wextra -Werror -std=c++98 -Wshadow
 RM		= rm -f
-SRC		= main.cpp Server.cpp Parser.cpp User.cpp Command.cpp
+SRC		= main.cpp Server.cpp User.cpp Command.cpp
 OBJ		= $(SRC:.cpp=.o)
 
 all: $(NAME)
@@ -25,7 +25,7 @@ debug: $(OBJ)
 
 run: $(OBJ)
 	$(CXX) $(CXXFLAGS) -o $(NAME) $(OBJ)
-	@./$(NAME)
+	@./$(NAME) 6667 test
 
 clean:
 	$(RM) $(OBJ) $(TOBJ)

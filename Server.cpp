@@ -1,6 +1,5 @@
 
 #include "Server.hpp"
-#include <sys/socket.h>
 
 Server::Server( void ) : _maxClients(30) {
 	_clientSockets.resize(_maxClients, 0);
@@ -146,7 +145,7 @@ void Server::loop( void ) {
 				valRead = read(sd, buffer, 1024);
 				_users[i].addBuffer(buffer);
 				_users[i].parseBuffer();
-				_users[i].printCommands();
+				//_users[i].printCommands();
 				//std::string datareceived(buffer);
 				//std::cout << "\033[31m" << datareceived << "\n\033[0m";
 

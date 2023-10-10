@@ -1,15 +1,15 @@
 
-#include "Server.hpp"
 #include "User.hpp"
 #include "Command.hpp"
-#include <string.h>
 
 User::User( void ) { }
 
 User::User( int num ) : _num(num) { }
 
-void    User::addBuffer(char *Buf){
-    _buffer = static_cast<std::string> (Buf);
+void    User::addBuffer( char *buf ){
+	std::cout << "len: " << strlen(buf) << std::endl;
+	std::cout << "str: " << buf << std::endl;
+    _buffer.assign(buf, strlen(buf));
 }
 
 void	User::parseBuffer( void ){
@@ -43,14 +43,13 @@ void User::printMessages( void ) {
     }
 }
 
-void User::printCommands( void ) {
-    std::vector<Command>::iterator it;
-    
-    for (it = messages.begin(); it != messages.end(); ++it) {
-        //it->printCommand();
-        it->parseInput();
-    }
-}
+//void User::printCommands( void ) {
+//    std::vector<std::string>::const_iterator it;
+//    
+//    for (it = messages.begin(); it != messages.end(); ++it) {
+//        *it.printCommand();
+//    }
+//}
 
 
 std::string User::cap( std::string str ) {

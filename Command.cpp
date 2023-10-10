@@ -1,5 +1,6 @@
 
 #include "Command.hpp"
+#include "Server.hpp"
 
 void	Command::parseInput( void ) {
 	std::cout << "Raw message: " << raw_message << std::endl;
