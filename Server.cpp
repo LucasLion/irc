@@ -145,7 +145,7 @@ void Server::loop( void ) {
 				valRead = read(sd, buffer, 1024);
 				_users[i].addBuffer(buffer);
 				_users[i].parseBuffer();
-				//_users[i].printCommands();
+				_users[i].printCommands();
 				//std::string datareceived(buffer);
 				//std::cout << "\033[31m" << datareceived << "\n\033[0m";
 
@@ -166,7 +166,12 @@ void Server::loop( void ) {
 				else {
 					//set the string terminating NULL byte on the end of the data read
 					_buffer[valRead] = '\0';
-					send(sd, "message bien recu\n", 19, 0 );
+					const char *rep = "001 amouly :Welcome to the SUPERSERVER Network, amouly[!amouly@localhost]\r\n";
+					const char *rep2 = "002 amouly :Welcome to the SUPERSERVER Network, amouly[!amouly@localhost]\r\n";
+					
+					//send(sd, "message bien recu\n",	 19, 0 );
+					send(sd, "CAP * LS :\r\n", 12, 0 );
+					send(sd, rep, strlen(rep), 0);
 				}
 			}
 		}

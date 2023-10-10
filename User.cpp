@@ -7,8 +7,6 @@ User::User( void ) { }
 User::User( int num ) : _num(num) { }
 
 void    User::addBuffer( char *buf ){
-	std::cout << "len: " << strlen(buf) << std::endl;
-	std::cout << "str: " << buf << std::endl;
     _buffer.assign(buf, strlen(buf));
 }
 
@@ -20,7 +18,6 @@ void	User::parseBuffer( void ){
 
     while ((crlfPos = _buffer.find("\r\n", start)) != std::string::npos) {
         cmd.raw_message = (_buffer.substr(start, crlfPos - start));
-		//cmd.parseInput();
         messages.push_back(cmd);
         messagesString.push_back(_buffer.substr(start, crlfPos - start));
         start = crlfPos + 2;
@@ -43,13 +40,13 @@ void User::printMessages( void ) {
     }
 }
 
-//void User::printCommands( void ) {
-//    std::vector<std::string>::const_iterator it;
-//    
-//    for (it = messages.begin(); it != messages.end(); ++it) {
-//        *it.printCommand();
-//    }
-//}
+void User::printCommands( void ) {
+   std::vector<Command>::iterator it;
+   
+   for (it = messages.begin(); it != messages.end(); ++it) {
+       it->parseInput();
+   }
+}
 
 
 std::string User::cap( std::string str ) {
