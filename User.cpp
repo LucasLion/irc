@@ -15,7 +15,7 @@ void	User::getBuffer( char *buf ) {
 
     _buffer.assign(buf, strlen(buf));
 
-    while ((crlfPos = _buffer.find("\n", start)) != std::string::npos) {
+    while ((crlfPos = _buffer.find("\r\n", start)) != std::string::npos) {
         Command cmd;
         cmd.rawMessage = (_buffer.substr(start, crlfPos - start));
 		cmd.parseInput();
