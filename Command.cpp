@@ -3,6 +3,16 @@
 
 //@id=234AB :dan!d@localhost PRIVMSG #chan :Hey what's up!
 
+Command::Command( void ) { }
+
+Command::Command( std::string raw ) : rawMessage(raw) { }
+
+Command::Command( Command const & src ) {
+	*this = src;
+}
+
+Command::~Command( void ) { }
+
 void	Command::parseInput( void ) {
 
 	std::vector<std::string> commands;
@@ -14,12 +24,13 @@ void	Command::parseInput( void ) {
 	tmp = rawMessage;
 	size_t position = 0;
 
-	//while ((position = tmp.find(" ")) != std::string::npos) {
-	while ((position = tmp.find(" ")) < tmp.size()) {
+	while ((position = tmp.find(" ")) != std::string::npos) {
 		word = tmp.substr(0, position);
+		std::cout << "word: " << word << std::endl;
 		commands.push_back(word);
 		tmp.erase(0, position + 1);
 	}
+	commands.push_back(tmp);
 
 	if (!commands.empty()) {
 		if (commands[0][0] == '@') {
@@ -45,7 +56,6 @@ void	Command::parseInput( void ) {
 		}
 
 		for (int i = 1; i < static_cast<int>(commands.size()) - commandPos; i++) {
-			std::cout << "commandPos: " << commands[commandPos + i] << std::endl;
 			_param.push_back(commands[commandPos + i]);
 
 		}
