@@ -22,9 +22,6 @@ void	User::getBuffer( char *buf ) {
         _messages.push_back(cmd); 
         start = crlfPos + 2;
     }
-    if (start < _buffer.length()) {
-        _buffer = _buffer.substr(start);
-    }
 }
 
 void User::printCommands( void ) {
@@ -35,8 +32,10 @@ void User::printCommands( void ) {
 }
 
 void User::generateResponse( int sd ) {
-        for (std::vector<Command>::iterator it = _messages.begin(); it != _messages.end();) {
-        it->generateResponse( sd );
-        it = _messages.erase(it);
+	send(sd, "PING\r\n", 6, 0 );
+	for (std::vector<Command>::iterator it = _messages.begin(); it != _messages.end(); it++) {
+		std::cout << "command: " << it->getCommand() << std::endl;
+		it->generateResponse( sd );
+	//	it = _messages.erase(it);
     }
 }
