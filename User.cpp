@@ -33,6 +33,6 @@ void User::printCommands( void ) {
     
     for (it = _messages.begin(); it != _messages.end(); ++it) {
 		it->printCommand();
-		_messages.erase(it);
+		_messages.pop_back();
     }
 }
