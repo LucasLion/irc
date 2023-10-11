@@ -17,6 +17,7 @@ class Command {
 		void                        printCommand( void );
 		void						parseParam( std::string params );
 		std::string                 rawMessage;
+		std::string					getCommand( void );
 
 	private : 
 

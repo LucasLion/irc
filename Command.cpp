@@ -105,10 +105,6 @@ void	Command::parseParam( std::string params ) {
     }
 }
 
-
-
-
-
 void    Command::printCommand( void ) {
 
     std::vector<std::string>::iterator it;
@@ -127,17 +123,16 @@ void    Command::printCommand( void ) {
 	std::cout  << std::endl;
 }
 
-
-
-
-
 void Command::generateResponse( int sd ){
+	if (_command == "NICK")
+		send(sd, "NICK\r\n", 6, 0 );
+	else if (_command == "USER")
+		send(sd, "USER\r\n", 6, 0 );
+	else if (_command == "CAP")
+		send(sd, "CAP * LS\r\n", 12, 0 );
 
+}
 
-
-
-
-
-	send(sd, "CAP * LS :\r\n", 12, 0 );
-
+std::string Command::getCommand( void ) {
+	return _command;
 }
