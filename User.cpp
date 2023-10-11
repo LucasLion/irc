@@ -15,11 +15,14 @@ void	User::getBuffer( char *buf ) {
 
     _buffer.assign(buf, strlen(buf));
 
-    while ((crlfPos = _buffer.find("\n", start)) != std::string::npos) {
-        cmd.rawMessage = (_buffer.substr(start, crlfPos - start));
-		cmd.parseInput(); _messages.push_back(cmd); start = crlfPos + 2;
+	std::cout << "buffer: " << _buffer << std::endl;
+    while ((crlfPos = _buffer.find("\r\n", start)) != std::string::npos) {
+		cmd.rawMessage = (_buffer.substr(start, crlfPos - start));
+		cmd.parseInput();
+		_messages.push_back(cmd);
+		start = crlfPos + 2;
     }
-
+	std::cout << "raw: " << cmd.rawMessage << std::endl;
     if (start < _buffer.length()) {
         _buffer = _buffer.substr(start);
     }
@@ -30,7 +33,6 @@ void User::printCommands( void ) {
     
     for (it = _messages.begin(); it != _messages.end(); ++it) {
 		it->printCommand();
+		_messages.erase(it);
     }
-	if (_messages.size() > 0)
-		_messages.pop_back();
 }
