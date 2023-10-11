@@ -5,19 +5,21 @@
 
 User::User( void ) { }
 
-User::User( int num ) : _num(num) { }
+//User::User( int num ) : _num(num) { }
 
 void	User::getBuffer( char *buf ) {
 
 	size_t	                start = 0;
     size_t	                crlfPos;
-    Command                 cmd;
 
     _buffer.assign(buf, strlen(buf));
 
-    while ((crlfPos = _buffer.find("\n", start)) != std::string::npos) {
+    while ((crlfPos = _buffer.find("\r\n", start)) != std::string::npos) {
+        Command cmd;
         cmd.rawMessage = (_buffer.substr(start, crlfPos - start));
-		cmd.parseInput(); _messages.push_back(cmd); start = crlfPos + 2;
+		cmd.parseInput();
+        _messages.push_back(cmd); 
+        start = crlfPos + 2;
     }
 
     if (start < _buffer.length()) {
@@ -26,11 +28,15 @@ void	User::getBuffer( char *buf ) {
 }
 
 void User::printCommands( void ) {
-    std::vector<Command>::iterator it;
-    
-    for (it = _messages.begin(); it != _messages.end(); ++it) {
-		it->printCommand();
+        for (std::vector<Command>::iterator it = _messages.begin(); it != _messages.end();) {
+        it->printCommand();
+        it = _messages.erase(it);
     }
-	if (_messages.size() > 0)
-		_messages.pop_back();
+}
+
+void User::generateResponse( int sd ) {
+        for (std::vector<Command>::iterator it = _messages.begin(); it != _messages.end();) {
+        it->generateResponse( sd );
+        it = _messages.erase(it);
+    }
 }
