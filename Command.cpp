@@ -1,14 +1,6 @@
 
 #include "Server.hpp"
 
-//static void printVector( std::vector<std::string> commands ) {
-//	std::vector<std::string>::iterator it;
-//
-//	for (it = commands.begin(); it != commands.end(); it++) {
-//		std::cout << "Command: " << *it << std::endl;
-//	}
-//}
-
 //@id=234AB :dan!d@localhost PRIVMSG #chan :Hey what's up!
 
 // void	Command::parseArgs( void ) {
@@ -78,6 +70,13 @@ void	Command::parseParam( std::string params ) {
 }
 
 
+	while ((position = tmp.find(" ")) != std::string::npos) {
+		word = tmp.substr(0, position);
+		std::cout << "word: " << word << std::endl;
+		commands.push_back(word);
+		tmp.erase(0, position + 1);
+	}
+	commands.push_back(tmp);
 
  void	Command::parseInput( void ) {
 
@@ -122,7 +121,7 @@ void    Command::printCommand( void ) {
 
     std::vector<std::string>::iterator it;
     
-    std::cout << "raw_message : " <<  rawMessage << std::endl;
+    std::cout << "rawMessage : " <<  rawMessage << std::endl;
     std::cout << "TAG         : " <<  _tag << std::endl;
     std::cout << "SOURCE      : " <<  _source << std::endl;
     std::cout << "COMMAND     : " <<  _command << std::endl;

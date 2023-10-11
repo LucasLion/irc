@@ -12,6 +12,7 @@ void	User::getBuffer( char *buf ) {
 	size_t	                start = 0;
     size_t	                crlfPos;
 
+
     _buffer.assign(buf, strlen(buf));
 
     while ((crlfPos = _buffer.find("\r\n", start)) != std::string::npos) {
@@ -21,7 +22,6 @@ void	User::getBuffer( char *buf ) {
         _messages.push_back(cmd); 
         start = crlfPos + 2;
     }
-
     if (start < _buffer.length()) {
         _buffer = _buffer.substr(start);
     }
