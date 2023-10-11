@@ -9,9 +9,9 @@ class User{
     public : 
 
                                 User();
-                                User(int num);
+    //                            User(int num);
     void                        getBuffer( char * buf );
-    int							generateResponse( void );
+    void						generateResponse( int sd );
     void                        printCommands( void );
 
     private : 
@@ -19,7 +19,10 @@ class User{
     std::string                 _nickName;
     std::string                 _buffer;
     std::vector<Command>	    _messages;
-    int                         _num;
+   // int                         _num;
 	
 
 };
+
+
+
