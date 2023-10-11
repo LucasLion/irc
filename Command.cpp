@@ -88,7 +88,7 @@ void	Command::parseParam( std::string params ) {
         return;
     }
 
-	Part = rawMessage.substr(spacePos + 1, spacePos2);
+	Part = rawMessage.substr(spacePos + 1, spacePos2 - spacePos - 1);
     if (Part[0] == ':') {
         _source = Part.substr(1); 
     } else 
