@@ -7,10 +7,10 @@ class Command {
     
 	public :
 
-									Command( void );
-									Command( std::string raw );
-									Command( Command const & src );
-									~Command( void );
+	//								Command( void );
+	//								Command( std::string raw );
+	//								Command( Command const & src );
+	//								~Command( void );
 		void                        parseInput( void );
 		void                        parseArgs( void );
 		void						generateResponse( int sd );

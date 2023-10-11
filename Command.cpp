@@ -3,9 +3,9 @@
 
 //@id=234AB :dan!d@localhost PRIVMSG #chan :Hey what's up!
 
-// void	Command::parseArgs( void ) {
-// 	return;	
-// }
+void	Command::parseArgs( void ) {
+	return;	
+}
 
 // void	Command::parseInput( void ) {
 
@@ -69,14 +69,6 @@ void	Command::parseParam( std::string params ) {
     _param.push_back(para); 
 }
 
-
-	while ((position = tmp.find(" ")) != std::string::npos) {
-		word = tmp.substr(0, position);
-		std::cout << "word: " << word << std::endl;
-		commands.push_back(word);
-		tmp.erase(0, position + 1);
-	}
-	commands.push_back(tmp);
 
  void	Command::parseInput( void ) {
 
