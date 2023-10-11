@@ -1,5 +1,6 @@
 
-#include "Server.hpp"
+#include "header.hpp"
+#include "Command.hpp"
 
 //@id=234AB :dan!d@localhost PRIVMSG #chan :Hey what's up!
 
@@ -124,12 +125,17 @@ void    Command::printCommand( void ) {
 }
 
 void Command::generateResponse( int sd ){
-	if (_command == "NICK")
-		send(sd, "NICK\r\n", 6, 0 );
-	else if (_command == "USER")
-		send(sd, "USER\r\n", 6, 0 );
-	else if (_command == "CAP")
+	std::cout << "COMMAND: " << _command << std::endl;
+	if (_command == "CAP")
 		send(sd, "CAP * LS\r\n", 12, 0 );
+	if (_command == "NICK")
+		send(sd, ":localhost 001 utilisateur :Bienvenue sur le serveur IRC, utilisateur\r\n", 6, 0 );
+	if (_command == "USER")
+		send(sd, ":localhost 002 utilisateur :Vos informations d'utilisateur ont été enregistrées avec succès\r\n", 6, 0 );
+	if (_command == "JOIN") {
+		send(sd, ":localhost 003 utilisateur :Vous avez rejoint le canal #chan\r\n", 6, 0 );
+		
+	}
 
 }
 

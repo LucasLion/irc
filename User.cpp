@@ -1,7 +1,7 @@
 
+#include "header.hpp"
 #include "User.hpp"
 #include "Command.hpp"
-#include <locale>
 
 User::User( void ) { }
 
@@ -31,10 +31,9 @@ void User::printCommands( void ) {
     }
 }
 
-void User::generateResponse( int sd ) {
-	send(sd, "PING\r\n", 6, 0 );
+void User::generateResponse( int sd, Server &server ) {
+	(void)server;
 	for (std::vector<Command>::iterator it = _messages.begin(); it != _messages.end(); it++) {
-		std::cout << "command: " << it->getCommand() << std::endl;
 		it->generateResponse( sd );
 	//	it = _messages.erase(it);
     }

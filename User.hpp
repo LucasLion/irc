@@ -4,14 +4,17 @@
 #include "header.hpp"
 #include "Command.hpp"
 
-class User{
+class Server;
+class Command;
+
+class User {
 
     public : 
 
                                 User();
     //                            User(int num);
     void                        getBuffer( char * buf );
-    void						generateResponse( int sd );
+    void						generateResponse( int sd, Server &server );
     void                        printCommands( void );
 
     private : 
