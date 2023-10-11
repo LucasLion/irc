@@ -161,7 +161,7 @@ void Server::loop( void ) {
 					
 				//Echo back the message that came in
 				else {
-					_users[i].printCommands();
+					_users[i].generateResponse(sd);
 					//send(sd, "CAP * LS :\r\n", 12, 0 );
 				}
 			}

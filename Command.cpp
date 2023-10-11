@@ -52,6 +52,10 @@ void	Command::parseArgs( void ) {
 // 	}
 // }
 
+
+const std::string Command::_cmd[4] = {"CAP", "PING", "NICK", "USER"};
+
+
 void	Command::parseParam( std::string params ) {
 
 	size_t	                start = 0;
@@ -128,16 +132,26 @@ void    Command::printCommand( void ) {
 }
 
 
-
+// char *      command_cap(std::vector<std::string> param){
+//     return ("CAP * LS :\r\n");
+// }
 
 
 void Command::generateResponse( int sd ){
 
+    (void) sd;
+    //char * response;
+    int i = 0;
+
+    while(i < 4){
+        if (_command.compare(_cmd[i]) == 0){
+            std::cout << _command << std::endl;
+            break;
+        }
+        i++;
+    }
 
 
-
-
-
-	send(sd, "CAP * LS :\r\n", 12, 0 );
+	//send(sd, response, strlen(response));
 
 }

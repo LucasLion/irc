@@ -25,6 +25,7 @@ class Command {
 		std::string                 				_command;
 		std::string									_paramstrng;
 		std::vector<std::string>				    _param; 
+		const static std::string					_cmd[4];
 		
 
 };
