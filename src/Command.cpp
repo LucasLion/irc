@@ -124,7 +124,7 @@ void    Command::printCommand( void ) {
 	std::cout  << std::endl;
 }
 
-void Command::generateResponse( int sd, Server &server ) {
+void Command::generateResponse( int sd ) {
 	std::cout << "COMMAND: " << _command << std::endl;
 	if (_command == "CAP")
 		send(sd, "CAP * LS\r\n", 12, 0 );
@@ -133,7 +133,6 @@ void Command::generateResponse( int sd, Server &server ) {
 	if (_command == "USER")
 		send(sd, ":localhost 002 utilisateur :Vos informations d'utilisateur ont été enregistrées avec succès\r\n", 6, 0 );
 	if (_command == "JOIN") {
-		(void)server;
 		//server.createChannel(_param[0]);
 	}
 

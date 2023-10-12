@@ -2,10 +2,10 @@
 #pragma once
 
 #include "header.hpp"
+#include "Channel.hpp"
 
 class Command;
 class User;
-
 
 class Server {
 
@@ -17,7 +17,7 @@ public:
 	void				handleConnections( void );
 	void				newConnection( void );
 	void				loop( void );
-	//bool				createChannel( std::string name );
+	bool				createChannel( std::string name );
 
 private:
 	
@@ -31,5 +31,6 @@ private:
 	std::string						_buffer;
 	int								_max_sd;
 	std::string						_passwd;
+	Channel							_channels[30];
 	//User							_users[30];
 };
