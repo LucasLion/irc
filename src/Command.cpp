@@ -8,51 +8,6 @@ void	Command::parseArgs( void ) {
 	return;	
 }
 
-// void	Command::parseInput( void ) {
-
-// 	std::vector<std::string> commands;
-// 	std::string			command;
-// 	int					commandPos;
-
-// 	size_t position = 0;
-// 	while ((position = rawMessage.find(" ")) != std::string::npos) {
-// 		command = rawMessage.substr(0, position);
-// 		std::cout << "-------> " << command << std::endl;
-// 		commands.push_back(command);
-// 		rawMessage.erase(0, position);
-// 	}
-// 	commands.push_back(command);
-
-
-// 	if (!commands.empty()) {
-// 		if (commands[0][0] == '@') {
-// 			_tag = commands[0];
-// 			if (commands[1][0] == ':') {
-// 				_source = commands[1];
-// 				_command = commands[2];
-// 				commandPos = 2;
-// 			}
-// 			else {
-// 				_command = commands[1];
-// 				commandPos = 1;
-// 			}
-// 		}
-// 		else if (commands[0][0] == ':') {
-// 			_source = commands[0];
-// 			_command = commands[1];
-// 			commandPos = 1;
-// 		}
-// 		else {
-// 			_command = commands[0];
-// 			commandPos = 0;
-// 		}
-
-// 		for (int i = 1; i < static_cast<int>(commands.size()) - commandPos; ++i) {
-// 			_param.push_back(commands[commandPos + i]);
-// 		}
-// 	}
-// }
-
 
 const std::string Command::_cmd[4] = {"CAP", "PASS", "NICK", "USER"};
 
@@ -134,7 +89,8 @@ void    Command::printCommand( void ) {
 // }
 
 
-// void Command::generateResponse( int sd, Server &server ){
+
+// void Command::generateResponse( int sd , Server &server){
 
 //     (void) sd;
 //     (void) server;
@@ -152,42 +108,24 @@ void    Command::printCommand( void ) {
 //     }
 
 
-void Command::generateResponse( int sd , Server &server){
-
-    (void) sd;
-    (void) server;
-    
-    //char * response;
-    int i = 0;
-
-    while(i < 4){
-        if (_command.compare(_cmd[i]) == 0){
-            std::cout << _command << std::endl;
-            break;
-            }
-        i++;
-         }
-    }
 
 
 
 
+void Command::generateResponse( int sd, Server &server ) {
+	std::cout << "COMMAND: " << _command << std::endl;
+	if (_command == "CAP")
+		send(sd, "CAP * LS\r\n", 12, 0 );
+	if (_command == "NICK")
+		send(sd, ":localhost 001 utilisateur :Bienvenue sur le serveur IRC, utilisateur\r\n", 71, 0 );
+	if (_command == "USER")
+		send(sd, ":localhost 002 utilisateur :Vos informations d'utilisateur ont été FFFFF enregistrées avec succès\r\n", 200, 0 );
+	if (_command == "JOIN") {
+		(void)server;
+		//server.createChannel(_param[0]);
+	}
 
-
-// void Command::generateResponse( int sd, Server &server ) {
-// 	std::cout << "COMMAND: " << _command << std::endl;
-// 	if (_command == "CAP")
-// 		send(sd, "CAP * LS\r\n", 12, 0 );
-// 	if (_command == "NICK")
-// 		send(sd, ":localhost 001 utilisateur :Bienvenue sur le serveur IRC, utilisateur\r\n", 71, 0 );
-// 	if (_command == "USER")
-// 		send(sd, ":localhost 002 utilisateur :Vos informations d'utilisateur ont été FFFFF enregistrées avec succès\r\n", 200, 0 );
-// 	if (_command == "JOIN") {
-// 		(void)server;
-// 		//server.createChannel(_param[0]);
-// 	}
-
-// }
+}
 
 std::string Command::getCommand( void ) {
 	return _command;

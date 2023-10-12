@@ -38,15 +38,3 @@ void User::generateResponse( int sd, Server &server ) {
 		it = _messages.erase(it);
     }
 }
-
-
-// void User::generateResponse( int sd ) {
-
-// 	if(_messages.size() != 0){
-//     for (std::vector<Command>::iterator it = _messages.begin(); it != _messages.end();) {
-// 		it->generateResponse( sd);
-// 		it = _messages.erase(it);
-//     }
-//     }
-
-// }
