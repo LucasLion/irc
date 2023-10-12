@@ -14,6 +14,10 @@ class Channel {
 		std::string					name;
 		std::vector<std::string>	userList;
 		User						_users[30];
+
+		class ChannelAlreadyExistsException : public std::exception {
+				virtual const char*	what() const throw();
+		};
 	
 	private:
 };

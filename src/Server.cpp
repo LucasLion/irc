@@ -27,38 +27,32 @@ int		Server::createSocket( void ) {
 	int masterSocket;
 		
 	//create a master socket
-	if( (masterSocket = socket(AF_INET , SOCK_STREAM , 0)) == 0) {
+	if((masterSocket = socket(AF_INET , SOCK_STREAM , 0)) == 0) {
 		perror("socket failed");
 		exit(EXIT_FAILURE);
 	}
-	
 	std::cout << "master socket : " << masterSocket << std::endl;
 	//set master socket to allow multiple connections ,
 	//this is just a good habit, it will work without this
-	if( setsockopt(masterSocket, SOL_SOCKET, SO_REUSEADDR, (char *)&opt, sizeof(opt)) < 0 ) {
+	if(setsockopt(masterSocket, SOL_SOCKET, SO_REUSEADDR, (char *)&opt, sizeof(opt)) < 0) {
 		perror("setsockopt");
 		exit(EXIT_FAILURE);
 	}
-	
 	//bind the socket to localhost port 8888
 	if (bind(masterSocket, (struct sockaddr *)&_address, sizeof(_address)) < 0) {
 		perror("bind failed");
 		exit(EXIT_FAILURE);
 	}
 	std::cout << "Listener on port " <<  _portno << std::endl;
-		
 	//try to specify maximum of 3 pending connections for the master socket
 	if (listen(masterSocket, 3) < 0) {
 		perror("listen");
 		exit(EXIT_FAILURE);
 	}
-		
 	//accept the incoming connection
 	std::cout << "Waiting for connections ..." <<  _portno << std::endl;
 	return (masterSocket);	
 }
-
-
 
 void Server::newConnection( void )
 {
@@ -70,7 +64,6 @@ void Server::newConnection( void )
 			perror("accept");
 			exit(EXIT_FAILURE);
 	}
-			
 	//inform user of socket number - used in send and receive commands
 	std::cout << "New connection , socket fd is " << new_socket << ", ip is: " << inet_ntoa(_address.sin_addr) << ", port : " << ntohs(_address.sin_port) << std::endl;
 		
@@ -79,7 +72,6 @@ void Server::newConnection( void )
 		perror("send");
 	}
 	std::cout << "Welcome message sent successfully" << std::endl;
-	
 	//add new socket to array of sockets
 	for (int i = 0; i < _maxClients; i++) {
 		//if position is empty
@@ -89,9 +81,7 @@ void Server::newConnection( void )
 			break;
 		}
 	}
-
 }
-
 
 void Server::handleConnections( void )
 {
@@ -101,31 +91,25 @@ void Server::handleConnections( void )
 	//clear socket set and add mastersocket
 	FD_ZERO(&_readfds);
 	FD_SET(_masterSocket, &_readfds);
-		
 	//add child sockets to set
 	for (int i = 0; i < _maxClients; i++) {
 		sd = _clientSockets[i];
-				
 	//if valid socket descriptor then add to read list
 		if(sd > 0)
-
 			FD_SET(sd, &_readfds);
 	//highest file descriptor number, need it for the select function
 		if(sd > _max_sd)
 			_max_sd = sd;
 	}
-	
 	//wait for an activity on one of the sockets , timeout is NULL ,so wait indefinitely
 	activity = select( _max_sd + 1, &_readfds, NULL, NULL, NULL);
 	if ((activity < 0) && (errno!=EINTR))
 		std::cout << "select error" << std::endl;
-			
 	//If something happened on the master socket ,
 	//then its an incoming connection
 	if (FD_ISSET(_masterSocket, &_readfds)) {
 		newConnection();
 	}
-
 }
 
 void Server::loop( void ) {
@@ -133,59 +117,50 @@ void Server::loop( void ) {
 	int				sd;
 	int				valRead;
 	char			buffer[4608];
-	Channel			channel;
 	
 	while (true) {
 		handleConnections();
-			
 		//else its some IO operation on some other socket
 		for (int i = 0; i < _maxClients; i++) {
 			sd = _clientSockets[i];
 				
 			if (FD_ISSET(sd, &_readfds)) {
-
 				//incoming message
 				bzero(buffer, 1025);
 				valRead = read(sd, buffer, 1024);
-				channel._users[i].getBuffer(buffer);
+				_users[i].getBuffer(buffer);
 				//_users[i].getBuffer(buffer);
 				//std::string datareceived(buffer);
 				//std::cout << "\033[31m" << datareceived << "\n\033[0m";
-
 				if (valRead == 0) {
 					//Somebody disconnected , get his details and print
-					
 					getpeername(sd , (struct sockaddr*)&_address, (socklen_t*)&_addrLen);
 					std::cout << "Host disconnected, ip: " << inet_ntoa(_address.sin_addr) << " port: " << ntohs(_address.sin_port) << std::endl;
-						
 					//Close the socket and mark as 0 in list for reuse
 					close(sd);
 					_clientSockets[i] = 0;
 				}
-					
-				//Echo back the message that came in
-				else {
-					//_users[i].generateResponse(sd);
-					//send(sd, "CAP * LS :\r\n", 12, 0 );
-					channel._users[i].generateResponse(sd, *this);
-					//_users[i].generateResponse(sd, *this);
-				}
+				else
+					_users[i].generateResponse(sd);
 			}
 		}
 	}
 }
 
-//bool	Server::createChannel( std::string channelName ) {
-//	if (_channels.find(channelName) != _channels.end()) {
-//		std::cout << "Le canal " << channelName << " existe déjà." << std::endl;
-//		return false;
-//	}
-//
-//	Channel newChannel;
-//	newChannel.name = channelName;
-//	_channels[channelName] = newChannel;
-//	std::cout << "Le canal " << channelName << " a été créé avec succès." << std::endl;
-//
-//	return true;
-//}
-//
+bool	Server::createChannel( std::string channelName ) {
+
+	try {
+		if (_channels.find(channelName) != _channels.end())
+			throw Channel::ChannelAlreadyExistsException();
+	} catch	(std::exception &e) {
+		std::cout << e.what() << std::endl;
+		return false;
+	}
+
+	Channel newChannel;
+	newChannel.name = channelName;
+	_channels[channelName] = newChannel;
+	std::cout << SUCCESS("Channel \"" + channelName + "\" created") << std::endl;
+	return true;
+}
+

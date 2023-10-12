@@ -31,8 +31,7 @@ void User::printCommands( void ) {
     }
 }
 
-void User::generateResponse( int sd, Server &server ) {
-	(void)server;
+void User::generateResponse( int sd ) {
 	for (std::vector<Command>::iterator it = _messages.begin(); it != _messages.end();) {
 		it->generateResponse( sd );
 		it = _messages.erase(it);

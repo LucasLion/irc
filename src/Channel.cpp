@@ -8,4 +8,8 @@ Channel::Channel( std::string nom ) : name(nom) { (void)name; }
 
 Channel::~Channel( void ) { }
 
+const char*	Channel::ChannelAlreadyExistsException::what() const throw() {
+	return (ERROR("Channel already exists"));
+}
+
 

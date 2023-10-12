@@ -29,6 +29,6 @@ private:
 	std::string						_buffer;
 	int								_max_sd;
 	std::string						_passwd;
-	Channel							_channels[30];
-	//User							_users[30];
+	std::map<std::string, Channel>	_channels;
+	User							_users[30];
 };

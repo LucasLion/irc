@@ -115,23 +115,7 @@ void    Command::printCommand( void ) {
     std::cout << "SOURCE      : " <<  _source << std::endl;
     std::cout << "COMMAND     : " <<  _command << std::endl;
     std::cout << "PARAMSTRING : " << _paramstrng <<std::endl;
-    
-    
-    std::cout << "rawMessage : " <<  rawMessage << std::endl;
-    std::cout << "TAG         : " <<  _tag << std::endl;
-    std::cout << "SOURCE      : " <<  _source << std::endl;
-    std::cout << "COMMAND     : " <<  _command << std::endl;
-    std::cout << "PARAMSTRING : " << _paramstrng <<std::endl;
-    
-    
-    std::cout << "rawMessage : " <<  rawMessage << std::endl;
-    std::cout << "TAG         : " <<  _tag << std::endl;
-    std::cout << "SOURCE      : " <<  _source << std::endl;
-    std::cout << "COMMAND     : " <<  _command << std::endl;
-    std::cout << "PARAMSTRING : " << _paramstrng <<std::endl;
-    
-    
-     std::cout << "PARAMS      : " ;
+	std::cout << "PARAMS      : " ;
     for (it = _param.begin(); it != _param.end(); ++it) {
         std::cout << *it << " --- ";
 	}
@@ -139,17 +123,27 @@ void    Command::printCommand( void ) {
 }
 
 void Command::generateResponse( int sd ) {
-	std::cout << "COMMAND: " << _command << std::endl;
-	if (_command == "CAP")
-		send(sd, "CAP * LS\r\n", 12, 0 );
-	if (_command == "NICK")
-		send(sd, ":localhost 001 utilisateur :Bienvenue sur le serveur IRC, utilisateur\r\n", 71, 0 );
-	if (_command == "USER")
-		send(sd, ":localhost 002 utilisateur :Vos informations d'utilisateur ont été enregistrées avec succès\r\n", 6, 0 );
-	if (_command == "JOIN") {
-		//server.createChannel(_param[0]);
-	}
 
+//	std::cout << "COMMAND: " << rawMessage << std::endl;
+	if (_command == "CAP") {
+		send(sd, "CAP * LS\r\n", 12, 0 );
+	}
+	if (_command == "NICK") {
+		send(sd, ":localhost 001 utilisateur :Bienvenue sur le serveur IRC, utilisateur\r\n", 71, 0 );
+	}
+	if (_command == "USER") {
+		send(sd, ":localhost 002 utilisateur :Vos informations d'utilisateur ont été enregistrées avec succès\r\n", 92, 0 );
+	}
+	if (_command == "PASS") {
+		if (_param[0] != "test") {
+			send(sd, ":localhost 464 utilisateur :Password incorrect\r\n", 51, 0 );
+			throw std::exception();
+		}
+		else
+			send(sd, ":localhost 001 utilisateur :Bienvenue sur le serveur IRC, utilisateur\r\n", 71, 0);
+	}
+	if (_command == "PING")
+		std::cout << SUCCESS("PONG") << std::endl;
 }
 
 std::string Command::getCommand( void ) {
