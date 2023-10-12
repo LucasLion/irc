@@ -1,7 +1,7 @@
 
-#include "header.hpp"
-#include "Server.hpp"
-#include "Channel.hpp"
+#include "../includes/header.hpp"
+#include "../includes/Server.hpp"
+#include "../includes/Channel.hpp"
 
 Server::Server( void ) : _maxClients(30) {
 	_clientSockets.resize(_maxClients, 0);

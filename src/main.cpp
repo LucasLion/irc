@@ -1,7 +1,7 @@
 
 
-#include "header.hpp"
-#include "Server.hpp"
+#include "../includes/header.hpp"
+#include "../includes/Server.hpp"
 
 int main(int argc , char *argv[])
 {
