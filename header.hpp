@@ -15,4 +15,7 @@
 #include <cstdio>
 #include <cerrno>
 #include <vector>
+#include <map>
 #include <sstream>
+#include <locale>
+

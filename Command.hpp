@@ -2,6 +2,8 @@
 #pragma once
 
 #include "header.hpp"
+#include "Server.hpp"
+
 
 class Command {
     
@@ -13,9 +15,11 @@ class Command {
 	//								~Command( void );
 		void                        parseInput( void );
 		void                        parseArgs( void );
-		void						generateResponse( int sd );
+		//void						generateResponse( int sd );
+		void						generateResponse( int sd , Server &server);
 		void                        printCommand( void );
 		void						parseParam( std::string params );
+		std::string 				getCommand( void );
 		std::string                 rawMessage;
 
 	private : 

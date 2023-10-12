@@ -1,5 +1,7 @@
 
+#include "header.hpp"
 #include "Server.hpp"
+#include "Channel.hpp"
 
 Server::Server( void ) : _maxClients(30) {
 	_clientSockets.resize(_maxClients, 0);
@@ -131,6 +133,7 @@ void Server::loop( void ) {
 	int				sd;
 	int				valRead;
 	char			buffer[4608];
+	Channel			channel;
 	
 	while (true) {
 		handleConnections();
@@ -144,7 +147,8 @@ void Server::loop( void ) {
 				//incoming message
 				bzero(buffer, 1025);
 				valRead = read(sd, buffer, 1024);
-				_users[i].getBuffer(buffer);
+				channel._users[i].getBuffer(buffer);
+				//_users[i].getBuffer(buffer);
 				//std::string datareceived(buffer);
 				//std::cout << "\033[31m" << datareceived << "\n\033[0m";
 
@@ -161,12 +165,27 @@ void Server::loop( void ) {
 					
 				//Echo back the message that came in
 				else {
-					_users[i].generateResponse(sd);
+					//_users[i].generateResponse(sd);
 					//send(sd, "CAP * LS :\r\n", 12, 0 );
+					channel._users[i].generateResponse(sd, *this);
+					//_users[i].generateResponse(sd, *this);
 				}
 			}
 		}
 	}
 }
 
+//bool	Server::createChannel( std::string channelName ) {
+//	if (_channels.find(channelName) != _channels.end()) {
+//		std::cout << "Le canal " << channelName << " existe déjà." << std::endl;
+//		return false;
+//	}
+//
+//	Channel newChannel;
+//	newChannel.name = channelName;
+//	_channels[channelName] = newChannel;
+//	std::cout << "Le canal " << channelName << " a été créé avec succès." << std::endl;
+//
+//	return true;
+//}
 

@@ -1,5 +1,6 @@
 
-#include "Server.hpp"
+#include "header.hpp"
+#include "Command.hpp"
 
 //@id=234AB :dan!d@localhost PRIVMSG #chan :Hey what's up!
 
@@ -53,7 +54,7 @@ void	Command::parseArgs( void ) {
 // }
 
 
-const std::string Command::_cmd[4] = {"CAP", "PING", "NICK", "USER"};
+const std::string Command::_cmd[4] = {"CAP", "PASS", "NICK", "USER"};
 
 
 void	Command::parseParam( std::string params ) {
@@ -109,10 +110,6 @@ void	Command::parseParam( std::string params ) {
     }
 }
 
-
-
-
-
 void    Command::printCommand( void ) {
 
     std::vector<std::string>::iterator it;
@@ -137,9 +134,29 @@ void    Command::printCommand( void ) {
 // }
 
 
-void Command::generateResponse( int sd ){
+// void Command::generateResponse( int sd, Server &server ){
+
+//     (void) sd;
+//     (void) server;
+    
+//     //char * response;
+//     int i = 0;
+
+//     while(i < 4){
+//         if (_command.compare(_cmd[i]) == 0){
+//             std::cout << _command << std::endl;
+//             break;
+//             }
+//         i++;
+//          }
+//     }
+
+
+void Command::generateResponse( int sd , Server &server){
 
     (void) sd;
+    (void) server;
+    
     //char * response;
     int i = 0;
 
@@ -147,11 +164,31 @@ void Command::generateResponse( int sd ){
         if (_command.compare(_cmd[i]) == 0){
             std::cout << _command << std::endl;
             break;
-        }
+            }
         i++;
+         }
     }
 
 
-	//send(sd, response, strlen(response));
 
+
+
+
+// void Command::generateResponse( int sd, Server &server ) {
+// 	std::cout << "COMMAND: " << _command << std::endl;
+// 	if (_command == "CAP")
+// 		send(sd, "CAP * LS\r\n", 12, 0 );
+// 	if (_command == "NICK")
+// 		send(sd, ":localhost 001 utilisateur :Bienvenue sur le serveur IRC, utilisateur\r\n", 71, 0 );
+// 	if (_command == "USER")
+// 		send(sd, ":localhost 002 utilisateur :Vos informations d'utilisateur ont été FFFFF enregistrées avec succès\r\n", 200, 0 );
+// 	if (_command == "JOIN") {
+// 		(void)server;
+// 		//server.createChannel(_param[0]);
+// 	}
+
+// }
+
+std::string Command::getCommand( void ) {
+	return _command;
 }

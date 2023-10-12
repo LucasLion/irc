@@ -2,8 +2,8 @@
 #pragma once
 
 #include "header.hpp"
-#include "User.hpp"
-#include "Command.hpp"
+
+
 
 class Server {
 
@@ -15,20 +15,19 @@ public:
 	void				handleConnections( void );
 	void				newConnection( void );
 	void				loop( void );
+	//bool				createChannel( std::string name );
 
 private:
 	
-	int					_maxClients;
-	int					_portno;
-	std::vector<int>	_clientSockets;
-	struct sockaddr_in	_address;
-	int					_addrLen;
-	int					_masterSocket;
-	fd_set				_readfds;
-	//char				_buffer[1025];
-	std::string			_buffer;
-	int					_max_sd;
-	std::string			_passwd;
-	User				_users[30];
-
+	int								_maxClients;
+	int								_portno;
+	std::vector<int>				_clientSockets;
+	struct sockaddr_in				_address;
+	int								_addrLen;
+	int								_masterSocket;
+	fd_set							_readfds;
+	std::string						_buffer;
+	int								_max_sd;
+	std::string						_passwd;
+	//User							_users[30];
 };
