@@ -5,10 +5,14 @@
 
 int main(int argc , char *argv[])
 {
-	if (argc == 3) 
-		Server	server(argv[1], argv[2]);
-	else 
-		std::cout << "wrong number of args" << std::endl;
+	try {
+		if (argc == 3) 
+			Server	server(argv[1], argv[2]);
+		else 
+			throw std::runtime_error(ERROR("Usage: ./server <port> <password>"));
+	} catch (std::exception &e) {
+		std::cout << ERROR("Error: ") << e.what() << std::endl;
+	}
 	return 0;
 }
 

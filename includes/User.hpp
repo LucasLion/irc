@@ -12,10 +12,8 @@ class User {
     public : 
 
                                 User();
-    //                            User(int num);
     void                        getBuffer( char * buf );
-    void						generateResponse( int sd, Server &server );
-   // void                        generateResponse(int sd);
+    void						generateResponse( int sd );
     void                        printCommands( void );
 
     private : 
