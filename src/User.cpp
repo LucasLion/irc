@@ -1,7 +1,7 @@
 
-#include "header.hpp"
-#include "User.hpp"
-#include "Command.hpp"
+#include "../includes/header.hpp"
+#include "../includes/User.hpp"
+#include "../includes/Command.hpp"
 
 User::User( void ) { }
 
