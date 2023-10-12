@@ -1,6 +1,6 @@
 
-#include "header.hpp"
-#include "Channel.hpp"
+#include "../includes/header.hpp"
+#include "../includes/Channel.hpp"
 
 Channel::Channel( void ) { }
 

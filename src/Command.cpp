@@ -1,6 +1,6 @@
 
-#include "header.hpp"
-#include "Command.hpp"
+#include "../includes/header.hpp"
+#include "../includes/Command.hpp"
 
 //@id=234AB :dan!d@localhost PRIVMSG #chan :Hey what's up!
 
