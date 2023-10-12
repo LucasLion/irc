@@ -4,8 +4,6 @@
 #include "header.hpp"
 #include "Channel.hpp"
 
-class Command;
-class User;
 
 class Server {
 

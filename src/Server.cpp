@@ -148,6 +148,7 @@ void Server::loop( void ) {
 				bzero(buffer, 1025);
 				valRead = read(sd, buffer, 1024);
 				channel._users[i].getBuffer(buffer);
+				//_users[i].getBuffer(buffer);
 				//std::string datareceived(buffer);
 				//std::cout << "\033[31m" << datareceived << "\n\033[0m";
 
@@ -164,8 +165,10 @@ void Server::loop( void ) {
 					
 				//Echo back the message that came in
 				else {
-					//_users[i].printCommands();
+					//_users[i].generateResponse(sd);
+					//send(sd, "CAP * LS :\r\n", 12, 0 );
 					channel._users[i].generateResponse(sd, *this);
+					//_users[i].generateResponse(sd, *this);
 				}
 			}
 		}
