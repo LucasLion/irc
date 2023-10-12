@@ -3,8 +3,6 @@
 
 #include "header.hpp"
 
-class Command;
-class User;
 
 
 class Server {

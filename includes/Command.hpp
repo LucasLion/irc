@@ -4,6 +4,7 @@
 #include "header.hpp"
 #include "Server.hpp"
 
+
 class Command {
     
 	public :
@@ -14,11 +15,12 @@ class Command {
 	//								~Command( void );
 		void                        parseInput( void );
 		void                        parseArgs( void );
-		void						generateResponse( int sd, Server &server );
+		//void						generateResponse( int sd );
+		void						generateResponse( int sd , Server &server);
 		void                        printCommand( void );
 		void						parseParam( std::string params );
+		std::string 				getCommand( void );
 		std::string                 rawMessage;
-		std::string					getCommand( void );
 
 	private : 
 
@@ -27,6 +29,7 @@ class Command {
 		std::string                 				_command;
 		std::string									_paramstrng;
 		std::vector<std::string>				    _param; 
+		const static std::string					_cmd[4];
 		
 
 };
