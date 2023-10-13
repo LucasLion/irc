@@ -22,3 +22,8 @@
         - k: active/desactive le mode de passe du salon
         - o: accorde/retire les privileges de moderateur d'un salon
         - l: active/desactive la limite d'utilisateurs d'un salon
+
+### Misc a faire
+
+- tranformer la classe user qui n'est pas tres adaptee (separer entre user / parser)
+- mettre getBuffer (en fait getCommand) dans la class Server
