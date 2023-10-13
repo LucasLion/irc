@@ -18,7 +18,6 @@ Server::Server( char *port, char *passwd ) : _maxClients(30)
 	_masterSocket = createSocket();
 	_max_sd = _masterSocket;
 	_passwd = passwd;
-	loop();
 }
 
 int		Server::createSocket( void ) {
@@ -57,7 +56,7 @@ int		Server::createSocket( void ) {
 void Server::newConnection( void )
 {
 	int new_socket;
-	std::string message = "Welcome to FT_IRC server\r\n";
+	//std::string message = "Welcome to FT_IRC server\r\n";
 
 	if ((new_socket = accept(_masterSocket,
 		(struct sockaddr *)&_address, (socklen_t*)&_addrLen))<0) {
@@ -68,9 +67,9 @@ void Server::newConnection( void )
 	std::cout << "New connection , socket fd is " << new_socket << ", ip is: " << inet_ntoa(_address.sin_addr) << ", port : " << ntohs(_address.sin_port) << std::endl;
 		
 	//send new connection greeting message
-	if(send(new_socket, message.c_str(), message.length(), 0) != (ssize_t)message.length()) {
+	//if(send(new_socket, message.c_str(), message.length(), 0) != (ssize_t)message.length()) {
 		perror("send");
-	}
+	//}
 	//add new socket to array of sockets
 	for (int i = 0; i < _maxClients; i++) {
 		//if position is empty
@@ -111,7 +110,7 @@ void Server::handleConnections( void )
 	}
 }
 
-void Server::loop( void ) {
+void Server::run( void ) {
 
 	int				sd;
 	int				valRead;
@@ -127,10 +126,7 @@ void Server::loop( void ) {
 				//incoming message
 				bzero(buffer, 1025);
 				valRead = read(sd, buffer, 1024);
-				_users[i].getBuffer(buffer);
-				//_users[i].getBuffer(buffer);
-				//std::string datareceived(buffer);
-				//std::cout << "\033[31m" << datareceived << "\n\033[0m";
+				getBuffer(buffer);
 				if (valRead == 0) {
 					//Somebody disconnected , get his details and print
 					getpeername(sd , (struct sockaddr*)&_address, (socklen_t*)&_addrLen);
@@ -144,6 +140,23 @@ void Server::loop( void ) {
 			}
 		}
 	}
+}
+
+void	Server::getBuffer( char *buf ) {
+
+	size_t	                start = 0;
+    size_t	                crlfPos;
+
+    _buffer.assign(buf, strlen(buf));
+
+	std::cout << "buffer : " << _buffer << std::endl;
+    while ((crlfPos = _buffer.find("\r\n", start)) != std::string::npos) {
+        Command cmd;
+        cmd.rawMessage = (_buffer.substr(start, crlfPos - start));
+		cmd.parseInput();
+        _messages.push_back(cmd); 
+        start = crlfPos + 2;
+    }
 }
 
 bool	Server::createChannel( std::string channelName ) {

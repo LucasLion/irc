@@ -76,20 +76,18 @@ void    Command::printCommand( void ) {
 	std::cout  << std::endl;
 }
 
-#include <string.h>
-
 void Command::generateResponse( int sd ) {
 
 	std::cout << "COMMAND_RECEIVED: " << rawMessage << std::endl;
 	if (_command == "CAP") {
 		send(sd, "CAP * LS\r\n", 12, 0 );
 	}
-	if (_command == "NICK") {
-		std::string protocol = ":localhost 001 utilisateur :Welcome to FT_IRC ";
-		std::string name = _param[0].append("\r\n");
-		protocol.append(name);
-		send(sd, protocol.c_str(), protocol.length(), 0 );
-	}
+	//if (_command == "NICK") {
+	//	std::string protocol = ":localhost 001 utilisateur :Welcome to FT_IRC ";
+	//	std::string name = _param[0].append("\r\n");
+	//	protocol.append(name);
+	//	send(sd, protocol.c_str(), protocol.length(), 0 );
+	//}
 	if (_command == "USER") {
 		send(sd, ":localhost 002 utilisateur :Vos informations d'utilisateur ont été enregistrées avec succes\r\n", 92, 0 );
 	}

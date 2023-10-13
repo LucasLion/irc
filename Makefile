@@ -37,6 +37,11 @@ run: $(OBJECTS) # Compile executable and run it
 	$(CXX) $(CXXFLAGS) -o $(NAME) $(OBJECTS)
 	@./$(COMMAND)
 
+test: $(OBJECTS) # Compile executable and run it
+	c++ -c tests/test.cpp -o $(OBJ_DIR)/test.o
+	$(CXX) $(CXXFLAGS) -o $(NAME) $(OBJECTS)
+	@./$(COMMAND)
+
 clean: # Remove object files and obj directory
 	rm -rf $(OBJ_DIR)/*.o $(OBJ_DIR)/.dummy
 	rmdir $(OBJ_DIR)
