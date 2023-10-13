@@ -27,3 +27,7 @@
 
 - tranformer la classe user qui n'est pas tres adaptee (separer entre user / parser)
 - mettre getBuffer (en fait getCommand) dans la class Server
+
+### General
+
+- prevoir des tests unitaires au fur et a mesure
