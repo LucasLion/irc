@@ -57,7 +57,7 @@ int		Server::createSocket( void ) {
 void Server::newConnection( void )
 {
 	int new_socket;
-	std::string message = "Welcome to our first server !!!!!!!! \n YOU ARE CONNECTED \n";
+	std::string message = "Welcome to FT_IRC server\r\n";
 
 	if ((new_socket = accept(_masterSocket,
 		(struct sockaddr *)&_address, (socklen_t*)&_addrLen))<0) {
@@ -71,7 +71,6 @@ void Server::newConnection( void )
 	if(send(new_socket, message.c_str(), message.length(), 0) != (ssize_t)message.length()) {
 		perror("send");
 	}
-	std::cout << "Welcome message sent successfully" << std::endl;
 	//add new socket to array of sockets
 	for (int i = 0; i < _maxClients; i++) {
 		//if position is empty
