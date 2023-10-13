@@ -1,4 +1,6 @@
 
+include includes/help.mk
+
 NAME	= ircserv
 COMMAND	= $(NAME) 6667 test
 CXX		= c++
@@ -12,35 +14,41 @@ OBJECTS = $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SOURCES))
 
 all: $(NAME)
 
-$(OBJ_DIR)/.dummy:
+$(OBJ_DIR)/.dummy: # Create obj directory
 	mkdir -p $(OBJ_DIR)
 	touch $@
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp $(OBJ_DIR)/.dummy
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp $(OBJ_DIR)/.dummy # Compile .cpp files
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(NAME): $(OBJECTS) 
+$(NAME): $(OBJECTS) # Compile executable
 	$(CXX) $(CXXFLAGS) -o $(NAME) $(OBJECTS)
 
-leaks: $(OBJECTS)
+
+leaks: $(OBJECTS) # Compile executable with valgrind
 	$(CXX) $(CXXFLAGS) -o $(NAME) $(OBJECTS)
 	@valgrind --leak-check=full --show-leak-kinds=all ./$(COMMAND)
 
-debug: $(OBJECTS)
+debug: $(OBJECTS) # Compile executable with gdb (-fsanitize=address)
 	$(CXX) $(CXXFLAGS) -fsanitize=address -o $(NAME) $(OBJECTS)
 	@./$(NAME) 6667 test
 
-run: $(OBJECTS)
+run: $(OBJECTS) # Compile executable and run it
 	$(CXX) $(CXXFLAGS) -o $(NAME) $(OBJECTS)
 	@./$(COMMAND)
 
-clean:
+test: $(OBJECTS) # Compile executable and run it
+	c++ -c tests/test.cpp -o $(OBJ_DIR)/test.o
+	$(CXX) $(CXXFLAGS) -o $(NAME) $(OBJECTS)
+	@./$(COMMAND)
+
+clean: # Remove object files and obj directory
 	rm -rf $(OBJ_DIR)/*.o $(OBJ_DIR)/.dummy
 	rmdir $(OBJ_DIR)
 
-fclean: clean
+fclean: clean # Remove executable, obj directory and object files
 	$(RM) $(NAME)
 
-re: fclean all
+re: fclean all # Recompile everything
 
-.PHONY: all clean fclean re run debug
+.PHONY: all clean fclean re run debug leaks

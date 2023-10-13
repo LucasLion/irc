@@ -14,7 +14,8 @@ public:
 	int					createSocket( void );
 	void				handleConnections( void );
 	void				newConnection( void );
-	void				loop( void );
+    void                getBuffer( char * buf );
+	void				run( void );
 	bool				createChannel( std::string name );
 
 private:
@@ -31,4 +32,5 @@ private:
 	std::string						_passwd;
 	std::map<std::string, Channel>	_channels;
 	User							_users[30];
+    std::vector<Command>		    _messages;
 };
