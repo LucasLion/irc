@@ -14,11 +14,18 @@ void	Message::parseParam( std::string params ) {
 
 
     while ((esp = params.find(" ", start)) != std::string::npos) {
+		if (params[start] == ':') {
+			std::cout << "Couocu: " << params.substr(start + 1) << std::endl;
+			_param.push_back(params.substr(start + 1));
+			return;
+		}
         std::string param;
         param = (params.substr(start, esp - start));
         _param.push_back(param); 
         start = esp + 1;
     }
+	if (params[start] == ':' && params.length() > 1)
+		start++;
     std::string para = (params.substr(start, esp - start));
     _param.push_back(para); 
 }

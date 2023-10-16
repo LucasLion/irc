@@ -18,6 +18,8 @@ Server::Server( char *port, char *passwd ) : _maxClients(30)
 	_masterSocket = createSocket();
 	_max_sd = _masterSocket;
 	_passwd = passwd;
+	_name = "FT_IRC";
+	// rajouter le IP par defaut / 3e parametre optionnel
 }
 
 int		Server::createSocket( void ) {
@@ -178,7 +180,8 @@ bool	Server::createChannel( std::string channelName ) {
 
 void Server::generateResponse( User *user, int sd ) {
 	for (std::vector<Message>::iterator it = user->messages.begin(); it != user->messages.end();) {
-		std::cout << "COMMAND_RECEIVED: " << it->rawMessage << std::endl;
+		//std::cout << "COMMAND_RECEIVED: " << it->rawMessage << std::endl;
+		it->printCommand();
 		if (it->getCommand() == "CAP") {
 			send(sd, "CAP * LS\r\n", 12, 0 );
 		}
@@ -189,12 +192,7 @@ void Server::generateResponse( User *user, int sd ) {
 			userCmd(sd, *it, user);
 		}
 		if (it->getCommand() == "PASS") {
-			if (it->getParam(0) != "test") {
-				send(sd, ":localhost 464 utilisateur :Password incorrect\r\n", 51, 0 );
-				throw std::exception();
-			}
-			else
-				send(sd, ":localhost 001 utilisateur :Bienvenue sur le serveur IRC, utilisateur\r\n", 71, 0);
+			passCmd(sd, *it, user);
 		}
 		if (it->getCommand() == "PING")
 			std::cout << SUCCESS("PONG") << std::endl;

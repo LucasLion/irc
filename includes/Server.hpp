@@ -20,9 +20,11 @@ public:
 	void				generateResponse( User *user, int sd );
 	void				userCmd( int sd, Message msg, User *user );
 	void				nickCmd( int sd, Message msg, User *user );
+	void				passCmd( int sd, Message msg, User *user );
 
 private:
 	
+	std::string						_name;
 	int								_maxClients;
 	int								_portno;
 	std::vector<int>				_clientSockets;
@@ -36,4 +38,5 @@ private:
 	std::map<std::string, Channel>	_channels;
 	User							_users[30];
     std::vector<Message>		    _messages;
+	// rajouter le IP par defaut / 3e parametre optionnel
 };
