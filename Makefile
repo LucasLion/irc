@@ -46,7 +46,7 @@ run: $(OBJECTS) # Compile executable and run it
 
 test: $(OBJECTS_NOFLAG) # Compile executable and run it
 	$(CXX) -o $(NAME) $(OBJECTS_NOFLAG) tests/main.cpp
-	@./$(COMMAND) 
+	@./$(COMMAND)
 
 clean: # Remove object files and obj directory
 	rm -rf $(OBJ_DIR)
