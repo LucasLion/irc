@@ -1,12 +1,12 @@
 
 #include "../includes/header.hpp"
-#include "../includes/Command.hpp"
+#include "../includes/Message.hpp"
 
-void	Command::parseArgs( void ) {
+void	Message::parseArgs( void ) {
 	return;	
 }
 
-void	Command::parseParam( std::string params ) {
+void	Message::parseParam( std::string params ) {
 
 	size_t	                start = 0;
     size_t	                esp;
@@ -24,7 +24,7 @@ void	Command::parseParam( std::string params ) {
 }
 
 
- void	Command::parseInput( void ) {
+ void	Message::parseInput( void ) {
 
     size_t spacePos = rawMessage.find(' ');
 
@@ -59,10 +59,11 @@ void	Command::parseParam( std::string params ) {
     }
 }
 
-void    Command::printCommand( void ) {
+void    Message::printCommand( void ) {
 
 	std::vector<std::string>::iterator it;
     
+	std::cout << "-------------" << std::endl;
     std::cout << "rawMessage : " <<  rawMessage << std::endl;
     std::cout << "TAG         : " <<  _tag << std::endl;
     std::cout << "SOURCE      : " <<  _source << std::endl;
@@ -73,39 +74,42 @@ void    Command::printCommand( void ) {
     for (it = _param.begin(); it != _param.end(); ++it) {
         std::cout << *it << " --- ";
 	}
-	std::cout  << std::endl;
+	std::cout << std::endl << "-------------" << std::endl;
 }
 
-void Command::generateResponse( int sd ) {
+//void Message::generateResponse( int sd ) {
+//
+//	//std::cout << "COMMAND_RECEIVED: " << rawMessage << std::endl;
+//	printCommand();
+//	std::cout << std::endl;
+//	if (_command == "CAP") {
+//		send(sd, "CAP * LS\r\n", 12, 0 );
+//	}
+//	if (_command == "NICK") {
+//		std::string protocol = ":localhost 001 utilisateur :Welcome to FT_IRC ";
+//		std::string name = _param[0].append("\r\n");
+//		protocol.append(name);
+//		send(sd, protocol.c_str(), protocol.length(), 0 );
+//	}
+//	if (_command == "USER") {
+//		user( sd, *this );
+//	}
+//	if (_command == "PASS") {
+//		if (_param[0] != "test") {
+//			send(sd, ":localhost 464 utilisateur :Password incorrect\r\n", 51, 0 );
+//			throw std::exception();
+//		}
+//		else
+//			send(sd, ":localhost 001 utilisateur :Bienvenue sur le serveur IRC, utilisateur\r\n", 71, 0);
+//	}
+//	if (_command == "PING")
+//		std::cout << SUCCESS("PONG") << std::endl;
+//	if (_command == "WHOIS") {
+//		send(sd, ":localhost 318 THE_BEST_NICKNAME :End of /WHOIS list", 51, 0);
+//	}
+//}
 
-	std::cout << "COMMAND_RECEIVED: " << rawMessage << std::endl;
-	if (_command == "CAP") {
-		send(sd, "CAP * LS\r\n", 12, 0 );
-	}
-	//if (_command == "NICK") {
-	//	std::string protocol = ":localhost 001 utilisateur :Welcome to FT_IRC ";
-	//	std::string name = _param[0].append("\r\n");
-	//	protocol.append(name);
-	//	send(sd, protocol.c_str(), protocol.length(), 0 );
-	//}
-	if (_command == "USER") {
-		send(sd, ":localhost 002 utilisateur :Vos informations d'utilisateur ont été enregistrées avec succes\r\n", 92, 0 );
-	}
-	if (_command == "PASS") {
-		if (_param[0] != "test") {
-			send(sd, ":localhost 464 utilisateur :Password incorrect\r\n", 51, 0 );
-			throw std::exception();
-		}
-		else
-			send(sd, ":localhost 001 utilisateur :Bienvenue sur le serveur IRC, utilisateur\r\n", 71, 0);
-	}
-	if (_command == "PING")
-		std::cout << SUCCESS("PONG") << std::endl;
-	if (_command == "WHOIS") {
-		send(sd, ":localhost 318 THE_BEST_NICKNAME :End of /WHOIS list", 51, 0);
-	}
-}
-
-std::string Command::getCommand( void ) {
-	return _command;
-}
+std::string Message::getCommand( void ) { return _command; }
+std::string Message::getSource( void ) { return _source; }
+std::string Message::getTag( void ) { return _tag; }
+std::string Message::getParam( int i ) { return _param[i]; }

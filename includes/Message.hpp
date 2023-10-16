@@ -3,7 +3,7 @@
 
 #include "header.hpp"
 
-class Command {
+class Message {
     
 	public :
 
@@ -17,7 +17,11 @@ class Command {
 		void                        printCommand( void );
 		void						parseParam( std::string params );
 		std::string 				getCommand( void );
+		std::string					getParam( int i );
+		std::string 				getSource( void );
+		std::string 				getTag( void );
 		std::string                 rawMessage;
+
 
 	private : 
 
