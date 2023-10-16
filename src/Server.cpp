@@ -180,8 +180,6 @@ bool	Server::createChannel( std::string channelName ) {
 
 void Server::generateResponse( User *user, int sd ) {
 	for (std::vector<Message>::iterator it = user->messages.begin(); it != user->messages.end();) {
-		//std::cout << "COMMAND_RECEIVED: " << it->rawMessage << std::endl;
-		it->printCommand();
 		if (it->getCommand() == "CAP") {
 			send(sd, "CAP * LS\r\n", 12, 0 );
 		}
@@ -202,3 +200,5 @@ void Server::generateResponse( User *user, int sd ) {
 		it = user->messages.erase(it);
     }
 }
+
+int	Server::getPortno( void ) const { return _portno; }

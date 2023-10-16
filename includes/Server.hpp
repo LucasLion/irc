@@ -22,6 +22,8 @@ public:
 	void				nickCmd( int sd, Message msg, User *user );
 	void				passCmd( int sd, Message msg, User *user );
 
+	int					getPortno( void ) const;
+
 private:
 	
 	std::string						_name;
