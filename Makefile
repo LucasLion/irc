@@ -1,16 +1,20 @@
 
 include includes/help.mk
 
-NAME	= ircserv
-COMMAND	= $(NAME) 6667 test
-CXX		= c++
-CXXFLAGS= -ggdb3 -Wall -Wextra -Werror -std=c++98 -Wshadow
-RM		= rm -f
-SRC_DIR = src
-OBJ_DIR = obj
+NAME			= ircserv
+COMMAND			= $(NAME) 6667 test
+CXX				= c++
+CXXFLAGS		= -ggdb3 -Wall -Wextra -Werror -std=c++98 -Wshadow
+RM				= rm -f
+SRC_DIR 		= src
+OBJ_DIR 		= obj
+OBJ_DIR_NOFLAG	= objNoFlag
 
-SOURCES = $(wildcard $(SRC_DIR)/*.cpp)
-OBJECTS = $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SOURCES))
+SOURCES			= $(wildcard $(SRC_DIR)/*.cpp)
+OBJECTS			= $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SOURCES))
+
+SOURCES_NOFLAG	= $(filter-out $(SRC_DIR)/main.cpp, $(wildcard $(SRC_DIR)/*.cpp))
+OBJECTS_NOFLAG	= $(patsubst $(SRC_DIR_NOFLAG)/%.cpp, $(OBJ_DIR_NOFLAG)/%.o, $(SOURCES_NOFLAG))
 
 all: $(NAME)
 
@@ -18,12 +22,15 @@ $(OBJ_DIR)/.dummy: # Create obj directory
 	mkdir -p $(OBJ_DIR)
 	touch $@
 
+$(OBJ_DIR_NOFLAG)/.dummy: # Create obj directory
+	mkdir -p $(OBJ_DIR_NOFLAG)
+	touch $@
+
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp $(OBJ_DIR)/.dummy # Compile .cpp files
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(NAME): $(OBJECTS) # Compile executable
 	$(CXX) $(CXXFLAGS) -o $(NAME) $(OBJECTS)
-
 
 leaks: $(OBJECTS) # Compile executable with valgrind
 	$(CXX) $(CXXFLAGS) -o $(NAME) $(OBJECTS)
@@ -37,18 +44,17 @@ run: $(OBJECTS) # Compile executable and run it
 	$(CXX) $(CXXFLAGS) -o $(NAME) $(OBJECTS)
 	@./$(COMMAND)
 
-test: $(OBJECTS) # Compile executable and run it
-	c++ -c tests/test.cpp -o $(OBJ_DIR)/test.o
-	$(CXX) $(CXXFLAGS) -o $(NAME) $(OBJECTS)
-	@./$(COMMAND)
+test: $(OBJECTS_NOFLAG) # Compile executable and run it
+	$(CXX) -o $(NAME) $(OBJECTS_NOFLAG) tests/tests.cpp
+	@./$(COMMAND) 
 
 clean: # Remove object files and obj directory
-	rm -rf $(OBJ_DIR)/*.o $(OBJ_DIR)/.dummy
-	rmdir $(OBJ_DIR)
+	rm -rf $(OBJ_DIR)
+	rm -rf $(OBJ_DIR_NOFLAG)
 
 fclean: clean # Remove executable, obj directory and object files
 	$(RM) $(NAME)
 
 re: fclean all # Recompile everything
 
-.PHONY: all clean fclean re run debug leaks
+.PHONY: all lean fclean re run debug leaks
