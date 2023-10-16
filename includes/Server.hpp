@@ -17,7 +17,9 @@ public:
     void                getBuffer( char * buf );
 	void				run( void );
 	bool				createChannel( std::string name );
-	void				generateResponse( int sd );
+	void				generateResponse( User *user, int sd );
+	void				userCmd( int sd, Message msg, User *user );
+	void				nickCmd( int sd, Message msg, User *user );
 
 private:
 	
@@ -33,5 +35,5 @@ private:
 	std::string						_passwd;
 	std::map<std::string, Channel>	_channels;
 	User							_users[30];
-    std::vector<Command>		    _messages;
+    std::vector<Message>		    _messages;
 };

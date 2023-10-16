@@ -127,7 +127,9 @@ void Server::run( void ) {
 				bzero(buffer, 1025);
 				valRead = read(sd, buffer, 1024);
 				_users[i].getBuffer(buffer);
-				if (valRead == 0) {
+				if (valRead != 0)
+					generateResponse(&_users[i], sd);
+				else {
 					//Somebody disconnected , get his details and print
 					getpeername(sd , (struct sockaddr*)&_address, (socklen_t*)&_addrLen);
 					std::cout << "Host disconnected, ip: " << inet_ntoa(_address.sin_addr) << " port: " << ntohs(_address.sin_port) << std::endl;
@@ -135,8 +137,6 @@ void Server::run( void ) {
 					close(sd);
 					_clientSockets[i] = 0;
 				}
-				else
-					_users[i].generateResponse(sd);
 			}
 		}
 	}
@@ -151,10 +151,10 @@ void	Server::getBuffer( char *buf ) {
 
 	std::cout << "buffer : " << _buffer << std::endl;
     while ((crlfPos = _buffer.find("\r\n", start)) != std::string::npos) {
-        Command cmd;
-        cmd.rawMessage = (_buffer.substr(start, crlfPos - start));
-		cmd.parseInput();
-        _messages.push_back(cmd); 
+        Message msg;
+        msg.rawMessage = (_buffer.substr(start, crlfPos - start));
+		msg.parseInput();
+        _messages.push_back(msg); 
         start = crlfPos + 2;
     }
 }
@@ -177,8 +177,30 @@ bool	Server::createChannel( std::string channelName ) {
 }
 
 void Server::generateResponse( User *user, int sd ) {
-	for (std::vector<Command>::iterator it = user->_messages.begin(); it != user->_messages.end();) {
-		it->generateResponse( sd );
-		it = _messages.erase(it);
+	for (std::vector<Message>::iterator it = user->messages.begin(); it != user->messages.end();) {
+		std::cout << "COMMAND_RECEIVED: " << it->rawMessage << std::endl;
+		if (it->getCommand() == "CAP") {
+			send(sd, "CAP * LS\r\n", 12, 0 );
+		}
+		if (it->getCommand() == "NICK") {
+			nickCmd(sd, *it, user);
+		}
+		if (it->getCommand() == "USER") {
+			userCmd(sd, *it, user);
+		}
+		if (it->getCommand() == "PASS") {
+			if (it->getParam(0) != "test") {
+				send(sd, ":localhost 464 utilisateur :Password incorrect\r\n", 51, 0 );
+				throw std::exception();
+			}
+			else
+				send(sd, ":localhost 001 utilisateur :Bienvenue sur le serveur IRC, utilisateur\r\n", 71, 0);
+		}
+		if (it->getCommand() == "PING")
+			std::cout << SUCCESS("PONG") << std::endl;
+		if (it->getCommand() == "WHOIS") {
+			send(sd, ":localhost 318 THE_BEST_NICKNAME :End of /WHOIS list", 51, 0);
+		}
+		it = user->messages.erase(it);
     }
 }
