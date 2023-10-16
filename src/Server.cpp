@@ -126,7 +126,7 @@ void Server::run( void ) {
 				//incoming message
 				bzero(buffer, 1025);
 				valRead = read(sd, buffer, 1024);
-				getBuffer(buffer);
+				_users[i].getBuffer(buffer);
 				if (valRead == 0) {
 					//Somebody disconnected , get his details and print
 					getpeername(sd , (struct sockaddr*)&_address, (socklen_t*)&_addrLen);
@@ -176,3 +176,9 @@ bool	Server::createChannel( std::string channelName ) {
 	return true;
 }
 
+void Server::generateResponse( User *user, int sd ) {
+	for (std::vector<Command>::iterator it = user->_messages.begin(); it != user->_messages.end();) {
+		it->generateResponse( sd );
+		it = _messages.erase(it);
+    }
+}

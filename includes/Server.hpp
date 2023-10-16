@@ -17,6 +17,7 @@ public:
     void                getBuffer( char * buf );
 	void				run( void );
 	bool				createChannel( std::string name );
+	void				generateResponse( int sd );
 
 private:
 	

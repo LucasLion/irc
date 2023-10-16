@@ -14,6 +14,7 @@ class User {
                                 User();
     void						generateResponse( int sd );
     void                        printCommands( void );
+    void                        getBuffer( char * buf );
 
     private : 
     std::string                 _realName;
