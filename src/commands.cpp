@@ -53,6 +53,7 @@ void	Server::joinCmd( int sd, Message msg, User *user ) {
 	(void)user;
 
 	// TODO parse command for multiple channels at once
+	// TODO check later for all the other errors
 	
 	if (msg.getParam(0).length() == 0) {
 		send(sd, ":localhost 461 utilisateur JOIN :Not enough parameters\r\n", 59, 0 );
@@ -76,11 +77,5 @@ void	Server::joinCmd( int sd, Message msg, User *user ) {
 		_channels[msg.getParam(0)].addUser(user->getNickName());
 		send(sd, ":localhost 332 utilisateur :Bienvenue sur le channel\r\n", 55, 0 );
 	}
-
-	//else {
-	//	std::cout << "bienvenur sur le channel: " << msg.getParam(0) << std::endl;
-	//	return ;
-	//}
-	
 }
 
