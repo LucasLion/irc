@@ -5,23 +5,12 @@
 
 User::User( void ) { }
 
-//User::User( int num ) : _num(num) { }
-
 void User::printCommands( void ) {
         for (std::vector<Message>::iterator it = messages.begin(); it != messages.end();) {
         it->printCommand();
         it = messages.erase(it);
     }
 }
-
-//void User::generateResponse( int sd ) {
-//	for (std::vector<Message>::iterator it = messages.begin(); it != messages.end();) {
-//		it->generateResponse( sd );
-//		it = messages.erase(it);
-//    }
-//}
-
-
 
 void	User::getBuffer( char *buf ) {
 
@@ -53,4 +42,8 @@ std::string	User::getRealName( void ) {
 
 std::string	User::getNickName( void ) {
 	return _nickName;
+}
+
+std::map<std::string, Channel>	User::getChannels( void ) {
+	return _channels;
 }

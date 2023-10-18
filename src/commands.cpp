@@ -25,15 +25,11 @@ void	Server::userCmd( int sd, Message msg, User *user ) {
 	//	user->setNickName(msg.getParam(0));
 		user->setRealName(msg.getParam(3));
 	}
-
-	
 	// verifier que le nickname est bien set 
 	// verifier que le username est bien set	
 	// verifier que le realname est bien set	
 	// verifier que le hostname est bien set
 	// envoyer un message de confirmation
-
-	
 	//"<client> :Welcome to the <networkname> Network, <nick>[!<user>@<host>]"
 	std::string protocol = ":localhost 001 :Welcome to the " + _name + " Network, " + user->getNickName() + "\r\n";
 	// possibilite d'ajouter le hostname etc
@@ -52,3 +48,39 @@ void	Server::passCmd( int sd, Message msg, User *user ) {
 		throw std::exception();
 	}
 }
+
+void	Server::joinCmd( int sd, Message msg, User *user ) {
+	(void)user;
+
+	// TODO parse command for multiple channels at once
+	
+	if (msg.getParam(0).length() == 0) {
+		send(sd, ":localhost 461 utilisateur JOIN :Not enough parameters\r\n", 59, 0 );
+		return ;
+	}
+	// check if the channel name is valide
+	if (msg.getParam(0)[0] != '#') {
+		send(sd, ":localhost 403 utilisateur :No such channel\r\n", 47, 0 );
+		return ;
+	}
+	// check if the channel exists and create it if not
+	if (_channels.find(msg.getParam(0)) == _channels.end()) {
+		this->createChannel(msg.getParam(0));
+	}
+	// check if the user is already in the channel
+	if (_channels[msg.getParam(0)].isUserInChannel(user->getNickName())) {
+		std::cout << "deja dans le channel: " << msg.getParam(0) << std::endl;
+		send(sd, ":localhost 403 utilisateur :You are already in this channel\r\n", 61, 0 );
+	}
+	else {
+		_channels[msg.getParam(0)].addUser(user->getNickName());
+		send(sd, ":localhost 332 utilisateur :Bienvenue sur le channel\r\n", 55, 0 );
+	}
+
+	//else {
+	//	std::cout << "bienvenur sur le channel: " << msg.getParam(0) << std::endl;
+	//	return ;
+	//}
+	
+}
+

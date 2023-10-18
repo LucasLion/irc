@@ -20,7 +20,6 @@
 #include <locale>
 #include <string.h>
 
-
 // Reset
 #define Color_Off "\033[0m"       // Text Reset
 

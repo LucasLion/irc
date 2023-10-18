@@ -4,10 +4,8 @@
 #include "../includes/Channel.hpp"
 
 #include <csignal>
-#include <thread>
 
-
-volatile sig_atomic_t gSignalStatus2 = 0;
+int GSIGNALSTATUS = 0;
 
 Server::Server( void ) : _maxClients(30) {
 	_clientSockets.resize(_maxClients, 0);
@@ -125,31 +123,26 @@ void Server::handleConnections( void )
 //		return ;
 //	}
 
-void Server::run( int gSignalStatus ) {
+void Server::run( void ) {
 
 	int				sd;
 	int				valRead;
 	char			buffer[4608];
 	
-	while (!gSignalStatus) {
+	while (true) {
 		handleConnections();
-		// write test to terminal t exec tests
-		//std::string input;
-		//std::getline(std::cin, input);
-		//if (input == "test")
-		//	break;
-
 		//else its some IO operation on some other socket
 		for (int i = 0; i < _maxClients; i++) {
 			sd = _clientSockets[i];
-				
 			if (FD_ISSET(sd, &_readfds)) {
 				//incoming message
 				bzero(buffer, 1025);
 				valRead = read(sd, buffer, 1024);
 				_users[i].getBuffer(buffer);
-				if (valRead != 0)
-					generateResponse(&_users[i], sd);
+				if (valRead != 0) {
+					if (generateResponse(&_users[i], sd) == false)
+						return ;
+				}
 				else {
 					//Somebody disconnected , get his details and print
 					getpeername(sd , (struct sockaddr*)&_address, (socklen_t*)&_addrLen);
@@ -194,10 +187,17 @@ bool	Server::createChannel( std::string channelName ) {
 	newChannel.name = channelName;
 	_channels[channelName] = newChannel;
 	std::cout << SUCCESS("Channel \"" + channelName + "\" created") << std::endl;
+	for (std::map<std::string, Channel>::iterator it = _channels.begin(); it != _channels.end(); it++) {
+		std::cout << "Channel: " << it->first << std::endl;
+		// iterate through the vector of users in the channel 
+		for (int i = 0; i < (int)it->second.userList.size(); i++) {
+			std::cout << "User: " << it->second.userList[i] << std::endl;
+		}
+	}
 	return true;
 }
 
-void Server::generateResponse( User *user, int sd ) {
+bool Server::generateResponse( User *user, int sd ) {
 	for (std::vector<Message>::iterator it = user->messages.begin(); it != user->messages.end();) {
 		std::cout << "COMMAND_RECEIVED: " << it->rawMessage << std::endl;
 		if (it->getCommand() == "CAP") {
@@ -213,12 +213,22 @@ void Server::generateResponse( User *user, int sd ) {
 			passCmd(sd, *it, user);
 		}
 		if (it->getCommand() == "PING")
-			std::cout << SUCCESS("PONG") << std::endl;
+			std::cout << SUCCESS("PING PONG") << std::endl;
+		if (it->getCommand() == "PONG") {
+			// for TESTS
+			return (false);
+		}
 		if (it->getCommand() == "WHOIS") {
 			send(sd, ":localhost 318 THE_BEST_NICKNAME :End of /WHOIS list", 51, 0);
 		}
+		if (it->getCommand() == "JOIN") {
+			joinCmd(sd, *it, user);
+		}
 		it = user->messages.erase(it);
     }
+	return (true);
 }
 
 int	Server::getPortno( void ) const { return _portno; }
+
+std::map<std::string, Channel>	Server::getChannels( void ) const { return _channels; }

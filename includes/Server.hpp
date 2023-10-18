@@ -3,6 +3,7 @@
 
 #include "header.hpp"
 #include "Channel.hpp"
+#include "User.hpp"
 
 class Server {
 
@@ -14,14 +15,17 @@ public:
 	void				handleConnections( void );
 	void				newConnection( void );
     void                getBuffer( char * buf );
-	void				run( int gSignalStatus );
+	void				run( void );
 	bool				createChannel( std::string name );
-	void				generateResponse( User *user, int sd );
+	bool				generateResponse( User *user, int sd );
 	void				userCmd( int sd, Message msg, User *user );
 	void				nickCmd( int sd, Message msg, User *user );
 	void				passCmd( int sd, Message msg, User *user );
-
+	void				joinCmd( int sd, Message msg, User *user );
 	int					getPortno( void ) const;
+
+
+	std::map<std::string, Channel>	getChannels( void ) const;
 
 private:
 	
