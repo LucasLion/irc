@@ -4,7 +4,6 @@
 #include "header.hpp"
 #include "Channel.hpp"
 
-
 class Server {
 
 public:
@@ -15,7 +14,7 @@ public:
 	void				handleConnections( void );
 	void				newConnection( void );
     void                getBuffer( char * buf );
-	void				run( void );
+	void				run( int gSignalStatus );
 	bool				createChannel( std::string name );
 	void				generateResponse( User *user, int sd );
 	void				userCmd( int sd, Message msg, User *user );

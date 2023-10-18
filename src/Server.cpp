@@ -3,6 +3,12 @@
 #include "../includes/Server.hpp"
 #include "../includes/Channel.hpp"
 
+#include <csignal>
+#include <thread>
+
+
+volatile sig_atomic_t gSignalStatus2 = 0;
+
 Server::Server( void ) : _maxClients(30) {
 	_clientSockets.resize(_maxClients, 0);
 }
@@ -112,14 +118,27 @@ void Server::handleConnections( void )
 	}
 }
 
-void Server::run( void ) {
+//void	handleSignal2(int signal) {
+//	if (signal == SIGINT) {
+//		gSignalStatus2 = 1;
+//		std::cout << "signal received in handleSignal2: " << 1 << std::endl; }
+//		return ;
+//	}
+
+void Server::run( int gSignalStatus ) {
 
 	int				sd;
 	int				valRead;
 	char			buffer[4608];
 	
-	while (true) {
+	while (!gSignalStatus) {
 		handleConnections();
+		// write test to terminal t exec tests
+		//std::string input;
+		//std::getline(std::cin, input);
+		//if (input == "test")
+		//	break;
+
 		//else its some IO operation on some other socket
 		for (int i = 0; i < _maxClients; i++) {
 			sd = _clientSockets[i];
