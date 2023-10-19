@@ -36,6 +36,10 @@ void	User::setNickName( std::string nickName ) {
 	_nickName = nickName;
 }
 
+void	User::setSd( int sd ) {
+	_sd = sd;
+}
+
 std::string	User::getRealName( void ) {
 	return _realName;
 }
@@ -46,4 +50,8 @@ std::string	User::getNickName( void ) {
 
 std::map<std::string, Channel>	User::getChannels( void ) {
 	return _channels;
+}
+
+int User::getSd( void ){
+    return _sd;
 }
