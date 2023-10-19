@@ -35,7 +35,7 @@ void	Server::userCmd( int sd, Message msg, User *user ) {
 	// verifier que le hostname est bien set
 	// envoyer un message de confirmation
 	//"<client> :Welcome to the <networkname> Network, <nick>[!<user>@<host>]"
-	std::string protocol = ":localhost 001 user Welcome1 to the " + _name + " Network, " + user->getNickName() + "\r\n";
+	std::string protocol = ":localhost 001 " + user->getNickName() + " Welcome1 to the " + _name + " Network, " + user->getNickName() + "\r\n";
 	// possibilite d'ajouter le hostname etc
 	send(sd, protocol.c_str(), protocol.length(), 0);
 	send(sd, protocol.c_str(), protocol.length(), 0);
@@ -82,7 +82,8 @@ void	Server::joinCmd( int sd, Message msg, User *user ) {
 	// check if the user is already in the channel
 	if (_channels[msg.getParam(0)].isUserInChannel(user->getNickName())) {
 		std::cout << "deja dans le channel: " << msg.getParam(0) << std::endl;
-		send(sd, ":localhost 403 utilisateur :You are already in this channel\r\n", 61, 0 );
+		std::string response = ":localhost 403 " + user->getNickName() + " utilisateur :You are already in this channel\r\n";
+		send(sd, response.c_str(), response.length(), 0);
 	}
 	else {
 		_channels[msg.getParam(0)].addUser(user->getNickName());
