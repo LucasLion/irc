@@ -78,8 +78,19 @@ void	Server::joinCmd( int sd, Message msg, User *user ) {
 	}
 	else {
 		_channels[msg.getParam(0)].addUser(user->getNickName());
-		//send(sd, ":localhost 332 utilisateur :Bienvenue sur le channel\r\n", 55, 0 );
 		std::string response = ":" + user->getNickName() +  " JOIN " + msg.getParam(0) + "\r\n";
+		// JOIN message
+		send(sd, response.c_str(), response.length(), 0);
+		// channel's topic
+		response = ":localhost 332 " + user->getNickName() + " " + msg.getParam(0) + " :No topic is set\r\n";
+		send(sd, response.c_str(), response.length(), 0);
+		// send the list of users in the channels
+		response = ":localhost 353 " + user->getNickName() + " = " + msg.getParam(0) + " :";
+		for (int i = 0; i < (int)_channels[msg.getParam(0)].userList.size(); i++) {
+			response += _channels[msg.getParam(0)].userList[i] + " ";
+		}
+		response += "\r\n";
+		std::cout << response << std::endl;
 		send(sd, response.c_str(), response.length(), 0);
 	}
 }
