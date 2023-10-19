@@ -136,38 +136,39 @@ void Server::run( void ) {
 	while (true) {
 		handleConnections();
 
-		//Ajout de nouveaux utilisateurs
-		//  while (_users.size() < _clientSockets.size()) {
-          //  User new_user;
-        //    _users.push_back(new_user);
-            //_users.back().setSd(_clientSockets[_users.size() - 1]);
-        //}
-
 		//else its some IO operation on some other socket
-		for (int i = 0; i < static_cast<int>(_users.size()); i++) {
+		for (size_t i = 0; i < _users.size(); i++) {
+			//int sd = _users[i].getSd();
+			//User& user = _users[i];
+
 			if (FD_ISSET(_users[i].getSd(), &_readfds)) {
+			//if (FD_ISSET(sd, &_readfds)) {
 				//incoming message
 				bzero(buffer, 1025);
 				valRead = read(_users[i].getSd(), buffer, 1024);
 				_users[i].getBuffer(buffer);
 				if (valRead != 0) {
 					if (generateResponse(&_users[i]) == false){
-						close(_users[i].getSd());
-                        _users.erase(_users.begin() + i);
+						//close(_users[i].getSd());
+                        //_users.erase(_users.begin() + i);
 						return;
 					}
 				}
 				else {
 					//Somebody disconnected , get his details and print
-					getpeername(_users[i].getSd() , (struct sockaddr*)&_address, (socklen_t*)&_addrLen);
+					getpeername(_users[i].getSd(), (struct sockaddr*)&_address, (socklen_t*)&_addrLen);
 					std::cout << "Host disconnected, ip: " << inet_ntoa(_address.sin_addr) << " port: " << ntohs(_address.sin_port) << std::endl;
 					//Close the socket and mark as 0 in list for reuse
 					close(_users[i].getSd());
 					_users.erase(_users.begin() + i);
+					_clientSockets.erase(_clientSockets.begin() + i);
 					//_clientSockets[i] = 0;
 				}
 			}
 		}
+
+
+
 	}
 }
 
