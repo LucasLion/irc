@@ -3,10 +3,14 @@
 #include "../includes/Server.hpp"
 
 void	Server::nickCmd( int sd, Message msg, User *user ) {
-	(void)msg;
-	(void)user;
-	(void)sd;
+	
+	std::string old_nick = user->getNickName();
 	user->setNickName(msg.getParam(0));
+
+	std::string protocol = ":" + old_nick + "!" + old_nick + "@localhost NICK " + user->getNickName() + "\r\n";
+	// possibilite d'ajouter le hostname etc
+	send(sd, protocol.c_str(), protocol.length(), 0);
+	
 
 	// faire un check si le nickname est deja pris
 	// faire un check si le nickname est valide
@@ -31,10 +35,14 @@ void	Server::userCmd( int sd, Message msg, User *user ) {
 	// verifier que le hostname est bien set
 	// envoyer un message de confirmation
 	//"<client> :Welcome to the <networkname> Network, <nick>[!<user>@<host>]"
-	std::string protocol = ":localhost 001 " +  user->getNickName() + " :Welcome to the " + _name + " Network, " + user->getNickName() + "\r\n";
+	std::string protocol = ":localhost 001 user Welcome1 to the " + _name + " Network, " + user->getNickName() + "\r\n";
 	// possibilite d'ajouter le hostname etc
 	send(sd, protocol.c_str(), protocol.length(), 0);
-
+	send(sd, protocol.c_str(), protocol.length(), 0);
+	//send(sd, ":localhost 001 test Welcome1 to server \r\n", 60, 0);
+	
+	//send(sd, ":localhost 001 utilisateur :Welcome to the , utilisateur\r\n", 71, 0);
+	send(sd, ":localhost 002 Welcome2 to FT_IRC\r\n", 35, 0 );
 
 }
 
