@@ -101,7 +101,7 @@ void	Server::joinCmd( Message msg, User *user ) {
 		// JOIN message
 		send(user->getSd(), response.c_str(), response.length(), 0);
 		// channel's topic
-		response = ":localhost 332 " + user->getNickName() + " " + msg.getParam(0) + " :No topic is set\r\n";
+		response = ":localhost 332 " + user->getNickName() + " " + msg.getParam(0) + " :Default topic name (you can change it)\r\n";
 		send(user->getSd(), response.c_str(), response.length(), 0);
 		// send the list of users in the channels
 		response = ":localhost 353 " + user->getNickName() + " = " + msg.getParam(0) + " :";
@@ -113,3 +113,60 @@ void	Server::joinCmd( Message msg, User *user ) {
 	}
 }
 
+void	Server::topicCmd( Message msg, User *user ) {
+	std::string response = "";
+
+	std::cout << "param: " << msg.getParam(0) << std::endl;
+	if (msg.getParam(0).length() == 0) {
+		response = ":localhost 461 " + user->getNickName() + " TOPIC :Not enough parameters\r\n";
+		send(user->getSd(), response.c_str(), response.length(), 0);
+		return ;
+	}
+	if (_channels.find(msg.getParam(0)) == _channels.end()) {
+		response = ":localhost 442 " + user->getNickName() + " " + msg.getParam(0) + " :You're not on that channel\r\n";
+		send(user->getSd(), response.c_str(), response.length(), 0);
+		return ;
+	}
+	else {
+		// Here change the topic of the channel
+		// check if user has rights
+		std::string newName = "newName";
+		response = ":localhost 332 " + user->getNickName() + " " + msg.getParam(0) + " :" + newName + "\r\n";
+		for (int i = 0; i < (int)_channels[msg.getParam(0)].userList.size(); i++) {
+			send(_users[i].getSd(), response.c_str(), response.length(), 0);
+		}
+	}
+}
+
+void	Server::prvMsgCmd( Message msg, User *user ) {
+	std::string response = "";
+	if (msg.getParam(0).length() == 0) {
+		response = ":localhost 411 " + user->getNickName() + " :No recipient given (PRIVMSG)\r\n";
+		send(user->getSd(), response.c_str(), response.length(), 0);
+		return ;
+	}
+	if (msg.getParam(1).length() == 0) {
+		response = ":localhost 412 " + user->getNickName() + " :No text to send\r\n";
+		send(user->getSd(), response.c_str(), response.length(), 0);
+		return ;
+	}
+	if (user->getChannels().find(msg.getParam(0)) == user->getChannels().end()) {
+		response = ":localhost 401 " + user->getNickName() + " " + msg.getParam(0) + " :No such nick/channel\r\n";
+		send(user->getSd(), response.c_str(), response.length(), 0);
+		return ;
+	}
+	else {
+		// send the message to the user
+		response = ":" + user->getNickName() + " PRIVMSG " + msg.getParam(0) + " :" + msg.getParam(1) + "\r\n";
+		send(user->getSd(), response.c_str(), response.length(), 0);
+		// send the message to the other users in the channel
+
+		// les containers se melangent 
+		for (int i = 0; i < (int)user->getChannels()[msg.getParam(0)].userList.size(); i++) {
+			if (user->getChannels()[msg.getParam(0)].userList[i] != user->getNickName()) {
+				response = ":" + user->getNickName() + " PRIVMSG " + msg.getParam(0) + " :" + msg.getParam(1) + "\r\n";
+				send(_users[i].getSd(), response.c_str(), response.length(), 0);
+			}
+		}
+	}
+}
