@@ -7,13 +7,13 @@
 
 int GSIGNALSTATUS = 0;
 
-Server::Server( void ) : _maxClients(30) {
-	_clientSockets.resize(_maxClients, 0);
+Server::Server( void ) : _nbClients(0) {
+	//_clientSockets.resize(nbClients, 0);
 }
 
-Server::Server( char *port, char *passwd ) : _maxClients(30)
+Server::Server( char *port, char *passwd ) : _nbClients(0)
 {
-	_clientSockets.resize(_maxClients, 0);
+	//_clientSockets.resize(nbClients, 0);
 	_address.sin_family = AF_INET;
 	_address.sin_addr.s_addr = INADDR_ANY;
 	_address.sin_port = htons( atoi(port) );
@@ -77,14 +77,19 @@ void Server::newConnection( void )
 		perror("send");
 	//}
 	//add new socket to array of sockets
-	for (int i = 0; i < _maxClients; i++) {
+	//for (int i = 0; i < nbClients; i++) {
 		//if position is empty
-		if( _clientSockets[i] == 0 ) {
-			_clientSockets[i] = new_socket;
-			std::cout << "Adding to list of sockets as " << i << std::endl;
-			break;
-		}
-	}
+		//if( _clientSockets[i] == 0 ) {
+			//_clientSockets[i] = new_socket;
+			_nbClients++;
+			User new_user;
+			new_user.setSd(new_socket);
+			_users.push_back(new_user);
+			_clientSockets.push_back(new_socket);
+			std::cout << "Adding to list of sockets as " << _nbClients << std::endl;
+			//break;
+		//}
+	//}
 }
 
 void Server::handleConnections( void )
@@ -96,7 +101,7 @@ void Server::handleConnections( void )
 	FD_ZERO(&_readfds);
 	FD_SET(_masterSocket, &_readfds);
 	//add child sockets to set
-	for (int i = 0; i < _maxClients; i++) {
+	for (int i = 0; i < static_cast<int>(_clientSockets.size()); i++) {
 		sd = _clientSockets[i];
 	//if valid socket descriptor then add to read list
 		if(sd > 0)
@@ -130,17 +135,27 @@ void Server::run( void ) {
 	
 	while (true) {
 		handleConnections();
+
+		//Ajout de nouveaux utilisateurs
+		//  while (_users.size() < _clientSockets.size()) {
+          //  User new_user;
+        //    _users.push_back(new_user);
+            //_users.back().setSd(_clientSockets[_users.size() - 1]);
+        //}
+
 		//else its some IO operation on some other socket
-		for (int i = 0; i < _maxClients; i++) {
-			_users[i].setSd(_clientSockets[i]);
+		for (int i = 0; i < static_cast<int>(_users.size()); i++) {
 			if (FD_ISSET(_users[i].getSd(), &_readfds)) {
 				//incoming message
 				bzero(buffer, 1025);
 				valRead = read(_users[i].getSd(), buffer, 1024);
 				_users[i].getBuffer(buffer);
 				if (valRead != 0) {
-					if (generateResponse(&_users[i]) == false)
-						return ;
+					if (generateResponse(&_users[i]) == false){
+						close(_users[i].getSd());
+                        _users.erase(_users.begin() + i);
+						return;
+					}
 				}
 				else {
 					//Somebody disconnected , get his details and print
@@ -148,7 +163,8 @@ void Server::run( void ) {
 					std::cout << "Host disconnected, ip: " << inet_ntoa(_address.sin_addr) << " port: " << ntohs(_address.sin_port) << std::endl;
 					//Close the socket and mark as 0 in list for reuse
 					close(_users[i].getSd());
-					_clientSockets[i] = 0;
+					_users.erase(_users.begin() + i);
+					//_clientSockets[i] = 0;
 				}
 			}
 		}

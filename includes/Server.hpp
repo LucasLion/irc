@@ -31,7 +31,7 @@ public:
 private:
 	
 	std::string						_name;
-	int								_maxClients;
+	int								_nbClients;
 	int								_portno;
 	std::vector<int>				_clientSockets;
 	struct sockaddr_in				_address;
@@ -42,7 +42,7 @@ private:
 	int								_max_sd;
 	std::string						_passwd;
 	std::map<std::string, Channel>	_channels;
-	User							_users[30];
+	std::vector<User>				_users;
     std::vector<Message>		    _messages;
 	// rajouter le IP par defaut / 3e parametre optionnel
 };
