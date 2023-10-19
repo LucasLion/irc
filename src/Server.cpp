@@ -212,8 +212,10 @@ bool Server::generateResponse( User *user, int sd ) {
 		if (it->getCommand() == "PASS") {
 			passCmd(sd, *it, user);
 		}
-		if (it->getCommand() == "PING")
+		if (it->getCommand() == "PING") {
 			std::cout << SUCCESS("PING PONG") << std::endl;
+			pongCmd(sd, *it, user);
+		}
 		if (it->getCommand() == "PONG") {
 			// for TESTS
 			return (false);
