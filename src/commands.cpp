@@ -2,8 +2,10 @@
 #include "../includes/header.hpp"
 #include "../includes/Server.hpp"
 
-void	Server::nickCmd( int sd, Message msg, User *user ) {
+
+void	Server::nickCmd( Message msg, User *user ) {
 	
+	int sd = user->getSd();
 	std::string old_nick = user->getNickName();
 	user->setNickName(msg.getParam(0));
 
@@ -17,9 +19,9 @@ void	Server::nickCmd( int sd, Message msg, User *user ) {
 	// envoyer un message de confirmation
 }
 
-void	Server::userCmd( int sd, Message msg, User *user ) {
-	(void)msg;
-
+void	Server::userCmd( Message msg, User *user ) {
+	
+	int sd = user->getSd();
 	msg.printCommand();
 	if (!msg.getParam(0).length())
 		send(sd, "localhost 461 :Not enough parameters\r\n", 53, 0 );
@@ -35,10 +37,10 @@ void	Server::userCmd( int sd, Message msg, User *user ) {
 	// verifier que le hostname est bien set
 	// envoyer un message de confirmation
 	//"<client> :Welcome to the <networkname> Network, <nick>[!<user>@<host>]"
-	std::string protocol = ":localhost 001 " + user->getNickName() + " Welcome1 to the " + _name + " Network, " + user->getNickName() + "\r\n";
+	std::string response = ":localhost 001 " + user->getNickName() + " Welcome1 to the " + _name + " Network, " + user->getNickName() + "\r\n";
 	// possibilite d'ajouter le hostname etc
-	send(sd, protocol.c_str(), protocol.length(), 0);
-	send(sd, protocol.c_str(), protocol.length(), 0);
+	send(sd, response.c_str(), response.length(), 0);
+	send(sd, response.c_str(), response.length(), 0);
 	//send(sd, ":localhost 001 test Welcome1 to server \r\n", 60, 0);
 	
 	//send(sd, ":localhost 001 utilisateur :Welcome to the , utilisateur\r\n", 71, 0);
@@ -46,22 +48,22 @@ void	Server::userCmd( int sd, Message msg, User *user ) {
 
 }
 
-void	Server::pongCmd( int sd, Message msg, User *user ) {
-	(void)user;
+void	Server::pongCmd( Message msg, User *user ) {
+	
 	std::string response = ":localhost PONG localhost :" + msg.getParam(0) + "\r\n";
-	send(sd, response.c_str(), response.length(), 0);
+	send( user->getSd(), response.c_str(), response.length(), 0);
 }
 
-void	Server::passCmd( int sd, Message msg, User *user ) {
-	(void)user;
+void	Server::passCmd( Message msg, User *user ) {
+	
 	if (msg.getParam(0) != _passwd) {
-		send(sd, ":localhost 464 utilisateur :Password incorrect\r\n", 51, 0 );
+		send(user->getSd(), ":localhost 464 utilisateur :Password incorrect\r\n", 51, 0 );
 		throw std::exception();
 	}
 }
 
-void	Server::joinCmd( int sd, Message msg, User *user ) {
-	(void)user;
+void	Server::joinCmd( Message msg, User *user ) {
+	
 
 	// TODO parse command for multiple channels at once
 	// TODO check later for all the other errors
@@ -70,13 +72,13 @@ void	Server::joinCmd( int sd, Message msg, User *user ) {
 
 	if (msg.getParam(0).length() == 0) {
 		response = ":localhost 461 " + user->getNickName() + " JOIN :Not enough parameters\r\n";
-		send(sd, response.c_str(), response.length(), 0);
+		send(user->getSd(), response.c_str(), response.length(), 0);
 		return ;
 	}
 	// check if the channel name is valide
 	if (msg.getParam(0)[0] != '#') {
 		response = ":localhost 403 " + user->getNickName() + " " + msg.getParam(0) + " :No such channel\r\n";
-		send(sd, response.c_str(), response.length(), 0);
+		send(user->getSd(), response.c_str(), response.length(), 0);
 		return ;
 	}
 	// check if the channel exists and create it if not
@@ -86,25 +88,24 @@ void	Server::joinCmd( int sd, Message msg, User *user ) {
 	// check if the user is already in the channel
 	if (_channels[msg.getParam(0)].isUserInChannel(user->getNickName())) {
 		std::cout << "deja dans le channel: " << msg.getParam(0) << std::endl;
-		std::string response = ":localhost 403 " + user->getNickName() + " utilisateur :You are already in this channel\r\n";
-		send(sd, response.c_str(), response.length(), 0);
+		response = ":localhost 403 " + user->getNickName() + " utilisateur :You are already in this channel\r\n";
+		send(user->getSd(), response.c_str(), response.length(), 0);
 	}
 	else {
 		_channels[msg.getParam(0)].addUser(user->getNickName());
-		std::string response = ":" + user->getNickName() +  " JOIN " + msg.getParam(0) + "\r\n";
+		response = ":" + user->getNickName() +  " JOIN " + msg.getParam(0) + "\r\n";
 		// JOIN message
-		send(sd, response.c_str(), response.length(), 0);
+		send(user->getSd(), response.c_str(), response.length(), 0);
 		// channel's topic
 		response = ":localhost 332 " + user->getNickName() + " " + msg.getParam(0) + " :No topic is set\r\n";
-		send(sd, response.c_str(), response.length(), 0);
+		send(user->getSd(), response.c_str(), response.length(), 0);
 		// send the list of users in the channels
 		response = ":localhost 353 " + user->getNickName() + " = " + msg.getParam(0) + " :";
 		for (int i = 0; i < (int)_channels[msg.getParam(0)].userList.size(); i++) {
 			response += _channels[msg.getParam(0)].userList[i] + " ";
 		}
 		response += "\r\n";
-		std::cout << response << std::endl;
-		send(sd, response.c_str(), response.length(), 0);
+		send(user->getSd(), response.c_str(), response.length(), 0);
 	}
 }
 

@@ -125,7 +125,6 @@ void Server::handleConnections( void )
 
 void Server::run( void ) {
 
-	int				sd;
 	int				valRead;
 	char			buffer[4608];
 	
@@ -133,22 +132,22 @@ void Server::run( void ) {
 		handleConnections();
 		//else its some IO operation on some other socket
 		for (int i = 0; i < _maxClients; i++) {
-			sd = _clientSockets[i];
-			if (FD_ISSET(sd, &_readfds)) {
+			_users[i].setSd(_clientSockets[i]);
+			if (FD_ISSET(_users[i].getSd(), &_readfds)) {
 				//incoming message
 				bzero(buffer, 1025);
-				valRead = read(sd, buffer, 1024);
+				valRead = read(_users[i].getSd(), buffer, 1024);
 				_users[i].getBuffer(buffer);
 				if (valRead != 0) {
-					if (generateResponse(&_users[i], sd) == false)
+					if (generateResponse(&_users[i]) == false)
 						return ;
 				}
 				else {
 					//Somebody disconnected , get his details and print
-					getpeername(sd , (struct sockaddr*)&_address, (socklen_t*)&_addrLen);
+					getpeername(_users[i].getSd() , (struct sockaddr*)&_address, (socklen_t*)&_addrLen);
 					std::cout << "Host disconnected, ip: " << inet_ntoa(_address.sin_addr) << " port: " << ntohs(_address.sin_port) << std::endl;
 					//Close the socket and mark as 0 in list for reuse
-					close(sd);
+					close(_users[i].getSd());
 					_clientSockets[i] = 0;
 				}
 			}
@@ -197,34 +196,34 @@ bool	Server::createChannel( std::string channelName ) {
 	return true;
 }
 
-bool Server::generateResponse( User *user, int sd ) {
+bool Server::generateResponse( User *user ) {
 	for (std::vector<Message>::iterator it = user->messages.begin(); it != user->messages.end();) {
 		std::cout << "COMMAND_RECEIVED: " << it->rawMessage << std::endl;
 		if (it->getCommand() == "CAP") {
-			send(sd, "CAP * LS\r\n", 12, 0 );
+			send( user->getSd(), "CAP * LS\r\n", 12, 0 );
 		}
 		if (it->getCommand() == "NICK") {
-			nickCmd(sd, *it, user);
+			nickCmd(*it, user);
 		}
 		if (it->getCommand() == "USER") {
-			userCmd(sd, *it, user);
+			userCmd(*it, user);
 		}
 		if (it->getCommand() == "PASS") {
-			passCmd(sd, *it, user);
+			passCmd(*it, user);
 		}
 		if (it->getCommand() == "PING") {
 			std::cout << SUCCESS("PING PONG") << std::endl;
-			pongCmd(sd, *it, user);
+			pongCmd(*it, user);
 		}
 		if (it->getCommand() == "PONG") {
 			// for TESTS
 			return (false);
 		}
 		if (it->getCommand() == "WHOIS") {
-			send(sd, ":localhost 318 THE_BEST_NICKNAME :End of /WHOIS list", 51, 0);
+			send(user->getSd(), ":localhost 318 THE_BEST_NICKNAME :End of /WHOIS list", 51, 0);
 		}
 		if (it->getCommand() == "JOIN") {
-			joinCmd(sd, *it, user);
+			joinCmd(*it, user);
 		}
 		it = user->messages.erase(it);
     }

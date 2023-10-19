@@ -17,12 +17,12 @@ public:
     void                getBuffer( char * buf );
 	void				run( void );
 	bool				createChannel( std::string name );
-	bool				generateResponse( User *user, int sd );
-	void				userCmd( int sd, Message msg, User *user );
-	void				nickCmd( int sd, Message msg, User *user );
-	void				passCmd( int sd, Message msg, User *user );
-	void				joinCmd( int sd, Message msg, User *user );
-	void				pongCmd( int sd, Message msg, User *user );
+	bool				generateResponse( User *user );
+	void				userCmd( Message msg, User *user );
+	void				nickCmd( Message msg, User *user );
+	void				passCmd( Message msg, User *user );
+	void				joinCmd( Message msg, User *user );
+	void				pongCmd( Message msg, User *user );
 	int					getPortno( void ) const;
 
 

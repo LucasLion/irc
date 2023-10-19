@@ -14,6 +14,8 @@ class User {
     void                	        getBuffer( char * buf );
 	void							setRealName( std::string realName );
 	void							setNickName( std::string nickName );
+    void                            setSd(int sd);
+    int                             getSd();
 	std::string						getRealName( void );
 	std::string						getNickName( void );
 	std::map<std::string, Channel>	getChannels( void );
@@ -22,10 +24,11 @@ class User {
 
 
     private : 
-    std::string					       _realName;
-    std::string          		       _nickName;
-    std::string          		       _buffer;
-	std::map<std::string, Channel>		_channels;
+    std::string					        _realName;
+    std::string          		        _nickName;
+    std::string                         _buffer;
+	std::map<std::string, Channel>      _channels;
+    int                                 _sd;
 
 };
 
