@@ -31,14 +31,17 @@ void	Server::userCmd( int sd, Message msg, User *user ) {
 	// verifier que le hostname est bien set
 	// envoyer un message de confirmation
 	//"<client> :Welcome to the <networkname> Network, <nick>[!<user>@<host>]"
-	std::string protocol = ":localhost 001 :Welcome to the " + _name + " Network, " + user->getNickName() + "\r\n";
+	std::string protocol = ":localhost 001 " +  user->getNickName() + " :Welcome to the " + _name + " Network, " + user->getNickName() + "\r\n";
 	// possibilite d'ajouter le hostname etc
 	send(sd, protocol.c_str(), protocol.length(), 0);
-	
-	//send(sd, ":localhost 001 utilisateur :Welcome to the , utilisateur\r\n", 71, 0);
-	send(sd, ":localhost 002 :Welcome to FT_IRC\r\n", 35, 0 );
 
 
+}
+
+void	Server::pongCmd( int sd, Message msg, User *user ) {
+	(void)user;
+	std::string response = ":localhost PONG localhost :" + msg.getParam(0) + "\r\n";
+	send(sd, response.c_str(), response.length(), 0);
 }
 
 void	Server::passCmd( int sd, Message msg, User *user ) {
