@@ -78,7 +78,9 @@ void	Server::joinCmd( int sd, Message msg, User *user ) {
 	}
 	else {
 		_channels[msg.getParam(0)].addUser(user->getNickName());
-		send(sd, ":localhost 332 utilisateur :Bienvenue sur le channel\r\n", 55, 0 );
+		//send(sd, ":localhost 332 utilisateur :Bienvenue sur le channel\r\n", 55, 0 );
+		std::string response = ":" + user->getNickName() +  " JOIN " + msg.getParam(0) + "\r\n";
+		send(sd, response.c_str(), response.length(), 0);
 	}
 }
 
