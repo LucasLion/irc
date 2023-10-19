@@ -66,13 +66,17 @@ void	Server::joinCmd( int sd, Message msg, User *user ) {
 	// TODO parse command for multiple channels at once
 	// TODO check later for all the other errors
 	
+	std::string response = "";
+
 	if (msg.getParam(0).length() == 0) {
-		send(sd, ":localhost 461 utilisateur JOIN :Not enough parameters\r\n", 59, 0 );
+		response = ":localhost 461 " + user->getNickName() + " JOIN :Not enough parameters\r\n";
+		send(sd, response.c_str(), response.length(), 0);
 		return ;
 	}
 	// check if the channel name is valide
 	if (msg.getParam(0)[0] != '#') {
-		send(sd, ":localhost 403 utilisateur :No such channel\r\n", 47, 0 );
+		response = ":localhost 403 " + user->getNickName() + " " + msg.getParam(0) + " :No such channel\r\n";
+		send(sd, response.c_str(), response.length(), 0);
 		return ;
 	}
 	// check if the channel exists and create it if not

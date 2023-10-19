@@ -32,5 +32,4 @@ TEST_CASE("testing the initialisation function") {
 
 	Server server = program(argc, argv);
 	CHECK(server.getPortno() == 6667);
-
 }
