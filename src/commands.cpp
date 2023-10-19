@@ -6,7 +6,11 @@
 void	Server::nickCmd( Message msg, User *user ) {
 	
 	int sd = user->getSd();
+	msg.printCommand();
 	std::string old_nick = user->getNickName();
+	std::string new_nick = msg.getParam(0);
+
+	
 	user->setNickName(msg.getParam(0));
 
 	std::string protocol = ":" + old_nick + "!" + old_nick + "@localhost NICK " + user->getNickName() + "\r\n";
@@ -49,7 +53,7 @@ void	Server::userCmd( Message msg, User *user ) {
 }
 
 void	Server::pongCmd( Message msg, User *user ) {
-	
+
 	std::string response = ":localhost PONG localhost :" + msg.getParam(0) + "\r\n";
 	send( user->getSd(), response.c_str(), response.length(), 0);
 }
