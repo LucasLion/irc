@@ -22,6 +22,7 @@ public:
 	void				nickCmd( int sd, Message msg, User *user );
 	void				passCmd( int sd, Message msg, User *user );
 	void				joinCmd( int sd, Message msg, User *user );
+	void				pongCmd( int sd, Message msg, User *user );
 	int					getPortno( void ) const;
 
 
