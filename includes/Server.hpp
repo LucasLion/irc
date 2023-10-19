@@ -23,6 +23,8 @@ public:
 	void				passCmd( Message msg, User *user );
 	void				joinCmd( Message msg, User *user );
 	void				pongCmd( Message msg, User *user );
+	void				topicCmd( Message msg, User *user );
+	void				prvMsgCmd( Message msg, User *user );
 	int					getPortno( void ) const;
 
 

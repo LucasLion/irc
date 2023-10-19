@@ -225,6 +225,12 @@ bool Server::generateResponse( User *user ) {
 		if (it->getCommand() == "JOIN") {
 			joinCmd(*it, user);
 		}
+		if (it->getCommand() == "TOPIC") {
+			topicCmd(*it, user);
+		}
+		if (it->getCommand() == "PRIVMSG") {
+			prvMsgCmd(*it, user);
+		}
 		it = user->messages.erase(it);
     }
 	return (true);
