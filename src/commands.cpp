@@ -136,8 +136,6 @@ void	Server::topicCmd( Message msg, User *user ) {
 
 void	Server::prvMsgCmd( Message msg, User *user ) {
 	std::string response = "";
-	for (int i = 0; i < (int)user->getChannels()[msg.getParam(0)].userList.size(); i++)
-		std::cout << "usersList: " << user->getChannels()[msg.getParam(0)].userList[i] << std::endl;
 	if (msg.getParam(0).length() == 0) {
 		response = ":localhost 411 " + user->getNickName() + " :No recipient given (PRIVMSG)\r\n";
 		send(user->getSd(), response.c_str(), response.length(), 0);
@@ -158,15 +156,13 @@ void	Server::prvMsgCmd( Message msg, User *user ) {
 		response = ":" + user->getNickName() + " PRIVMSG " + msg.getParam(0) + " :" + msg.getParam(1) + "\r\n";
 		send(user->getSd(), response.c_str(), response.length(), 0);
 		// send the message to the other users in the channel
-		Channel currentChannel = user->getChannels()[msg.getParam(0)];
 
-		// petits soucis avec l'utilisation des variables channels
-		//
-		//for (int i = 0; i < currentChannel.userList.size(); i++) {
-		//	if (currentChannel.userList[i] != user->getNickName()) {
-		//		response = ":" + user->getNickName() + " PRIVMSG " + msg.getParam(0) + " :" + msg.getParam(1) + "\r\n";
-		//		send(_users[i].getSd(), response.c_str(), response.length(), 0);
-		//	}
-		//}
+		// les containers se melangent 
+		for (int i = 0; i < (int)user->getChannels()[msg.getParam(0)].userList.size(); i++) {
+			if (user->getChannels()[msg.getParam(0)].userList[i] != user->getNickName()) {
+				response = ":" + user->getNickName() + " PRIVMSG " + msg.getParam(0) + " :" + msg.getParam(1) + "\r\n";
+				send(_users[i].getSd(), response.c_str(), response.length(), 0);
+			}
+		}
 	}
 }
