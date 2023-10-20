@@ -80,7 +80,7 @@ void Server::newConnection( void )
 			_nbClients++;
 			User new_user;
 			new_user.setSd(new_socket);
-			//new_user.ipAdress = inet_ntoa(_address.sin_addr);
+			new_user.ipAdress = inet_ntoa(_address.sin_addr);
 			_users.push_back(new_user);
 			_clientSockets.push_back(new_socket);
 			std::cout << "Adding to list of sockets as " << _nbClients << std::endl;

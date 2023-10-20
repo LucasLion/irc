@@ -20,7 +20,7 @@ class User {
 	std::string						getNickName( void );
 	std::map<std::string, Channel>	getChannels( void );
     std::vector<Message>			messages;
-   // std::string                     ipAdress;
+    std::string                     ipAdress;
 
 
     private : 

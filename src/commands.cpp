@@ -83,21 +83,19 @@ void	Server::userCmd( Message msg, User *user ) {
 		user->setNickName(msg.getParam(0));
 		user->setRealName(msg.getParam(3));
 	}
-	// verifier que le nickname est bien set 
-	// verifier que le username est bien set	
-	// verifier que le realname est bien set	
-	// verifier que le hostname est bien set
+	
 	// envoyer un message de confirmation
 	//"<client> :Welcome to the <networkname> Network, <nick>[!<user>@<host>]"
-	//std::string response = ":" + user->ipAdress + " 001 " + user->getNickName() + " Welcome1 to the " + _name + " Network, " + user->getNickName() + "\r\n";
-	std::string response = ":localhost 001 " + user->getNickName() + " Welcome1 to the " + _name + " Network, " + user->getNickName() + "\r\n";
+	std::string response = ":10.12.4.5/6667 001 " + user->getNickName() + " Welcome1 to the " + _name + " Network, " + user->getNickName() + "\r\n";
+	//std::string response = ":localhost 001 " + user->getNickName() + " Welcome1 to the " + _name + " Network, " + user->getNickName() + "\r\n";
 	// possibilite d'ajouter le hostname etc
-	send(sd, response.c_str(), response.length(), 0);
-	send(sd, response.c_str(), response.length(), 0);
+	// send(sd, response.c_str(), response.length(), 0);
+	//send(sd, response.c_str(), response.length(), 0);
+	//send(sd, ":localhost 001 test Welcome1 to server \r\n", 60, 0);
 	//send(sd, ":localhost 001 test Welcome1 to server \r\n", 60, 0);
 	
 	//send(sd, ":localhost 001 utilisateur :Welcome to the , utilisateur\r\n", 71, 0);
-	send(sd, ":localhost 002 Welcome2 to FT_IRC\r\n", 35, 0 );
+	send(sd, ":10.12.4.5/6667 002 Welcome2 to FT_IRC\r\n", 36, 0 );
 
 }
 
