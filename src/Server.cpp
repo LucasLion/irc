@@ -229,15 +229,7 @@ bool Server::generateResponse( User *user ) {
 			passCmd(*it, user);
 		}
 		if (it->getCommand() == "PING") {
-			std::cout << SUCCESS("PING PONG") << std::endl;
 			pongCmd(*it, user);
-		}
-		if (it->getCommand() == "PONG") {
-			// for TESTS
-			return (false);
-		}
-		if (it->getCommand() == "WHOIS") {
-			send(user->getSd(), ":localhost 318 THE_BEST_NICKNAME :End of /WHOIS list", 51, 0);
 		}
 		if (it->getCommand() == "JOIN") {
 			joinCmd(*it, user);
@@ -247,6 +239,9 @@ bool Server::generateResponse( User *user ) {
 		}
 		if (it->getCommand() == "PRIVMSG") {
 			prvMsgCmd(*it, user);
+		}
+		if (it->getCommand() == "PONG") {
+			return (false);
 		}
 		it = user->messages.erase(it);
     }

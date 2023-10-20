@@ -103,13 +103,16 @@ void	Server::joinCmd( Message msg, User *user ) {
 		// channel's topic
 		response = ":localhost 332 " + user->getNickName() + " " + msg.getParam(0) + " :Default topic name (you can change it)\r\n";
 		send(user->getSd(), response.c_str(), response.length(), 0);
-		// send the list of users in the channels
+		// create the list of users in the channels
 		response = ":localhost 353 " + user->getNickName() + " = " + msg.getParam(0) + " :";
 		for (int i = 0; i < (int)_channels[msg.getParam(0)].userList.size(); i++) {
 			response += _channels[msg.getParam(0)].userList[i] + " ";
 		}
 		response += "\r\n";
-		send(user->getSd(), response.c_str(), response.length(), 0);
+		// send the list to everyone in the channel
+		for (int i = 0; i < (int)_channels[msg.getParam(0)].userList.size(); i++) {
+			send(_users[i].getSd(), response.c_str(), response.length(), 0);
+		}
 	}
 }
 
@@ -157,6 +160,7 @@ void	Server::prvMsgCmd( Message msg, User *user ) {
 	}
 	else {
 		// send the message to all the users in the channel
+		//for (int i = 0; i < (int)_channels[msg.getParam(0)].userList.size(); i++) {
 		for (int i = 0; i < (int)_channels[msg.getParam(0)].userList.size(); i++) {
 			if (_channels[msg.getParam(0)].userList[i] != user->getNickName()) {
 				response = ":" + user->getNickName() + " PRIVMSG " + msg.getParam(0) + " :" + msg.getParam(1) + "\r\n";
