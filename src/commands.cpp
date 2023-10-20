@@ -156,14 +156,9 @@ void	Server::prvMsgCmd( Message msg, User *user ) {
 		return ;
 	}
 	else {
-		// send the message to the user
-		response = ":" + user->getNickName() + " PRIVMSG " + msg.getParam(0) + " :" + msg.getParam(1) + "\r\n";
-		send(user->getSd(), response.c_str(), response.length(), 0);
-		// send the message to the other users in the channel
-
-		// les containers se melangent 
-		for (int i = 0; i < (int)user->getChannels()[msg.getParam(0)].userList.size(); i++) {
-			if (user->getChannels()[msg.getParam(0)].userList[i] != user->getNickName()) {
+		// send the message to all the users in the channel
+		for (int i = 0; i < (int)_channels[msg.getParam(0)].userList.size(); i++) {
+			if (_channels[msg.getParam(0)].userList[i] != user->getNickName()) {
 				response = ":" + user->getNickName() + " PRIVMSG " + msg.getParam(0) + " :" + msg.getParam(1) + "\r\n";
 				send(_users[i].getSd(), response.c_str(), response.length(), 0);
 			}
