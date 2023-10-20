@@ -2,37 +2,85 @@
 #include "../includes/header.hpp"
 #include "../includes/Server.hpp"
 
+void	Server::sendError(std::string code_Error, int sd)
+{
+	std::string response;
+	response = ":localhost " + code_Error + " \r\n";
+	send (sd, response.c_str(), response.length(), 0);
+	return ;
+}
+
+bool is_valid(const std::string nickname){
+	if (nickname.length() < 1 || nickname.length() > 32) {
+        return false;
+    }
+
+    const std::string validChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789[]{}\\|";
+
+    for (size_t i = 0; i < nickname.length(); ++i) {
+        char c = nickname[i];
+        if (i == 0 && !isalpha(c) && c != '[' && c != '{' && c != '\\' && c != '|') {
+            return false;
+        }
+        if (i > 0 && validChars.find(c) == std::string::npos) {
+            return false;
+        }
+    }
+    return true;
+}
 
 void	Server::nickCmd( Message msg, User *user ) {
 	
+	std::vector<User>::iterator it;
+	std::string response;
+
 	int sd = user->getSd();
-	msg.printCommand();
-	std::string old_nick = user->getNickName();
-	std::string new_nick = msg.getParam(0);
 
-	
-	user->setNickName(msg.getParam(0));
+	if (user->getNickName().length() != 0)
+	{
+		std::string old_nick = user->getNickName();
+		if (msg.getParam(0).length() == 0){
+				response = ":localhost 431 :No Nickname given \r\n";
+				send(sd, response.c_str(), response.length(), 0);
+				return;
+			return;
+		}
+		std::string new_nick = msg.getParam(0);
+		
+		for (it = _users.begin(); it != _users.end(); ++it){
+			if (new_nick == it->getNickName()){
+				response = ":localhost 433 " + new_nick + new_nick + " Nickname already in use \r\n";
+				//response = ":localhost 433 " + new_nick + " :Nickname already in use \r\n";
+				send(sd, response.c_str(), response.length(), 0);
+				return;
+				}
+		}
+		 if (! (is_valid(new_nick))){
+		 		response = ":localhost 432 " + new_nick + new_nick + " :Erroneus Nickname \r\n";
+				//response = ":localhost 432 " + new_nick + " :Erroneus Nickname \r\n";
+				send(sd, response.c_str(), response.length(), 0);
+				return;
+		 	return;
+		 }
+		user->setNickName(msg.getParam(0));
+		response = ":" + old_nick + "!" + old_nick + "@localhost NICK " + user->getNickName() + "\r\n";
+		send(sd, response.c_str(), response.length(), 0);
+		// envoyer un message de conrimation a tous les channels ???
+	}
 
-	std::string protocol = ":" + old_nick + "!" + old_nick + "@localhost NICK " + user->getNickName() + "\r\n";
-	// possibilite d'ajouter le hostname etc
-	send(sd, protocol.c_str(), protocol.length(), 0);
-	
-
-	// faire un check si le nickname est deja pris
-	// faire un check si le nickname est valide
-	// envoyer un message de confirmation
 }
 
 void	Server::userCmd( Message msg, User *user ) {
 	
 	int sd = user->getSd();
-	msg.printCommand();
-	if (!msg.getParam(0).length())
+	std::string origin;
+	
+	if (msg.getParam(0).length() > 0 )
 		send(sd, "localhost 461 :Not enough parameters\r\n", 53, 0 );
-	//if (user->getNickName().length())
-	//	send(sd, "localhost 462 :You may not reregister\r\n", 53, 0 );
+	if (user->getNickName().length() > 0)
+		send(sd, ":localhost 462 :You may not reregister\r\n", 54, 0 );
 	else {
-	//	user->setNickName(msg.getParam(0));
+		user->setNickName(msg.getParam(0));
 		user->setRealName(msg.getParam(3));
 	}
 	// verifier que le nickname est bien set 
@@ -41,6 +89,7 @@ void	Server::userCmd( Message msg, User *user ) {
 	// verifier que le hostname est bien set
 	// envoyer un message de confirmation
 	//"<client> :Welcome to the <networkname> Network, <nick>[!<user>@<host>]"
+	//std::string response = ":" + user->ipAdress + " 001 " + user->getNickName() + " Welcome1 to the " + _name + " Network, " + user->getNickName() + "\r\n";
 	std::string response = ":localhost 001 " + user->getNickName() + " Welcome1 to the " + _name + " Network, " + user->getNickName() + "\r\n";
 	// possibilite d'ajouter le hostname etc
 	send(sd, response.c_str(), response.length(), 0);
@@ -61,7 +110,7 @@ void	Server::pongCmd( Message msg, User *user ) {
 void	Server::passCmd( Message msg, User *user ) {
 	
 	if (msg.getParam(0) != _passwd) {
-		send(user->getSd(), ":localhost 464 utilisateur :Password incorrect\r\n", 51, 0 );
+		send(user->getSd(), ":localhost 464 FT_IRC :Password incorrect\r\n", 51, 0 );
 		throw std::exception();
 	}
 }
