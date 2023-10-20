@@ -160,11 +160,21 @@ void	Server::prvMsgCmd( Message msg, User *user ) {
 	}
 	else {
 		// send the message to all the users in the channel
-		//for (int i = 0; i < (int)_channels[msg.getParam(0)].userList.size(); i++) {
-		for (int i = 0; i < (int)_channels[msg.getParam(0)].userList.size(); i++) {
-			if (_channels[msg.getParam(0)].userList[i] != user->getNickName()) {
-				response = ":" + user->getNickName() + " PRIVMSG " + msg.getParam(0) + " :" + msg.getParam(1) + "\r\n";
-				send(_users[i].getSd(), response.c_str(), response.length(), 0);
+		if (msg.getParam(0)[0] == '#') {
+			for (int i = 0; i < (int)_channels[msg.getParam(0)].userList.size(); i++) {
+				if (_channels[msg.getParam(0)].userList[i] != user->getNickName()) {
+					response = ":" + user->getNickName() + " PRIVMSG " + msg.getParam(0) + " :" + msg.getParam(1) + "\r\n";
+					send(_users[i].getSd(), response.c_str(), response.length(), 0);
+				}
+			}
+		}
+		// send private message to the user
+		else if (msg.getParam(0)[0] != '#') {
+			for (int i = 0; i < (int)_users.size(); i++) {
+				if (_users[i].getNickName() == msg.getParam(0)) {
+					response = ":" + user->getNickName() + " PRIVMSG " + msg.getParam(0) + " :" + msg.getParam(1) + "\r\n";
+					send(_users[i].getSd(), response.c_str(), response.length(), 0);
+				}
 			}
 		}
 	}
