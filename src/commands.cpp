@@ -7,7 +7,11 @@ void	Server::nickCmd( int sd, Message msg, User *user ) {
 	(void)user;
 	(void)sd;
 	user->setNickName(msg.getParam(0));
-
+	std::cout << "coucou\n";
+	std::string test = ":welcome1!tonio@localhost NICK test\r\n" ; 
+	send(sd, test.c_str(), test.length(),0);
+	
+	
 	// faire un check si le nickname est deja pris
 	// faire un check si le nickname est valide
 	// envoyer un message de confirmation
@@ -35,12 +39,12 @@ void	Server::userCmd( int sd, Message msg, User *user ) {
 
 	
 	//"<client> :Welcome to the <networkname> Network, <nick>[!<user>@<host>]"
-	std::string protocol = ":localhost 001 :Welcome to the " + _name + " Network, " + user->getNickName() + "\r\n";
+	std::string protocol = "001 " + user->getNickName() + "Welcome to the Network, " + user->getNickName() + "\r\n";
 	// possibilite d'ajouter le hostname etc
 	send(sd, protocol.c_str(), protocol.length(), 0);
 	
 	//send(sd, ":localhost 001 utilisateur :Welcome to the , utilisateur\r\n", 71, 0);
-	send(sd, ":localhost 002 :Welcome to FT_IRC\r\n", 35, 0 );
+	send(sd, ":localhost 002 :Welcome2 to FT_IRC\r\n", 35, 0 );
 
 
 }

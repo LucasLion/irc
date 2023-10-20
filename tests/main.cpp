@@ -30,7 +30,7 @@ Server program(int argc , char *argv[])
 		if (argc == 3) {
 			doctest::Context context;
             //std::thread contextThread([&context]() {
-             //   runContext(&context);
+            //   runContext(&context);
             //});
 			while (!gSignalStatus) {
 				std::this_thread::sleep_for(std::chrono::milliseconds(100));
