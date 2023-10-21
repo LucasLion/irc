@@ -28,6 +28,12 @@ void	User::getBuffer( char *buf ) {
     }
 }
 
+void	User::addChannel( std::string channelName ) {
+	Channel newChannel;
+	newChannel.name = channelName;
+	_channels[channelName] = newChannel;
+}
+
 void	User::setRealName( std::string realName ) {
 	_realName = realName;
 }

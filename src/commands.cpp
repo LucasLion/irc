@@ -88,6 +88,7 @@ void	Server::joinCmd( Message msg, User *user ) {
 	// check if the channel exists and create it if not
 	if (_channels.find(msg.getParam(0)) == _channels.end()) {
 		this->createChannel(msg.getParam(0));
+		user->addChannel(msg.getParam(0));
 	}
 	// check if the user is already in the channel
 	if (_channels[msg.getParam(0)].isUserInChannel(user->getNickName())) {
@@ -97,6 +98,7 @@ void	Server::joinCmd( Message msg, User *user ) {
 	}
 	else {
 		_channels[msg.getParam(0)].addUser(user->getNickName());
+		user->addChannel(msg.getParam(0));
 		response = ":" + user->getNickName() +  " JOIN " + msg.getParam(0) + "\r\n";
 		// JOIN message
 		send(user->getSd(), response.c_str(), response.length(), 0);
@@ -111,6 +113,12 @@ void	Server::joinCmd( Message msg, User *user ) {
 		response += "\r\n";
 		// send the list to everyone in the channel
 		for (int i = 0; i < (int)_channels[msg.getParam(0)].userList.size(); i++) {
+			std::cout << "1" << std::endl;
+			// modifier ici, envoie a tout le monde dans le serveur au lieu de tout le monde dans le channel
+			send(_users[i].getSd(), response.c_str(), response.length(), 0);
+		}
+		for (int i = 0; i < (int)user->getChannels()[msg.getParam(0)].userList.size(); i++) {
+			std::cout << "2" << std::endl;
 			send(_users[i].getSd(), response.c_str(), response.length(), 0);
 		}
 	}
