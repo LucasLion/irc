@@ -13,14 +13,8 @@ void	Server::nickCmd( Message msg, User *user ) {
 	
 	user->setNickName(msg.getParam(0));
 
-	std::string protocol = ":" + old_nick + "!" + old_nick + "@localhost NICK " + user->getNickName() + "\r\n";
-	// possibilite d'ajouter le hostname etc
+	std::string protocol = ":" + old_nick + "!" + old_nick + "@" + _ip + " NICK " + user->getNickName() + "\r\n";
 	send(sd, protocol.c_str(), protocol.length(), 0);
-	
-
-	// faire un check si le nickname est deja pris
-	// faire un check si le nickname est valide
-	// envoyer un message de confirmation
 }
 
 void	Server::userCmd( Message msg, User *user ) {
@@ -46,10 +40,8 @@ void	Server::userCmd( Message msg, User *user ) {
 	// possibilite d'ajouter le hostname etc
 	send(sd, response.c_str(), response.length(), 0);
 	send(sd, response.c_str(), response.length(), 0);
-	//send(sd, ":localhost 001 test Welcome1 to server \r\n", 60, 0);
 	
-	//send(sd, ":localhost 001 utilisateur :Welcome to the , utilisateur\r\n", 71, 0);
-	response = ":" + _ip + " 002 Welcome2 to FT_IRC\r\n";
+	response = ":" + _ip + " 002 Welcome to FT_IRC\r\n";
 	send(sd, response.c_str(), response.length(), 0 );
 
 }
