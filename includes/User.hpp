@@ -19,7 +19,6 @@ class User {
 	std::string						getRealName( void );
 	std::string						getNickName( void );
 	std::map<std::string, Channel>	getChannels( void );
-
 	void							addChannel( std::string channelName );
     std::vector<Message>			messages;
     std::string                     ipAdress;
