@@ -23,7 +23,24 @@ Server::Server( char *port, char *passwd ) : _nbClients(0)
 	_max_sd = _masterSocket;
 	_passwd = passwd;
 	_name = "FT_IRC";
-	// rajouter le IP par defaut / 3e parametre optionnel
+	_ip = getLocalIp();
+	
+}
+
+std::string Server::getLocalIp( void ) {
+	std::string command = "ip a | grep 'dynamic noprefixroute' | awk '{print $2}' | cut -d'/' -f1";
+	std::vector<char> buffer(128);
+	std::string ip;
+
+	FILE*  pipe = popen(command.c_str(), "r");
+	if (!pipe)
+		return ("Error executing command");
+	while (fgets(buffer.data(), buffer.size(), pipe) != NULL) {
+		ip += buffer.data();
+	}
+
+	pclose(pipe);
+	return (ip);
 }
 
 int		Server::createSocket( void ) {
@@ -205,6 +222,7 @@ bool	Server::createChannel( std::string channelName ) {
 bool Server::generateResponse( User *user ) {
 	for (std::vector<Message>::iterator it = user->messages.begin(); it != user->messages.end();) {
 		std::cout << "COMMAND_RECEIVED: " << it->rawMessage << std::endl;
+		std::cout << "IP_ADDRESS: " << _ip << std::endl;
 		if (it->getCommand() == "CAP") {
 			send( user->getSd(), "CAP * LS\r\n", 12, 0 );
 		}
@@ -218,15 +236,7 @@ bool Server::generateResponse( User *user ) {
 			passCmd(*it, user);
 		}
 		if (it->getCommand() == "PING") {
-			std::cout << SUCCESS("PING PONG") << std::endl;
 			pongCmd(*it, user);
-		}
-		if (it->getCommand() == "PONG") {
-			// for TESTS
-			return (false);
-		}
-		if (it->getCommand() == "WHOIS") {
-			send(user->getSd(), ":localhost 318 THE_BEST_NICKNAME :End of /WHOIS list", 51, 0);
 		}
 		if (it->getCommand() == "JOIN") {
 			joinCmd(*it, user);
@@ -236,6 +246,9 @@ bool Server::generateResponse( User *user ) {
 		}
 		if (it->getCommand() == "PRIVMSG") {
 			prvMsgCmd(*it, user);
+		}
+		if (it->getCommand() == "PONG") {
+			return (false);
 		}
 		it = user->messages.erase(it);
     }

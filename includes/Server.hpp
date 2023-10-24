@@ -11,6 +11,7 @@ public:
 
 						Server( void );
 						Server( char *port, char *passwd );
+	std::string			getLocalIp( void );
 	int					createSocket( void );
 	void				handleConnections( void );
 	void				newConnection( void );
@@ -33,6 +34,7 @@ public:
 
 private:
 	
+	std::string						_ip;
 	std::string						_name;
 	int								_nbClients;
 	int								_portno;
