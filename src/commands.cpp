@@ -2,48 +2,92 @@
 #include "../includes/header.hpp"
 #include "../includes/Server.hpp"
 
+bool is_valid(const std::string nickname){
+	if (nickname.length() < 1 || nickname.length() > 32) {
+        return false;
+    }
+
+    const std::string validChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789[]{}\\|";
+
+    for (size_t i = 0; i < nickname.length(); ++i) {
+        char c = nickname[i];
+        if (i == 0 && !isalpha(c) && c != '[' && c != '{' && c != '\\' && c != '|') {
+            return false;
+        }
+        if (i > 0 && validChars.find(c) == std::string::npos) {
+            return false;
+        }
+    }
+    return true;
+}
+
+
 
 void	Server::nickCmd( Message msg, User *user ) {
 	
+	std::string new_nick;
+	std::string old_nick;
+	std::string response;
 	int sd = user->getSd();
-	msg.printCommand();
-	std::string old_nick = user->getNickName();
-	std::string new_nick = msg.getParam(0);
+	std::vector<User>::iterator it;
 
-	
-	user->setNickName(msg.getParam(0));
+	if (msg.getParam(0).length() == 0) {
+				response = ":localhost 431 :No Nickname given \r\n";
+				send(sd, response.c_str(), response.length(), 0);
+				return;
+			return;
+	}
 
-	std::string protocol = ":" + old_nick + "!" + old_nick + "@localhost NICK " + user->getNickName() + "\r\n";
-	send(sd, protocol.c_str(), protocol.length(), 0);
+	new_nick = msg.getParam(0);
+	for (it = _users.begin(); it != _users.end(); ++it) {
+		if (new_nick == it->getNickName()) {
+			response = ":localhost 433 " + new_nick + " :Nickname already in use \r\n";
+			send(sd, response.c_str(), response.length(), 0);
+			return;
+		}
+	}
+
+	if (!is_valid(new_nick)) {
+		response = ":localhost 432 " + new_nick + " :Erroneus Nickname \r\n";
+		send(sd, response.c_str(), response.length(), 0);
+		return;
+	}
+
+	if (user->isRegistered() == false) {
+		
+		user->setNickName(new_nick);
+		user->setNickNameSet(true);
+		if (user->isRealNameSet() && user->isNickNameSet() && _passOK )	{
+			user->setRegistered(true);
+			connectServer( sd, user);
+		}
+			
+	}
+	else {
+		old_nick = user->getNickName();
+		user->setNickName(new_nick);
+		response = ":" + old_nick + "!" + old_nick + "@localhost NICK " + user->getNickName() + "\r\n";
+		send(sd, response.c_str(), response.length(), 0);
+	// TODO envoyer un message de conrimation a tous les channels ???
+	}
 }
 
 void	Server::userCmd( Message msg, User *user ) {
 	
 	int sd = user->getSd();
-	std::string response = ":localhost 461 :Not enough parameters\r\n";
-	msg.printCommand();
-	if (!msg.getParam(0).length())
+	std::string response ;
+	if (!msg.getParam(0).length()){
+		response = ":localhost 461 :Not enough parameters\r\n";
 		send(sd, response.c_str(), response.length(), 0);
-	//if (user->getNickName().length())
-	//	send(sd, "localhost 462 :You may not reregister\r\n", 53, 0 );
+	}
+	if (user->isRegistered())
+		send(sd, ":localhost 462 :You may not reregister\r\n", 53, 0 );
 	else {
-	//	user->setNickName(msg.getParam(0));
+		user->setUserName(msg.getParam(0));
 		user->setRealName(msg.getParam(3));
 	}
-	// verifier que le nickname est bien set 
-	// verifier que le username est bien set	
-	// verifier que le realname est bien set	
-	// verifier que le hostname est bien set
-	// envoyer un message de confirmation
-	//"<client> :Welcome to the <networkname> Network, <nick>[!<user>@<host>]"
-	response = ":localhost 001 " + user->getNickName() + " Welcome1 to the " + _name + " Network, " + user->getNickName() + "\r\n";
-	// possibilite d'ajouter le hostname etc
-	send(sd, response.c_str(), response.length(), 0);
-	send(sd, response.c_str(), response.length(), 0);
-	
-	response = ":localhost 002 Welcome to FT_IRC\r\n";
-	send(sd, response.c_str(), response.length(), 0 );
-
+	user->setRegistered(true);
+	connectServer(sd, user);
 }
 
 void	Server::pongCmd( Message msg, User *user ) {
@@ -181,4 +225,26 @@ void	Server::prvMsgCmd( Message msg, User *user ) {
 			}
 		}
 	}
+}
+
+void	Server::connectServer( int sd, User *user) {
+
+	std::string response;
+	
+	char buffer[20];
+	snprintf(buffer, 20, "%ld", _creationDate);
+	std::string creationDate(buffer);
+
+	response = ":localhost 001 " + user->getNickName() + " Welcome1 to the " + _name + " Network, " + user->getNickName() + "\r\n";
+	send(sd, response.c_str(), response.length(), 0);
+	send(sd, response.c_str(), response.length(), 0);
+	
+	response = ":localhost 002 Welcome to FT_IRC\r\n";
+	send(sd, response.c_str(), response.length(), 0);
+
+	response = ":localhost 003 This server was created " + creationDate + "\r\n";
+	send(sd, response.c_str(), response.length(), 0);
+
+	response = ":localhost 004 " + _name + " localhost 1.0\r\n";
+	send(sd, response.c_str(), response.length(), 0);
 }

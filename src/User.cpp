@@ -3,7 +3,9 @@
 #include "../includes/User.hpp"
 #include "../includes/Message.hpp"
 
-User::User( void ) { }
+User::User( void ) { 
+    setRegistered(false);
+}
 
 void User::printCommands( void ) {
         for (std::vector<Message>::iterator it = messages.begin(); it != messages.end();) {
@@ -60,4 +62,36 @@ std::map<std::string, Channel>	User::getChannels( void ) {
 
 int User::getSd( void ){
     return _sd;
+}
+
+bool User::isRegistered(){
+    return _isRegistered;
+}
+
+void User::setRegistered(bool isRegistered){
+    _isRegistered = isRegistered;
+}
+
+bool User::isNickNameSet(){
+    return _isNickNameSet;
+}
+
+void User::setNickNameSet(bool isNickNameSet){
+    _isNickNameSet = isNickNameSet;
+}
+
+bool User::isRealNameSet(){
+    return _isRealNameSet;
+}
+
+void User::setRealNameSet(bool isRealNameSet){
+    _isRealNameSet = isRealNameSet;
+}
+
+void User::setUserName(std::string userName){
+    _username = userName;
+}
+
+std::string User::getUserName(){
+    return _username;
 }

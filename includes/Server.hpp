@@ -27,6 +27,9 @@ public:
 	void				topicCmd( Message msg, User *user );
 	void				prvMsgCmd( Message msg, User *user );
 	int					getPortno( void ) const;
+	bool				passOK();
+	void				setPassOK(bool passOK);
+	void				connectServer( int sd , User *user );
 
 
 	std::map<std::string, Channel>	getChannels( void ) const;
@@ -47,5 +50,7 @@ private:
 	std::map<std::string, Channel>	_channels;
 	std::vector<User>				_users;
     std::vector<Message>		    _messages;
+	bool							_passOK;
+	std::time_t						_creationDate;
 	// rajouter le IP par defaut / 3e parametre optionnel
 };

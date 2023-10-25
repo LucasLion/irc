@@ -23,7 +23,7 @@ Server::Server( char *port, char *passwd ) : _nbClients(0)
 	_max_sd = _masterSocket;
 	_passwd = passwd;
 	_name = "FT_IRC";
-	
+	_creationDate = std::time(NULL);
 }
 
 int		Server::createSocket( void ) {
@@ -216,7 +216,6 @@ bool	Server::createChannel( std::string channelName ) {
 bool Server::generateResponse( User *user ) {
 	for (std::vector<Message>::iterator it = user->messages.begin(); it != user->messages.end();) {
 		std::cout << "COMMAND_RECEIVED: " << it->rawMessage << std::endl;
-		std::cout << "IP_ADDRESS: " << _ip << std::endl;
 		if (it->getCommand() == "CAP") {
 			send( user->getSd(), "CAP * LS\r\n", 12, 0 );
 		}
@@ -252,3 +251,7 @@ bool Server::generateResponse( User *user ) {
 int	Server::getPortno( void ) const { return _portno; }
 
 std::map<std::string, Channel>	Server::getChannels( void ) const { return _channels; }
+
+bool	Server::passOK() { return _passOK; }
+
+void	Server::setPassOK(bool passOK) { _passOK = passOK;}
