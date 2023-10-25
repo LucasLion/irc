@@ -23,24 +23,7 @@ Server::Server( char *port, char *passwd ) : _nbClients(0)
 	_max_sd = _masterSocket;
 	_passwd = passwd;
 	_name = "FT_IRC";
-	_ip = getLocalIp();
 	
-}
-
-std::string Server::getLocalIp( void ) {
-	std::string command = "ip a | grep 'dynamic noprefixroute' | awk '{print $2}' | cut -d'/' -f1";
-	std::vector<char> buffer(128);
-	std::string ip;
-
-	FILE*  pipe = popen(command.c_str(), "r");
-	if (!pipe)
-		return ("Error executing command");
-	while (fgets(buffer.data(), buffer.size(), pipe) != NULL) {
-		ip += buffer.data();
-	}
-
-	pclose(pipe);
-	return (ip);
 }
 
 int		Server::createSocket( void ) {

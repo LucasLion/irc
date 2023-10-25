@@ -34,7 +34,6 @@ public:
 
 private:
 	
-	std::string						_ip;
 	std::string						_name;
 	int								_nbClients;
 	int								_portno;
