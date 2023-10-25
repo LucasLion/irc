@@ -67,9 +67,6 @@ void	Server::nickCmd( Message msg, User *user ) {
 		send(sd, response.c_str(), response.length(), 0);
 		// envoyer un message de conrimation a tous les channels ???
 	}
-
-	std::string protocol = ":" + old_nick + "!" + old_nick + "@localhost NICK " + user->getNickName() + "\r\n";
-	send(sd, protocol.c_str(), protocol.length(), 0);
 }
 
 void	Server::userCmd( Message msg, User *user ) {
