@@ -1,6 +1,8 @@
 
 #pragma once
 
+#include "defines.hpp"
+
 #include <iostream>
 #include <string>
 #include <strings.h>
