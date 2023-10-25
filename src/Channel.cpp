@@ -12,14 +12,14 @@ const char*	Channel::ChannelAlreadyExistsException::what() const throw() {
 	return (ERROR("Channel already exists"));
 }
 
-void	Channel::addUser( std::string user ) {
+void	Channel::addUser( User* user ) {
 	userList.push_back(user);
-	std::cout << "User " << user << " added to channel " << name << std::endl;
+	std::cout << "User " << user->getNickName() << " added to channel " << name << std::endl;
 }
 
 bool	Channel::isUserInChannel( std::string user ) {
-	for (std::vector<std::string>::iterator it = userList.begin(); it != userList.end(); it++) {
-		if (*it == user) {
+	for (std::vector<User*>::iterator it = userList.begin(); it != userList.end(); it++) {
+		if ((*it)->getNickName() == user) {
 			std::cout << "User " << user << " is in channel " << name << std::endl;
 			return (true);
 		}
