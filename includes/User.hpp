@@ -5,6 +5,8 @@
 #include "Message.hpp"
 #include "Channel.hpp"
 
+class Channel;
+
 class User {
 
     public : 
@@ -20,7 +22,8 @@ class User {
 	std::string						getRealName( void );
     std::string                     getUserName();
 	std::string						getNickName( void );
-	std::map<std::string, Channel>	getChannels( void );
+	std::map<std::string, Channel*>	getChannels( void );
+
 	void							addChannel( std::string channelName );
     std::vector<Message>			messages;
     bool                            isRegistered();
@@ -36,7 +39,7 @@ class User {
     std::string          		        _nickName;
     std::string                         _username;
     std::string                         _buffer;
-	std::map<std::string, Channel>      _channels;
+	std::map<std::string, Channel*>     _channels;
     int                                 _sd;
     bool                                _isRegistered;
     bool                                _isNickNameSet;

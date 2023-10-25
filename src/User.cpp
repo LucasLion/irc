@@ -33,7 +33,7 @@ void	User::getBuffer( char *buf ) {
 void	User::addChannel( std::string channelName ) {
 	Channel newChannel;
 	newChannel.name = channelName;
-	_channels[channelName] = newChannel;
+	_channels[channelName] = &newChannel;
 }
 
 void	User::setRealName( std::string realName ) {
@@ -56,7 +56,7 @@ std::string	User::getNickName( void ) {
 	return _nickName;
 }
 
-std::map<std::string, Channel>	User::getChannels( void ) {
+std::map<std::string, Channel*>	User::getChannels( void ) {
 	return _channels;
 }
 
