@@ -80,7 +80,6 @@ void Server::newConnection( void )
 			_nbClients++;
 			User new_user;
 			new_user.setSd(new_socket);
-			new_user.ipAdress = inet_ntoa(_address.sin_addr);
 			_users.push_back(new_user);
 			_clientSockets.push_back(new_socket);
 			std::cout << "Adding to list of sockets as " << _nbClients << std::endl;
@@ -188,15 +187,15 @@ bool	Server::createChannel( std::string channelName ) {
 		return false;
 	}
 
-	Channel newChannel;
-	newChannel.name = channelName;
+	Channel* newChannel = new Channel; 
+	newChannel->name = channelName;
 	_channels[channelName] = newChannel;
 	std::cout << SUCCESS("Channel \"" + channelName + "\" created") << std::endl;
-	for (std::map<std::string, Channel>::iterator it = _channels.begin(); it != _channels.end(); it++) {
+	for (std::map<std::string, Channel*>::iterator it = _channels.begin(); it != _channels.end(); it++) {
 		std::cout << "Channel: " << it->first << std::endl;
 		// iterate through the vector of users in the channel 
-		for (int i = 0; i < (int)it->second.userList.size(); i++) {
-			std::cout << "User: " << it->second.userList[i] << std::endl;
+		for (int i = 0; i < (int)it->second->userList.size(); i++) {
+			std::cout << "User: " << it->second->userList[i] << std::endl;
 		}
 	}
 	return true;
@@ -239,7 +238,7 @@ bool Server::generateResponse( User *user ) {
 
 int	Server::getPortno( void ) const { return _portno; }
 
-std::map<std::string, Channel>	Server::getChannels( void ) const { return _channels; }
+std::map<std::string, Channel*>	Server::getChannels( void ) { return _channels; }
 
 bool	Server::passOK() { return _passOK; }
 

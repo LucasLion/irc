@@ -1,8 +1,6 @@
 
 #pragma once
 
-#include "defines.hpp"
-
 #include <iostream>
 #include <string>
 #include <strings.h>
@@ -21,6 +19,8 @@
 #include <locale>
 #include <cstdlib>
 #include <string.h>
+
+#include "defines.hpp"
 
 // Reset
 #define Color_Off "\033[0m"       // Text Reset

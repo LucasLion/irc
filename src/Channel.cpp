@@ -19,11 +19,8 @@ void	Channel::addUser( User* user ) {
 
 bool	Channel::isUserInChannel( std::string user ) {
 	for (std::vector<User*>::iterator it = userList.begin(); it != userList.end(); it++) {
-		if ((*it)->getNickName() == user) {
-			std::cout << "User " << user << " is in channel " << name << std::endl;
+		if ((*it)->getNickName() == user)
 			return (true);
-		}
 	}
-	std::cout << "User " << user << " is not in channel " << name << std::endl;
 	return (false);
 }

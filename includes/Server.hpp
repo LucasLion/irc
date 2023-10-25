@@ -15,7 +15,7 @@ public:
 	int					createSocket( void );
 	void				handleConnections( void );
 	void				newConnection( void );
-    void                getBuffer( char * buf );
+    void                geter( char * buf );
 	void				run( void );
 	bool				createChannel( std::string name );
 	void				sendError(std::string code_Error, int sd);
@@ -33,7 +33,7 @@ public:
 	void				connectServer( int sd , User *user );
 
 
-	std::map<std::string, Channel>	getChannels( void ) const;
+	std::map<std::string, Channel*>	getChannels( void ) ;
 
 private:
 	
@@ -48,7 +48,7 @@ private:
 	std::string						_buffer;
 	int								_max_sd;
 	std::string						_passwd;
-	std::map<std::string, Channel>	_channels;
+	std::map<std::string, Channel*>	_channels;
 	std::vector<User>				_users;
     std::vector<Message>		    _messages;
 	bool							_passOK;
