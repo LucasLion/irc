@@ -11,13 +11,13 @@
 #include <netinet/in.h>
 #include <sys/time.h>
 #include <unistd.h>
-#include <stdlib.h>
 #include <cstdio>
 #include <cerrno>
 #include <vector>
 #include <map>
 #include <sstream>
 #include <locale>
+#include <cstdlib>
 #include <string.h>
 
 // Reset

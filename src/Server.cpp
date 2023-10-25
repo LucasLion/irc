@@ -23,7 +23,7 @@ Server::Server( char *port, char *passwd ) : _nbClients(0)
 	_max_sd = _masterSocket;
 	_passwd = passwd;
 	_name = "FT_IRC";
-	
+	_creationDate = std::time(NULL);
 }
 
 int		Server::createSocket( void ) {
@@ -240,3 +240,7 @@ bool Server::generateResponse( User *user ) {
 int	Server::getPortno( void ) const { return _portno; }
 
 std::map<std::string, Channel>	Server::getChannels( void ) const { return _channels; }
+
+bool	Server::passOK() { return _passOK; }
+
+void	Server::setPassOK(bool passOK) { _passOK = passOK;}
