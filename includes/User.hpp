@@ -24,7 +24,7 @@ class User {
 	std::string						getNickName( void );
 	std::map<std::string, Channel*>	getChannels( void );
 
-	void							addChannel( std::string channelName );
+	void							addChannel( std::string channelName, Channel* channel );
     std::vector<Message>			messages;
     bool                            isRegistered();
     void                            setRegistered(bool isRegistered);
@@ -32,6 +32,7 @@ class User {
     bool                            isRealNameSet();
     void                            setNickNameSet(bool isNickNameSet);
     void                            setRealNameSet(bool isRealNameSet);
+    std::map<std::string, Channel*> _channels;
 
 
     private : 
@@ -39,7 +40,7 @@ class User {
     std::string          		        _nickName;
     std::string                         _username;
     std::string                         _buffer;
-	std::map<std::string, Channel*>     _channels;
+	//std::map<std::string, Channel*>     _channels;
     int                                 _sd;
     bool                                _isRegistered;
     bool                                _isNickNameSet;

@@ -2,7 +2,8 @@
 #ifndef INC_42FT_IRC_ANSWERS_HPP
 # define INC_42FT_IRC_ANSWERS_HPP
 
-std::string	g_host = "localhost";
+
+# define g_host localhost
 
 # define CHANNELLEN 512
 # define HOSTLEN 512
@@ -113,6 +114,5 @@ std::string	g_host = "localhost";
 # define KICK(sender, chan, nick, reason)(":" + sender + " KICK " + chan + " " + nick + " :" + reason + "\r\n")
 # define QUIT(sender, reason)			(":" + sender + " QUIT :" + reason + "\r\n")
 # define PONG(token)						(":" + g_host + " PONG " + g_host + " " + token + "\r\n")
-# define ERROR(reason)					("ERROR :" + reason + "\r\n")
 
 #endif
