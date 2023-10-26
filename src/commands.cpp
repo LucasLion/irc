@@ -48,26 +48,29 @@ void	Server::nickCmd( Message msg, User *user ) {
 
 	if (user->isRegistered() == false) {
 		
+		if (user->getNickName().length() > 0)
+			old_nick = user->getNickName();
+		else 
+			old_nick = new_nick;
 		user->setNickName(new_nick);
 		user->setNickNameSet(true);
+		sendClient(sd, NICK(old_nick, new_nick));
 		if (user->isRealNameSet() && user->isNickNameSet() && _passOK )	{
 			user->setRegistered(true);
+			std::cout << "user registered" << std::endl;
 			connectServer(sd, user);
-		}
-			
+		}		
 	}
 	else {
 		old_nick = user->getNickName();
 		user->setNickName(new_nick);
-		std::string response = ":" + old_nick + "!" + old_nick + "@localhost NICK " + user->getNickName() + "\r\n";
-
 		for (it2 = user->_channels.begin(); it2 != user->_channels.end(); ++it2) {
 			for (int i = 0 ; i < (int)it2->second->userList.size(); i++) {
 				std::cout << it2->second->userList[i]->getSd() << std::endl;
-				send(it2->second->userList[i]->getSd(), response.c_str(), response.length(), 0);
+				sendClient(it2->second->userList[i]->getSd(), NICK(old_nick, new_nick));
+				}
 			}
-		}
-		send(sd, response.c_str(), response.length(), 0);
+		sendClient(sd, NICK(old_nick, new_nick));
 	}
 }
 
@@ -81,9 +84,13 @@ void	Server::userCmd( Message msg, User *user ) {
 	else {
 		user->setUserName(msg.getParam(0));
 		user->setRealName(msg.getParam(3));
+		user->setRealNameSet(true);
 	}
-	user->setRegistered(true);
-	connectServer(user->getSd(), user);
+	if (user->isRealNameSet() && user->isNickNameSet() && _passOK )	{
+			user->setRegistered(true);
+			std::cout << "user registered" << std::endl;
+			connectServer(user->getSd(), user);
+		}		
 }
 
 void	Server::pongCmd( Message msg, User *user ) {
@@ -94,7 +101,15 @@ void	Server::passCmd( Message msg, User *user ) {
 
 	if (msg.getParam(0) != _passwd) {
 		sendClient(user->getSd(), ERR_PASSWDMISMATCH(user->getNickName()));
-		throw std::exception();
+		return ;
+	}
+	else {
+		_passOK = true;
+		if (user->isRealNameSet() && user->isNickNameSet() && _passOK )	{
+			user->setRegistered(true);
+			std::cout << "user registered" << std::endl;
+			connectServer(user->getSd(), user);
+		}		
 	}
 }
 
@@ -212,7 +227,7 @@ void	Server::connectServer( int sd, User *user) {
 
 	std::string response;
 	
-	char buffer[20];
+	char buffer[80];
 	strftime(buffer, 40, "%a %b %d %H:%M:%S %Y", localtime(&_creationDate));
 	std::string creationDate(buffer);
 
@@ -220,4 +235,6 @@ void	Server::connectServer( int sd, User *user) {
 	sendClient(sd, RPL_YOURHOST(user->getNickName()));
 	sendClient(sd, RPL_CREATED(user->getNickName(), creationDate));
 	sendClient(sd, RPL_MYINFO(user->getNickName()));
+	sendClient(sd, RPL_ISUPPORT(user->getNickName()));
+	sendClient(sd, RPL_ISUPPORT2(user->getNickName()));
 }

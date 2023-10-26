@@ -204,7 +204,7 @@ bool Server::generateResponse( User *user ) {
 	for (std::vector<Message>::iterator it = user->messages.begin(); it != user->messages.end();) {
 		std::cout << "COMMAND_RECEIVED: " << it->rawMessage << std::endl;
 		if (it->getCommand() == "CAP") {
-			send( user->getSd(), "CAP * LS\r\n", 12, 0 );
+				send( user->getSd(), "CAP * LS\r\n", 12, 0 );
 		}
 		if (it->getCommand() == "NICK") {
 			nickCmd(*it, user);
