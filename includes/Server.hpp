@@ -15,7 +15,7 @@ public:
 	int					createSocket( void );
 	void				handleConnections( void );
 	void				newConnection( void );
-    void                geter( char * buf );
+    void                getBuffer( char * buf );
 	void				run( void );
 	bool				createChannel( std::string name );
 	void				sendError(std::string code_Error, int sd);
@@ -31,6 +31,7 @@ public:
 	bool				passOK();
 	void				setPassOK(bool passOK);
 	void				connectServer( int sd , User *user );
+	void				sendClient(int sd, std::string response);
 
 
 	std::map<std::string, Channel*>	getChannels( void ) ;

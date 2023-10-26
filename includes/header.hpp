@@ -19,6 +19,7 @@
 #include <locale>
 #include <cstdlib>
 #include <string.h>
+#include <ctime>
 
 #include "defines.hpp"
 

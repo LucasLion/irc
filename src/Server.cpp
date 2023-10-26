@@ -62,7 +62,6 @@ int		Server::createSocket( void ) {
 void Server::newConnection( void )
 {
 	int new_socket;
-	//std::string message = "Welcome to FT_IRC server\r\n";
 
 	if ((new_socket = accept(_masterSocket,
 		(struct sockaddr *)&_address, (socklen_t*)&_addrLen))<0) {
