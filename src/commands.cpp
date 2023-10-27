@@ -36,6 +36,7 @@ void	Server::nickCmd( Message msg, User *user ) {
 	new_nick = msg.getParam(0);
 	for (it = _users.begin(); it != _users.end(); ++it) {
 		if (new_nick == it->getNickName()) {
+			std::cout << "nick already taken" << std::endl;
 			sendClient(sd, ERR_NICKNAMEINUSE(user->getNickName(), new_nick));
 			return;
 		}
@@ -57,7 +58,7 @@ void	Server::nickCmd( Message msg, User *user ) {
 		sendClient(sd, NICK(old_nick, new_nick));
 		if (user->isRealNameSet() && user->isNickNameSet() && _passOK )	{
 			user->setRegistered(true);
-			std::cout << "user registered" << std::endl;
+			std::cout << "user registered dans NICK" << std::endl;
 			connectServer(sd, user);
 		}		
 	}
@@ -81,14 +82,18 @@ void	Server::userCmd( Message msg, User *user ) {
 	}
 	if (user->isRegistered())
 		sendClient(user->getSd(), ERR_ALREADYREGISTERED(user->getNickName()));
+	if(user->isRealNameSet())
+		sendClient(user->getSd(), ERR_ALREADYREGISTERED(user->getNickName()));
+	if (user->isPassOK() == false)
+		sendClient(user->getSd(), ERR_PASSWDMISMATCH(user->getNickName()));
 	else {
 		user->setUserName(msg.getParam(0));
 		user->setRealName(msg.getParam(3));
 		user->setRealNameSet(true);
 	}
-	if (user->isRealNameSet() && user->isNickNameSet() && _passOK )	{
+	if (user->isRealNameSet() && user->isNickNameSet() && user->isPassOK() && !user->isRegistered())	{
 			user->setRegistered(true);
-			std::cout << "user registered" << std::endl;
+			std::cout << "user registered dans USER" << std::endl;
 			connectServer(user->getSd(), user);
 		}		
 }
@@ -99,18 +104,17 @@ void	Server::pongCmd( Message msg, User *user ) {
 
 void	Server::passCmd( Message msg, User *user ) {
 
-	if (msg.getParam(0) != _passwd) {
-		sendClient(user->getSd(), ERR_PASSWDMISMATCH(user->getNickName()));
-		return ;
+	if (msg.getParam(0).length() > 0) {
+		user->setPass(msg.getParam(0));
+		if(user->getPass() == _passwd)
+			user->setPassOK(true);
+		else
+			user->setPassOK(false);
 	}
-	else {
-		_passOK = true;
-		if (user->isRealNameSet() && user->isNickNameSet() && _passOK )	{
-			user->setRegistered(true);
-			std::cout << "user registered" << std::endl;
-			connectServer(user->getSd(), user);
-		}		
-	}
+		//throw std::exception();
+		//sendClient(user->getSd(), ERR_PASSWDMISMATCH(user->getNickName()));
+		
+	
 }
 
 void	Server::joinCmd( Message msg, User *user ) {
