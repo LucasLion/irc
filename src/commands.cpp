@@ -130,7 +130,7 @@ void	Server::joinCmd( Message msg, User *user ) {
 		sendClient(user->getSd(), ERR_NEEDMOREPARAMS(user->getNickName(), msg.getCommand()));
 		return ;
 	}
-	// check if the channel name is valide
+	// check if the channel name is valid
 	if (msg.getParam(0)[0] != '#') {
 		sendClient(user->getSd(), ERR_NOSUCHCHANNEL(user->getNickName(), msg.getParam(0)));
 		return ;
@@ -141,9 +141,9 @@ void	Server::joinCmd( Message msg, User *user ) {
 		//user->addChannel(msg.getParam(0), , &(_channels[msg.getParam(0)])));
 	}
 	// check if the user is already in the channel
-	//if (_channels[msg.getParam(0)]->isUserInChannel(user->getNickName())) {
-	//	sendClient(user->getSd(), ERR_USERONCHANNEL(user->getNickName(), user->getNickName(), msg.getParam(0)));
-	//}
+	if (_channels[msg.getParam(0)]->isUserInChannel(user->getNickName())) {
+		sendClient(user->getSd(), ERR_USERONCHANNEL(user->getNickName(), user->getNickName(), msg.getParam(0)));
+	}
 	else {
 		_channels[msg.getParam(0)]->addUser(user);
 		user->addChannel(msg.getParam(0), _channels[msg.getParam(0)]);
@@ -166,16 +166,16 @@ void	Server::joinCmd( Message msg, User *user ) {
 		}
 		
 		// loop with iterator to send the list to everyone in the channels
-		//std::vector<User*>::iterator it;
-		//for (it = _channels[msg.getParam(0)]->userList.begin(); it != _channels[msg.getParam(0)]->userList.end(); ++it) {
-		//	sendClient((*it)->getSd(), RPL_NAMREPLY(user->getNickName(), "=", msg.getParam(0), "", (*it)->getNickName()));
-		//};	
+		std::vector<User*>::iterator it;
+		for (it = _channels[msg.getParam(0)]->userList.begin(); it != _channels[msg.getParam(0)]->userList.end(); ++it) {
+			sendClient((*it)->getSd(), RPL_NAMREPLY(user->getNickName(), "=", msg.getParam(0), "", (*it)->getNickName()));
+		};	
 
 
-		//for (int i = 0; i < (int)user->getChannels()[msg.getParam(0)]->userList.size(); i++) {
-		//	std::cout << "2" << std::endl;
-		//	send(_users[i].getSd(), response.c_str(), response.length(), 0);
-		//}
+		for (int i = 0; i < (int)user->getChannels()[msg.getParam(0)]->userList.size(); i++) {
+			std::cout << "2" << std::endl;
+			send(_users[i].getSd(), response.c_str(), response.length(), 0);
+		}
 	}
 	}
 
