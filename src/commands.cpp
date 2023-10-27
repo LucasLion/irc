@@ -21,6 +21,9 @@ void	Server::sendClient(int sd, std::string response) {
 	write(sd, response.c_str(), response.length());
 }
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <cstring>
 void	Server::nickCmd( Message msg, User *user ) {
 	
 	std::string new_nick;
@@ -37,9 +40,12 @@ void	Server::nickCmd( Message msg, User *user ) {
 	new_nick = msg.getParam(0);
 	for (it = _users.begin(); it != _users.end(); ++it) {
 		if (new_nick == it->getNickName()) {
-			std::cout << "nick already taken" << std::endl;
-			sendClient(sd, ERR_NICKNAMEINUSE(user->getNickName(), new_nick));
-			return;
+			char num[10];
+			sprintf(num, "%d", _nbClients);
+			std::string nu = static_cast<std::string>(num);
+			new_nick = "guest" + nu;
+			//sendClient(sd, ERR_NICKNAMEINUSE(user->getNickName(), new_nick));
+			//return;
 		}
 	}
 
@@ -146,25 +152,24 @@ void	Server::joinCmd( Message msg, User *user ) {
 		sendClient(user->getSd(), RPL_TOPIC(user->getNickName(), msg.getParam(0), "default topic (has to change)"));
 
 		// create the list of users in the channels
-		//response = ":localhost 353 " + user->getNickName() + " = " + msg.getParam(0) + " :";
+		std::string response = ":localhost 353 " + user->getNickName() + " = " + msg.getParam(0) + " :";
 
-		//for (int i = 0; i < (int)_channels[msg.getParam(0)]->userList.size(); i++) {
-		//	response += _channels[msg.getParam(0)]->userList[i]->getNickName() + " ";
-		//}
-		//response += "\r\n";
-		// send the list to everyone in the channel
-//
-		//for (int i = 0; i < (int)_channels[msg.getParam(0)]->userList.size(); i++) {
-		//	// modifier ici, envoie a tout le monde dans le serveur au lieu de tout le monde dans le channel
-		//	send(_users[i].getSd(), response.c_str(), response.length(), 0);
-		//	sendClient(user->getSd(), ERR_PASSWDMISMATCH(user->getNickName()));
-		//}
+		for (int i = 0; i < (int)_channels[msg.getParam(0)]->userList.size(); i++) {
+			response += _channels[msg.getParam(0)]->userList[i]->getNickName() + " ";
+		}
+		response += "\r\n";
+//		 send the list to everyone in the channel
+		for (int i = 0; i < (int)_channels[msg.getParam(0)]->userList.size(); i++) {
+			// modifier ici, envoie a tout le monde dans le serveur au lieu de tout le monde dans le channel
+			send(_users[i].getSd(), response.c_str(), response.length(), 0);
+			//sendClient(user->getSd(), ERR_PASSWDMISMATCH(user->getNickName()));
+		}
 		
 		// loop with iterator to send the list to everyone in the channels
-		std::vector<User*>::iterator it;
-		for (it = _channels[msg.getParam(0)]->userList.begin(); it != _channels[msg.getParam(0)]->userList.end(); ++it) {
-			sendClient((*it)->getSd(), RPL_NAMREPLY(user->getNickName(), "=", msg.getParam(0), "", (*it)->getNickName()));
-		};	
+		//std::vector<User*>::iterator it;
+		//for (it = _channels[msg.getParam(0)]->userList.begin(); it != _channels[msg.getParam(0)]->userList.end(); ++it) {
+		//	sendClient((*it)->getSd(), RPL_NAMREPLY(user->getNickName(), "=", msg.getParam(0), "", (*it)->getNickName()));
+		//};	
 
 
 		//for (int i = 0; i < (int)user->getChannels()[msg.getParam(0)]->userList.size(); i++) {
