@@ -21,17 +21,33 @@ void	User::getBuffer( char *buf ) {
 
 	size_t	                start = 0;
     size_t	                crlfPos;
+    size_t                  lfPos;
 
-    _buffer.assign(buf, strlen(buf));
+        _buffer.append(buf, strlen(buf));
+       while ((crlfPos = _buffer.find("\r\n", start)) != std::string::npos ||
+           (lfPos = _buffer.find("\n", start)) != std::string::npos) {
 
-    while ((crlfPos = _buffer.find("\r\n", start)) != std::string::npos) {
+        size_t pos;
+        if (crlfPos != std::string::npos && lfPos != std::string::npos) {
+            pos = std::min(crlfPos, lfPos);
+        } else if (crlfPos != std::string::npos) {
+            pos = crlfPos;
+        } else {
+            pos = lfPos;
+        }
+
         Message cmd;
-        cmd.rawMessage = (_buffer.substr(start, crlfPos - start));
+        cmd.rawMessage = (_buffer.substr(start, pos - start));
 		cmd.parseInput();
         messages.push_back(cmd); 
-        start = crlfPos + 2;
+        start = pos + 2;
+    }
+     if (start > 0) {
+        _buffer = _buffer.substr(start);
     }
 }
+
+
 
 void	User::addChannel( std::string chanName, Channel* channel ) {
     _channels[chanName] = channel;

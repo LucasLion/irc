@@ -17,7 +17,8 @@ bool is_valid(const std::string nickname) {
 }
 
 void	Server::sendClient(int sd, std::string response) {
-	send(sd, response.c_str(), response.length(), 0);
+	///send(sd, response.c_str(), response.length(), 0);
+	write(sd, response.c_str(), response.length());
 }
 
 void	Server::nickCmd( Message msg, User *user ) {
