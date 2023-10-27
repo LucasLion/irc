@@ -2,12 +2,12 @@
 #ifndef INC_42FT_IRC_ANSWERS_HPP
 # define INC_42FT_IRC_ANSWERS_HPP
 
-# define CHANNELLEN 512
-# define HOSTLEN 512
-# define KICKLEN 307
-# define NICKLEN 31
-# define TOPICLEN 307
-# define USERLEN 18
+# define CHANNELLEN "512"
+# define HOSTLEN "512"
+# define KICKLEN "307"
+# define NICKLEN "31"
+# define TOPICLEN "307"
+# define USERLEN "18"
 
 # define RPL_WELCOME(client)				(":localhost 001 " + client + " :Welcome to FT_IRC Network, " + client + "\r\n")
 # define RPL_YOURHOST(client)			(":localhost 002 " + client + " :Your host is localhost, running version 1\r\n")
@@ -17,19 +17,19 @@
 																			"CASEMAPPING=rfc7613 " + \
 																			"CHANLIMIT=#: " + \
 																			"CHANMODES=,,kl,it " + \
-																			"CHANNELLEN=" + std::to_string(CHANNELLEN) + " " + \
+																			"CHANNELLEN=" + CHANNELLEN + " " + \
 																			"CHANTYPES=# " + \
 																			"ELIST= " + \
-																			"HOSTLEN=" + std::to_string(HOSTLEN) + " " + \
-																			"KICKLEN=" + std::to_string(KICKLEN) + " " + \
+																			"HOSTLEN=" + HOSTLEN + " " + \
+																			"KICKLEN=" + KICKLEN + " " + \
 																			"MAXTARGETS= " + \
 																			"NETWORK=FT_IRC " + \
-																			"NICKLEN=" + std::to_string(NICKLEN) + " " + \
+																			"NICKLEN=" + NICKLEN + " " + \
 																			"STATUSMSG=~@ " + \
 																			":Are supported by this server\r\n")
 # define RPL_ISUPPORT2(client)			(":localhost 005 " + client +	" TARGMAX=PRIVMSG:,JOIN:,NAMES:,WHO:1,PART:,KICK:1,LIST:1 " + \
-																			"TOPICLEN=" + std::to_string(TOPICLEN) + " " + \
-																			"USERLEN=" + std::to_string(USERLEN) + " " + \
+																			"TOPICLEN=" + TOPICLEN + " " + \
+																			"USERLEN=" + USERLEN + " " + \
 																			":Are supported by this server\r\n")
 
 # define RPL_UMODEIS(client, modestring)	(":localhost 221 " + client + " " + modestring + "\r\n")

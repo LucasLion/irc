@@ -5,6 +5,9 @@
 
 User::User( void ) { 
     setRegistered(false);
+    setNickNameSet(false);
+    setRealNameSet(false);
+    _passOK = false;
 }
 
 void User::printCommands( void ) {
@@ -92,4 +95,20 @@ void User::setUserName(std::string userName){
 
 std::string User::getUserName(){
     return _username;
+}
+
+std::string User::getPass(){
+    return _pass;
+}
+
+void User::setPass(std::string pass){
+    _pass = pass;
+}
+
+void User::setPassOK(bool passOK){
+    _passOK = passOK;
+}
+
+bool User::isPassOK(){
+    return _passOK;
 }
