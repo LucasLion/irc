@@ -54,5 +54,6 @@ private:
     std::vector<Message>		    _messages;
 	bool							_passOK;
 	std::time_t						_creationDate;
+	int								_numGuest;
 	// rajouter le IP par defaut / 3e parametre optionnel
 };

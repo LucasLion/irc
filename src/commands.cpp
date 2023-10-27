@@ -41,7 +41,8 @@ void	Server::nickCmd( Message msg, User *user ) {
 	for (it = _users.begin(); it != _users.end(); ++it) {
 		if (new_nick == it->getNickName()) {
 			char num[10];
-			sprintf(num, "%d", _nbClients);
+			sprintf(num, "%d", _numGuest);
+			_numGuest++;
 			std::string nu = static_cast<std::string>(num);
 			new_nick = "guest" + nu;
 			//sendClient(sd, ERR_NICKNAMEINUSE(user->getNickName(), new_nick));

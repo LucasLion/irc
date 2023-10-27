@@ -25,6 +25,7 @@ Server::Server( char *port, char *passwd ) : _nbClients(0)
 	_name = "FT_IRC";
 	_creationDate = std::time(NULL);
 	_passOK = false;
+	_numGuest= 1;
 }
 
 int		Server::createSocket( void ) {
