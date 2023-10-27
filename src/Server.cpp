@@ -136,6 +136,8 @@ void Server::run( void ) {
 				bzero(buffer, 1025);
 				valRead = read(_users[i].getSd(), buffer, 1024);
 				_users[i].getBuffer(buffer);
+
+				
 				if (valRead != 0) {
 					if (generateResponse(&_users[i]) == false){
 						close(_users[i].getSd());
