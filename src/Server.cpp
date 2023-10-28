@@ -209,17 +209,24 @@ bool Server::generateResponse( User *user ) {
 
 	for (std::vector<Message>::iterator it = user->messages.begin(); it != user->messages.end();) {
 		std::cout << "COMMAND_RECEIVED: " << it->rawMessage << std::endl;
-		if (it->getCommand() == "CAP") {
-				send( user->getSd(), "CAP * LS\r\n", 12, 0 );
-		}
+		
+				if (it->getCommand() == "CAP") {
+					//send( user->getSd(), "CAP * LS\r\n", 12, 0 );
+					//break;
+				}
+				if (it->getCommand() == "NICK") {
+					nickCmd(*it, user);
+				}
+				if (it->getCommand() == "USER") {
+					userCmd(*it, user);
+				}
+				if (it->getCommand() == "PASS") {
+					passCmd(*it, user);
+				}
+		
+		
 		if (it->getCommand() == "NICK") {
 			nickCmd(*it, user);
-		}
-		if (it->getCommand() == "USER") {
-			userCmd(*it, user);
-		}
-		if (it->getCommand() == "PASS") {
-			passCmd(*it, user);
 		}
 		if (it->getCommand() == "PING") {
 			pongCmd(*it, user);
