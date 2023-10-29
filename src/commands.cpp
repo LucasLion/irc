@@ -21,9 +21,63 @@ void	Server::sendClient(int sd, std::string response) {
 	write(sd, response.c_str(), response.length());
 }
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <cstring>
+
+
+
+
+void	Server::nickPreRegistration( Message msg, User *user ) {
+	
+	std::string new_nick;
+	std::string old_nick;
+	int sd = user->getSd();
+	char num[10];
+	std::string nu;
+	std::string response;
+	std::vector<User>::iterator it;
+	std::map<std::string, Channel*>::iterator it2;
+
+	sprintf(num, "%d", _numGuest);
+
+	if (msg.getParam(0).length() == 0) {
+		_numGuest++;
+		nu = static_cast<std::string>(num);
+		new_nick = "guest" + nu;
+		response = "we gave you the nickname :  " + new_nick;
+		//write(sd, response.c_str(), response.length());
+		//sendClient(sd, response);
+	}
+
+	new_nick = msg.getParam(0);
+	for (it = _users.begin(); it != _users.end(); ++it) {
+		if (new_nick == it->getNickName()) {
+			_numGuest++;
+			nu = static_cast<std::string>(num);
+			new_nick = "guest" + nu;
+			response = "we gave you the nickname :  " + new_nick;
+			//write(sd, response.c_str(), response.length());
+			//sendClient(sd, response);
+		}
+	}
+
+	if (!is_valid(new_nick)) {
+			_numGuest++;
+			nu = static_cast<std::string>(num);
+			new_nick = "guest" + nu;
+			response = "we gave you the nickname :  " + new_nick;
+			//write(sd, response.c_str(), response.length());
+			//sendClient(sd, response);
+	}
+
+	user->setNickName(new_nick);
+	user->setNickNameSet(true);
+		if(user->isPassOK() && user->isRealNameSet()){
+			user->setRegistered(true);
+			std::cout << "user registered dans NICK" << std::endl;
+			connectServer(sd, user);
+		}
+
+}
+
 void	Server::nickCmd( Message msg, User *user ) {
 	
 	std::string new_nick;
@@ -31,6 +85,9 @@ void	Server::nickCmd( Message msg, User *user ) {
 	int sd = user->getSd();
 	std::vector<User>::iterator it;
 	std::map<std::string, Channel*>::iterator it2;
+
+	std::cout << "nickCmd" << std::endl;
+	std::cout << "msg : " << msg.getParam(0) << std::endl;
 
 	if (msg.getParam(0).length() == 0) {
 		sendClient(sd, ERR_NONICKNAMEGIVEN(user->getNickName()));
@@ -40,13 +97,8 @@ void	Server::nickCmd( Message msg, User *user ) {
 	new_nick = msg.getParam(0);
 	for (it = _users.begin(); it != _users.end(); ++it) {
 		if (new_nick == it->getNickName()) {
-			char num[10];
-			sprintf(num, "%d", _numGuest);
-			_numGuest++;
-			std::string nu = static_cast<std::string>(num);
-			new_nick = "guest" + nu;
-			//sendClient(sd, ERR_NICKNAMEINUSE(user->getNickName(), new_nick));
-			//return;
+			sendClient(sd, ERR_NICKNAMEINUSE(user->getNickName(), new_nick));
+			return;
 		}
 	}
 
@@ -54,31 +106,22 @@ void	Server::nickCmd( Message msg, User *user ) {
 		sendClient(sd, ERR_ERRONEUSNICKNAME(user->getNickName(), new_nick));
 		return;
 	}
-
-	if (user->isRegistered() == false) {
-		
-		if (user->getNickName().length() > 0)
-			old_nick = user->getNickName();
-		else 
-			old_nick = new_nick;
-		user->setNickName(new_nick);
-		user->setNickNameSet(true);
-		sendClient(sd, NICK(old_nick, new_nick));
-		if (user->isRealNameSet() && user->isNickNameSet() && _passOK )	{
-			user->setRegistered(true);
-			std::cout << "user registered dans NICK" << std::endl;
-			connectServer(sd, user);
-		}		
-	}
-	else {
-		old_nick = user->getNickName();
-		user->setNickName(new_nick);
+	
+	old_nick = user->getNickName();
+	user->setNickName(new_nick);
+	if (user->_channels.size() > 0){
 		for (it2 = user->_channels.begin(); it2 != user->_channels.end(); ++it2) {
 			for (int i = 0 ; i < (int)it2->second->userList.size(); i++) {
 				std::cout << it2->second->userList[i]->getSd() << std::endl;
 				sendClient(it2->second->userList[i]->getSd(), NICK(old_nick, new_nick));
-				}
 			}
+		}
+	}else{
+		std::cout << "new nick : " << new_nick << std::endl;
+		old_nick += "!" + user->getUserName() + "@localhost";
+		std::cout << "old nick : " << old_nick << std::endl;
+		std::string response = NICK(old_nick, new_nick);
+		std::cout << "response : " << response << std::endl;
 		sendClient(sd, NICK(old_nick, new_nick));
 	}
 }
@@ -99,16 +142,14 @@ void	Server::userCmd( Message msg, User *user ) {
 		user->setRealName(msg.getParam(3));
 		user->setRealNameSet(true);
 	}
-	if (user->isRealNameSet() && user->isNickNameSet() && user->isPassOK() && !user->isRegistered())	{
+	if (user->isNickNameSet() && user->isPassOK())	{
 			user->setRegistered(true);
 			std::cout << "user registered dans USER" << std::endl;
 			connectServer(user->getSd(), user);
 		}		
 }
 
-void	Server::pongCmd( Message msg, User *user ) {
-	sendClient(user->getSd(), msg.getParam(0));
-}
+
 
 void	Server::passCmd( Message msg, User *user ) {
 
@@ -123,6 +164,12 @@ void	Server::passCmd( Message msg, User *user ) {
 		//sendClient(user->getSd(), ERR_PASSWDMISMATCH(user->getNickName()));
 		
 	
+}
+
+
+
+void	Server::pongCmd( Message msg, User *user ) {
+	sendClient(user->getSd(), PONG(msg.getParam(0)));
 }
 
 void	Server::joinCmd( Message msg, User *user ) {
@@ -248,4 +295,13 @@ void	Server::connectServer( int sd, User *user) {
 	sendClient(sd, RPL_MYINFO(user->getNickName()));
 	sendClient(sd, RPL_ISUPPORT(user->getNickName()));
 	sendClient(sd, RPL_ISUPPORT2(user->getNickName()));
+	sendClient(sd, RPL_LUSERCLIENT(user->getNickName(), "1", "1", "1"));
+	sendClient(sd, RPL_LUSEROP(user->getNickName(), "1"));
+	sendClient(sd, RPL_LUSERCHANNELS(user->getNickName(), "1"));
+	sendClient(sd, RPL_LUSERME(user->getNickName(), "1", "1"));
+	sendClient(sd, RPL_LOCALUSERS(user->getNickName(), "1", "1"));
+	sendClient(sd, RPL_GLOBALUSERS(user->getNickName(), "1", "1"));
+	sendClient(sd, RPL_MOTDSTART(user->getNickName()));
+	sendClient(sd, RPL_MOTD(user->getNickName(), "Welcome to the Internet Relay Network " + user->getNickName()));
+	sendClient(sd, RPL_MOTDEND(user->getNickName()));
 }

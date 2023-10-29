@@ -209,13 +209,10 @@ bool Server::generateResponse( User *user ) {
 
 	for (std::vector<Message>::iterator it = user->messages.begin(); it != user->messages.end();) {
 		std::cout << "COMMAND_RECEIVED: " << it->rawMessage << std::endl;
-		
-				if (it->getCommand() == "CAP") {
-					//send( user->getSd(), "CAP * LS\r\n", 12, 0 );
-					//break;
-				}
+	
+			if(user->isRegistered() == false) {
 				if (it->getCommand() == "NICK") {
-					nickCmd(*it, user);
+					nickPreRegistration(*it, user);
 				}
 				if (it->getCommand() == "USER") {
 					userCmd(*it, user);
@@ -223,37 +220,44 @@ bool Server::generateResponse( User *user ) {
 				if (it->getCommand() == "PASS") {
 					passCmd(*it, user);
 				}
-		
-		
-		if (it->getCommand() == "NICK") {
-			nickCmd(*it, user);
-		}
-		if (it->getCommand() == "PING") {
-			pongCmd(*it, user);
-		}
-		if (it->getCommand() == "JOIN") {
-			joinCmd(*it, user);
-		}
-		if (it->getCommand() == "TOPIC") {
-			topicCmd(*it, user);
-		}
-		if (it->getCommand() == "PRIVMSG") {
-			prvMsgCmd(*it, user);
-		}
-		if (it->getCommand() == "PONG") {
-			return (false);
-		}
-		if (it->getCommand() == "LIST") {
-			//print list of user by nickname
-			for (std::vector<User>::iterator it2 = _users.begin(); it2 != _users.end(); ++it2) {
-				std::cout << "User: " << it2->getNickName() << std::endl;
 			}
-		}
+			else{
+
+				if (it->getCommand() == "NICK") {
+					nickCmd(*it, user);
+				}
+				if (it->getCommand() == "PING") {
+					pongCmd(*it, user);
+				}
+				if (it->getCommand() == "JOIN") {
+					joinCmd(*it, user);
+				}
+				if (it->getCommand() == "TOPIC") {
+					topicCmd(*it, user);
+				}
+				if (it->getCommand() == "PRIVMSG") {
+					prvMsgCmd(*it, user);
+				}
+				if (it->getCommand() == "PONG") {
+					return (false);
+				}
+				if (it->getCommand() == "MODE") {
+					sendClient(user->getSd(), MODE(user->getNickName(), user->getNickName(), "+i", ""));
+				}
+				if (it->getCommand() == "LIST") {
+					//print list of user by nickname
+					for (std::vector<User>::iterator it2 = _users.begin(); it2 != _users.end(); ++it2) {
+						std::cout << "User: " << it2->getNickName() << std::endl;
+					}
+				}
+			}
 
 		it = user->messages.erase(it);
     }
 	return (true);
 }
+
+
 
 int	Server::getPortno( void ) const { return _portno; }
 
