@@ -53,8 +53,8 @@ void	Server::nickPreRegistration( Message msg, User *user ) {
 			_numGuest++;
 			nu = static_cast<std::string>(num);
 			new_nick = "guest" + nu;
-			response = "we gave you the nickname :  " + new_nick;
-			//write(sd, response.c_str(), response.length());
+			response = "we gave you the nickname : " + new_nick + "\r\n";
+			write(sd, response.c_str(), response.length());
 			//sendClient(sd, response);
 		}
 	}
@@ -64,7 +64,7 @@ void	Server::nickPreRegistration( Message msg, User *user ) {
 			nu = static_cast<std::string>(num);
 			new_nick = "guest" + nu;
 			response = "we gave you the nickname :  " + new_nick;
-			//write(sd, response.c_str(), response.length());
+			write(sd, response.c_str(), response.length());
 			//sendClient(sd, response);
 	}
 
