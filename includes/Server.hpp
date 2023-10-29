@@ -22,6 +22,7 @@ public:
 	bool				generateResponse( User *user );
 	void				userCmd( Message msg, User *user );
 	void				nickCmd( Message msg, User *user );
+	void				nickPreRegistration( Message msg, User *user );
 	void				passCmd( Message msg, User *user );
 	void				joinCmd( Message msg, User *user );
 	void				pongCmd( Message msg, User *user );

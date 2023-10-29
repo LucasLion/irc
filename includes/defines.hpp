@@ -113,3 +113,9 @@
 # define PONG(token)						(":localhost PONG localhost " + token + "\r\n")
 
 #endif
+
+
+
+// NICK amouly
+// USER useramouly 0 * :realamouly
+// NICK moulnick
