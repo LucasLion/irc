@@ -20,6 +20,7 @@ public:
 	bool				createChannel( std::string name );
 	void				sendError(std::string code_Error, int sd);
 	bool				generateResponse( User *user );
+	std::string			generateDefaultNick( void );
 	void				userCmd( Message msg, User *user );
 	void				nickCmd( Message msg, User *user );
 	void				nickPreRegistration( Message msg, User *user );
@@ -54,7 +55,9 @@ private:
 	std::vector<User>				_users;
     std::vector<Message>		    _messages;
 	bool							_passOK;
-	std::time_t						_creationDate;
+	std::time_t						_creationTime;
+	std::string						_creationDate;
 	int								_numGuest;
+	unsigned long					_maxUsers;
 	// rajouter le IP par defaut / 3e parametre optionnel
 };
