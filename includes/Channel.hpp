@@ -14,9 +14,13 @@ class Channel {
 		void						addUser( User* user );
 		void 						removeUser(User* user);
 		bool						isUserInChannel( std::string user );
+		bool						isUserOp( std::string user );
 
+		
 		std::string					name;
 		std::vector<User*>			userList;
+		std::vector<std::string>	operList;
+		std::vector<std::string>	bannedList;
 
 		class ChannelAlreadyExistsException : public std::exception {
 				virtual const char*	what() const throw();

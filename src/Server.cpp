@@ -184,8 +184,7 @@ void	Server::getBuffer( char *buf ) {
     }
 }
 
-bool	Server::createChannel( std::string channelName ) {
-
+bool	Server::createChannel( std::string channelName, std::string user) {
 	try {
 		if (_channels.find(channelName) != _channels.end())
 			throw Channel::ChannelAlreadyExistsException();
@@ -196,7 +195,10 @@ bool	Server::createChannel( std::string channelName ) {
 
 	Channel* newChannel = new Channel; 
 	newChannel->name = channelName;
+	std::cout << "User: " << user << std::endl;
+	newChannel->operList.push_back(user);
 	_channels[channelName] = newChannel;
+
 	std::cout << SUCCESS("Channel \"" + channelName + "\" created") << std::endl;
 	for (std::map<std::string, Channel*>::iterator it = _channels.begin(); it != _channels.end(); it++) {
 		std::cout << "Channel: " << it->first << std::endl;
@@ -273,7 +275,7 @@ bool Server::generateResponse( User *user ) {
 
 int	Server::getPortno( void ) const { return _portno; }
 
-std::map<std::string, Channel*>	Server::getChannels( void ) { return _channels; }
+std::map<std::string, Channel*>	*Server::getChannels( void ) { return &_channels; }
 
 bool	Server::passOK() { return _passOK; }
 

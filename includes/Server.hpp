@@ -17,7 +17,7 @@ public:
 	void				newConnection( void );
     void                getBuffer( char * buf );
 	void				run( void );
-	bool				createChannel( std::string name );
+	bool				createChannel( std::string namechannel, std::string user );
 	void				sendError(std::string code_Error, int sd);
 	bool				generateResponse( User *user );
 	std::string			generateDefaultNick( void );
@@ -38,7 +38,7 @@ public:
 	void				sendClient(int sd, std::string response);
 
 
-	std::map<std::string, Channel*>	getChannels( void ) ;
+	std::map<std::string, Channel*>	*getChannels( void ) ;
 
 private:
 	

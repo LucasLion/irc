@@ -21,6 +21,7 @@ class Message {
 		std::string 				getSource( void );
 		std::string 				getTag( void );
 		std::string                 rawMessage;
+		int 						nbParam( void );
 
 
 	private : 

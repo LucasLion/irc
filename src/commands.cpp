@@ -156,22 +156,48 @@ void	Server::userCmd( Message msg, User *user ) {
 void	Server::modeCmd( Message msg, User *user ) {
 	
 	std::cout << "modeCmd : " << msg.rawMessage	<< std::endl;
-	std::string userMode = msg.getParam(0);
-	std::string channel = msg.getParam(1);
-	std::string modestring = msg.getParam(2);
-	if(channel[0] != '#'){
-		sendClient(user->getSd(), ERR_UMODEUNKNOWNFLAG(user->getNickName()));
-		return;
-	}
-	else if(_channels.find(channel) == _channels.end())
-		sendClient(user->getSd(), ERR_NOSUCHCHANNEL(user->getNickName(), channel));
-	if(modestring.size() == 0)
-		sendClient(user->getSd(), RPL_CHANNELMODEIS(user->getNickName(), channel, "+,-", "i,t,k,o,l"));
-	else  
-		sendClient(user->getSd(), "OOOOOOKKKKKKKK");
+	Channel *channel;
+	std::map<std::string, Channel*>::iterator it;
+	std::string nick = user->getNickName();
+	std::string target = msg.getParam(0);
+	int sd = user->getSd();
+	int nbArgs = msg.nbParam() - 1;
+	std::string modeArgs[nbArgs];
+	for(int i = 0; i < nbArgs; i++)
+		modeArgs[i] = msg.getParam(1 + i);
 	
-}
+	if(target[0] != '#')
+	 	sendClient(sd, ERR_UMODEUNKNOWNFLAG(nick));
+	else {
+		if(_channels.find(target) == _channels.end()){
+			sendClient(sd, ERR_NOSUCHCHANNEL(nick, target));
+			return;
+		}
+		if (nbArgs == 0){
+	  		sendClient(sd, RPL_CHANNELMODEIS(nick, target, "+,-", "i,t,k,o,l"));
+			return;
+		}
+		//find the channel
+		for (it = getChannels()->begin(); it != getChannels()->end(); ++it) {
+				if (it->first == target)
+					channel = it->second;
+				std::cout << "Channel: " << it->first << std::endl;
+			}
+		//check if the user is in the channel && is op
+		if (channel->isUserInChannel(nick) == false){
+			sendClient(sd, ERR_NOTONCHANNEL(nick, target));
+			return;
+		}
+		if (channel->isUserOp(nick) == false){
+			sendClient(sd, ERR_CHANOPRIVSNEEDED(nick, target));
+			return;
+		}
+		
 
+	// // else  
+	// // 	sendClient(user->getSd(), "OOOOOOKKKKKKKK");
+	}
+}
 
 
 
@@ -210,7 +236,7 @@ void	Server::joinCmd( Message msg, User *user ) {
 	}
 	// check if the channel exists and create it if not
 	if (_channels.find(msg.getParam(0)) == _channels.end()) {
-		this->createChannel(msg.getParam(0));
+		this->createChannel(msg.getParam(0), user->getNickName());
 		//user->addChannel(msg.getParam(0), , &(_channels[msg.getParam(0)])));
 	}
 	// check if the user is already in the channel
@@ -307,7 +333,7 @@ void	Server::prvMsgCmd( Message msg, User *user ) {
 }
 
 void Server::quitCmd(Message msg, User *user) {
-	std::string reason = "Quit :";
+	std::string reason = "Quit: ";
 	if (msg.getParam(0).length()> 0)
 		reason += msg.getParam(0);
     for (std::vector<User>::iterator it = _users.begin(); it != _users.end(); ++it) {
