@@ -285,6 +285,43 @@ void	Server::prvMsgCmd( Message msg, User *user ) {
 	}
 }
 
+void Server::quitCmd(Message msg, User *user) {
+    std::string reason = msg.getParam(0);
+    for (std::vector<User>::iterator it = _users.begin(); it != _users.end(); ++it) {
+        if (it->getNickName() != user->getNickName()) {
+            std::string quitMessage = "QUIT";
+            if (!reason.empty()) {
+                quitMessage += " :" + reason;
+            }
+            sendClient(it->getSd(), quitMessage);
+        }
+    }
+
+   
+    for (std::map<std::string, Channel*>::iterator it = user->_channels.begin(); it != user->_channels.end(); ++it) {
+        it->second->removeUser(user);
+    }
+
+   
+    std::string quitResponse = "ERROR :Closing Link: " + user->getNickName() + " (" + user->getHost() + ") [" + (reason.empty() ? "Quit" : reason) + "]";
+    sendClient(user->getSd(), quitResponse);
+
+    
+    close(user->getSd());
+
+   
+    for (std::vector<User>::iterator it = _users.begin(); it != _users.end(); ++it) {
+        if (it->getNickName() == user->getNickName()) {
+            _users.erase(it);
+            break;
+        }
+    }
+}
+
+
+
+
+
 std::string		ft_itoa(int n){
 	char num[10];
 	sprintf(num, "%d", n);
