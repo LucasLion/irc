@@ -17,7 +17,7 @@ public:
 	void				newConnection( void );
     void                getBuffer( char * buf );
 	void				run( void );
-	bool				createChannel( std::string name );
+	bool				createChannel( std::string namechannel, std::string user );
 	void				sendError(std::string code_Error, int sd);
 	bool				generateResponse( User *user );
 	std::string			generateDefaultNick( void );
@@ -29,6 +29,7 @@ public:
 	void				pongCmd( Message msg, User *user );
 	void				topicCmd( Message msg, User *user );
 	void				prvMsgCmd( Message msg, User *user );
+	void				modeCmd( Message msg, User *user );
 	void 				quitCmd(Message msg, User *user); 
 	int					getPortno( void ) const;
 	bool				passOK( void );
@@ -38,7 +39,7 @@ public:
 	bool				is_valid( const std::string nickname );
 
 
-	std::map<std::string, Channel*>	getChannels( void ) ;
+	std::map<std::string, Channel*>	*getChannels( void ) ;
 
 private:
 	

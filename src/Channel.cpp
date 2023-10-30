@@ -35,3 +35,10 @@ void Channel::removeUser(User* user) {
 	}
 }			
 
+bool Channel::isUserOp( std::string user ) {
+	for (std::vector<std::string>::iterator it = operList.begin(); it != operList.end(); it++) {
+		if (*it == user)
+			return (true);
+	}
+	return (false);
+}

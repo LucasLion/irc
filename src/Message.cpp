@@ -120,3 +120,4 @@ std::string Message::getCommand( void ) { return _command; }
 std::string Message::getSource( void ) { return _source; }
 std::string Message::getTag( void ) { return _tag; }
 std::string Message::getParam( int i ) { return _param[i]; }
+int         Message::nbParam( void ) { return _param.size(); }
