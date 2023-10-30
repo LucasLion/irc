@@ -32,10 +32,11 @@ public:
 	void				modeCmd( Message msg, User *user );
 	void 				quitCmd(Message msg, User *user); 
 	int					getPortno( void ) const;
-	bool				passOK();
-	void				setPassOK(bool passOK);
+	bool				passOK( void );
+	void				setPassOK( bool passOK );
 	void				connectServer( int sd , User *user );
-	void				sendClient(int sd, std::string response);
+	void				sendClient( int sd, std::string response );
+	bool				is_valid( const std::string nickname );
 
 
 	std::map<std::string, Channel*>	*getChannels( void ) ;
@@ -61,5 +62,4 @@ private:
 	std::string						_creationDate;
 	int								_numGuest;
 	unsigned long					_maxUsers;
-	// rajouter le IP par defaut / 3e parametre optionnel
 };

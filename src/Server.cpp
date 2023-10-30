@@ -119,12 +119,11 @@ void Server::handleConnections( void )
 	}
 }
 
-//void	handleSignal2(int signal) {
-//	if (signal == SIGINT) {
-//		gSignalStatus2 = 1;
-//		std::cout << "signal received in handleSignal2: " << 1 << std::endl; }
-//		return ;
-//	}
+std::string		ft_itoa(int n){
+	char num[10];
+	sprintf(num, "%d", n);
+	return (static_cast<std::string>(num));
+}
 
 void Server::run( void ) {
 
@@ -271,6 +270,38 @@ bool Server::generateResponse( User *user ) {
 	return (true);
 }
 
+void	Server::connectServer( int sd, User *user) {
+
+	std::string nbusers = ft_itoa(_users.size());
+	if (_users.size() > _maxUsers)
+		_maxUsers = _users.size();
+	std::string maxuser = ft_itoa(_maxUsers);
+	std::string nbchannels = ft_itoa(_channels.size());
+	std::string nbservers = "0";
+	std::string nbopers = "0";
+	std::string nbinvisible = "0";
+	std::string nbClients = "1";
+
+	
+	// char buffer[80];
+	// strftime(buffer, 40, "%a %b %d %H:%M:%S %Y", localtime(&_creationDate));
+	// std::string creationDate(buffer);
+
+	sendClient(sd, RPL_WELCOME(user->getNickName()));
+	sendClient(sd, RPL_YOURHOST(user->getNickName()));
+	sendClient(sd, RPL_CREATED(user->getNickName(), _creationDate));
+	sendClient(sd, RPL_MYINFO(user->getNickName()));
+	sendClient(sd, RPL_ISUPPORT(user->getNickName()));
+	sendClient(sd, RPL_ISUPPORT2(user->getNickName()));
+	sendClient(sd, RPL_LUSERCLIENT(user->getNickName(), nbusers, nbinvisible, nbservers));
+	sendClient(sd, RPL_LUSEROP(user->getNickName(), nbopers));
+	sendClient(sd, RPL_LUSERCHANNELS(user->getNickName(), nbchannels));
+	sendClient(sd, RPL_LUSERME(user->getNickName(), nbClients, nbservers));
+	sendClient(sd, RPL_LOCALUSERS(user->getNickName(), nbusers, maxuser));
+	sendClient(sd, RPL_MOTDSTART(user->getNickName()));
+	sendClient(sd, RPL_MOTD(user->getNickName(), "Welcome to the Internet Relay Network " + user->getNickName()));
+	sendClient(sd, RPL_MOTDEND(user->getNickName()));
+}
 
 
 int	Server::getPortno( void ) const { return _portno; }
