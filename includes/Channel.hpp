@@ -15,8 +15,13 @@ class Channel {
 		void 						removeUser(User* user);
 		bool						isUserInChannel( std::string user );
 		bool						isUserOp( std::string user );
-
+		std::string					getCurrentModes ( void );
 		
+		
+		bool						isInviteOnly;
+		bool						isTopicProtected;
+		bool						hasUserLimit;
+		int							userLimit;
 		std::string					name;
 		std::vector<User*>			userList;
 		std::vector<std::string>	operList;

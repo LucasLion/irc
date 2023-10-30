@@ -1,5 +1,79 @@
 #include "../includes/Server.hpp"
 
+void splitMode(const std::string& modeArg, std::vector<std::string>& modeChanges) {
+    std::string currentChange;
+    bool isAdding = true;  // True for adding modes, false for removing
+    for (char c : modeArg) {
+        if (c == '+' || c == '-') {
+            if (!currentChange.empty()) {
+                modeChanges.push_back(currentChange);
+            }
+            currentChange = c;
+            isAdding = (c == '+');
+        } else {
+            currentChange += c;
+        }
+    }
+    if (!currentChange.empty()) {
+        modeChanges.push_back(currentChange);
+    }
+}
+
+void parseMode(Channel* channel, User* user, const std::string& target, const std::string* modeArgs, int nbArgs) {
+    std::string nick = user->getNickName();
+    int sd = user->getSd();
+
+    // Iterate through the modeArgs to handle different modes
+    for (int i = 0; i < nbArgs; i++) {
+        std::string modeArg = modeArgs[i];
+        std::vector<std::string> modeChanges;
+        splitMode(modeArg, modeChanges);
+
+        for (const std::string& modeChange : modeChanges) {
+            char modeLetter = modeChange[0];
+            bool isAdding = (modeChange[0] == '+');
+            
+            // Flag to indicate if the mode was handled
+            bool modeHandled = true;
+
+            switch (modeLetter) {
+                case 'i':
+                    // Handle Invite-Only (i) Channel Mode
+                    // ... (as previously implemented)
+                    break;
+                case 't':
+                    // Handle Protected Topic (t) Channel Mode
+                    // ... (as previously implemented)
+                    break;
+                case 'l':
+                    // Handle User Limit (l) Channel Mode
+                    // ... (as previously implemented)
+                    break;
+                case 'o':
+                    // Handle Operator (o) Channel Mode
+                    // ... (as previously implemented)
+                    break;
+                case 'k':
+                    // Handle Password (k) Channel Mode
+                    // ... (as previously implemented)
+                    break;
+                default:
+                    // Mode not supported, return ERR_UMODEUNKNOWNFLAG
+                    modeHandled = false;
+                    break;
+            }
+
+            if (modeHandled) {
+                // Send appropriate responses if the mode was handled
+            } else {
+                // Mode not supported, return ERR_UMODEUNKNOWNFLAG
+                sendClient(sd, ERR_UMODEUNKNOWNFLAG(nick));
+            }
+        }
+    }
+}
+
+
 void	Server::modeCmd( Message msg, User *user ) {
 	
 	std::cout << "modeCmd : " << msg.rawMessage	<< std::endl;
@@ -20,6 +94,8 @@ void	Server::modeCmd( Message msg, User *user ) {
 			sendClient(sd, ERR_NOSUCHCHANNEL(nick, target));
 			return;
 		}
+
+		// retouver les modes du channels
 		if (nbArgs == 0){
 	  		sendClient(sd, RPL_CHANNELMODEIS(nick, target, "+,-", "i,t,k,o,l"));
 			return;
