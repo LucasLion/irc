@@ -5,7 +5,7 @@
 bool is_valid(const std::string nickname) {
 	if (nickname.length() < 1 || nickname.length() > 32)
         return false;
-    const std::string validChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789[]{}\\|";
+    const std::string validChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_[]{}\\|";
     for (size_t i = 0; i < nickname.length(); ++i) {
         char c = nickname[i];
         if (i == 0 && !isalpha(c) && c != '[' && c != '{' && c != '\\' && c != '|')
@@ -17,12 +17,28 @@ bool is_valid(const std::string nickname) {
 }
 
 void	Server::sendClient(int sd, std::string response) {
-	///send(sd, response.c_str(), response.length(), 0);
 	write(sd, response.c_str(), response.length());
 }
 
 
+std::string		Server::generateDefaultNick() {
+	int				numGuest = 1;
+	char			num[10];
+	std::string		defaultNick;
+	std::vector<User>::iterator it;
 
+	sprintf(num, "%d", numGuest);
+	defaultNick = "guest" + static_cast<std::string>(num);
+	for (it = _users.begin(); it != _users.end(); ++it) {
+		if (defaultNick == it->getNickName()) {
+			numGuest++;
+			sprintf(num, "%d", numGuest);
+			defaultNick = "guest" + static_cast<std::string>(num);
+			it = _users.begin();
+		}
+	}
+	return (defaultNick);
+}
 
 
 void	Server::nickPreRegistration( Message msg, User *user ) {
@@ -30,51 +46,47 @@ void	Server::nickPreRegistration( Message msg, User *user ) {
 	std::string new_nick;
 	std::string old_nick;
 	int sd = user->getSd();
-	char num[10];
-	std::string nu;
 	std::string response;
 	std::vector<User>::iterator it;
 	std::map<std::string, Channel*>::iterator it2;
 
-	sprintf(num, "%d", _numGuest);
-
 	if (msg.getParam(0).length() == 0) {
-		_numGuest++;
-		nu = static_cast<std::string>(num);
-		new_nick = "guest" + nu;
-		response = "we gave you the nickname :  " + new_nick;
-		//write(sd, response.c_str(), response.length());
+		new_nick = generateDefaultNick();
+		sendClient(sd, ERR_NONICKNAMEGIVEN(new_nick));
+		//response = "we gave you the nickname : " + new_nick + "\r\n";
 		//sendClient(sd, response);
+		return;
 	}
 
 	new_nick = msg.getParam(0);
 	for (it = _users.begin(); it != _users.end(); ++it) {
 		if (new_nick == it->getNickName()) {
-			_numGuest++;
-			nu = static_cast<std::string>(num);
-			new_nick = "guest" + nu;
-			response = "we gave you the nickname :  " + new_nick;
-			//write(sd, response.c_str(), response.length());
+			//new_nick = generateDefaultNick();
+			sendClient(sd, ERR_NICKNAMEINUSE(msg.getParam(0), new_nick));
+			//response = "we gave you the nickname : " + new_nick + "\r\n";
 			//sendClient(sd, response);
+			return;
 		}
 	}
 
 	if (!is_valid(new_nick)) {
-			_numGuest++;
-			nu = static_cast<std::string>(num);
-			new_nick = "guest" + nu;
-			response = "we gave you the nickname :  " + new_nick;
-			//write(sd, response.c_str(), response.length());
+			std::cout << "new_nick: " << new_nick << std::endl;
+			std::cout << "size: " << new_nick.length() << std::endl;
+			new_nick = generateDefaultNick();
+			std::cout << "new_nick: " << new_nick << std::endl;
+			sendClient(sd, ERR_ERRONEUSNICKNAME(user->getNickName(), new_nick));
+			//response = "we gave you the nickname : " + new_nick + "\r\n";
 			//sendClient(sd, response);
+			return;
 	}
 
 	user->setNickName(new_nick);
 	user->setNickNameSet(true);
-		if(user->isPassOK() && user->isRealNameSet()){
-			user->setRegistered(true);
-			std::cout << "user registered dans NICK" << std::endl;
-			connectServer(sd, user);
-		}
+	if(user->isPassOK() && user->isRealNameSet()){
+		user->setRegistered(true);
+		std::cout << "user registered dans NICK" << std::endl;
+		connectServer(sd, user);
+	}
 
 }
 
@@ -112,18 +124,12 @@ void	Server::nickCmd( Message msg, User *user ) {
 	if (user->_channels.size() > 0){
 		for (it2 = user->_channels.begin(); it2 != user->_channels.end(); ++it2) {
 			for (int i = 0 ; i < (int)it2->second->userList.size(); i++) {
-				std::cout << it2->second->userList[i]->getSd() << std::endl;
+				//std::cout << it2->second->userList[i]->getSd() << std::endl;
 				sendClient(it2->second->userList[i]->getSd(), NICK(old_nick, new_nick));
 			}
 		}
-	}else{
-		std::cout << "new nick : " << new_nick << std::endl;
-		old_nick += "!" + user->getUserName() + "@localhost";
-		std::cout << "old nick : " << old_nick << std::endl;
-		std::string response = NICK(old_nick, new_nick);
-		std::cout << "response : " << response << std::endl;
+	}else
 		sendClient(sd, NICK(old_nick, new_nick));
-	}
 }
 
 void	Server::userCmd( Message msg, User *user ) {
@@ -131,9 +137,7 @@ void	Server::userCmd( Message msg, User *user ) {
 	if (!msg.getParam(0).length()){
 		sendClient(user->getSd(), ERR_NEEDMOREPARAMS(user->getNickName(), msg.getCommand()));
 	}
-	if (user->isRegistered())
-		sendClient(user->getSd(), ERR_ALREADYREGISTERED(user->getNickName()));
-	if(user->isRealNameSet())
+	if (user->isRegistered() || user->isRealNameSet())
 		sendClient(user->getSd(), ERR_ALREADYREGISTERED(user->getNickName()));
 	if (user->isPassOK() == false)
 		sendClient(user->getSd(), ERR_PASSWDMISMATCH(user->getNickName()));
@@ -281,26 +285,65 @@ void	Server::prvMsgCmd( Message msg, User *user ) {
 	}
 }
 
+void Server::quitCmd(Message msg, User *user) {
+	std::string reason = "Quit :";
+	if (msg.getParam(0).length()> 0)
+		reason += msg.getParam(0);
+    for (std::vector<User>::iterator it = _users.begin(); it != _users.end(); ++it) {
+        if (it->getNickName() != user->getNickName()) 
+            sendClient(it->getSd(),QUIT(user->getNickName(), reason));
+    }
+
+	if (user->_channels.size() > 0){
+		for (std::map<std::string, Channel*>::iterator it = user->_channels.begin(); it != user->_channels.end(); ++it) {
+			for (int i = 0 ; i < (int)it->second->userList.size(); i++) {
+				sendClient(it->second->userList[i]->getSd(), QUIT(user->getNickName(), reason));
+				it->second->removeUser(user);
+			}
+		}
+	}else
+		sendClient(user->getSd(),QUIT(user->getNickName(), reason));
+}
+
+
+
+
+
+std::string		ft_itoa(int n){
+	char num[10];
+	sprintf(num, "%d", n);
+	return (static_cast<std::string>(num));
+}
+
+
 void	Server::connectServer( int sd, User *user) {
 
-	std::string response;
+	std::string nbusers = ft_itoa(_users.size());
+	if (_users.size() > _maxUsers)
+		_maxUsers = _users.size();
+	std::string maxuser = ft_itoa(_maxUsers);
+	std::string nbchannels = ft_itoa(_channels.size());
+	std::string nbservers = "0";
+	std::string nbopers = "0";
+	std::string nbinvisible = "0";
+	std::string nbClients = "1";
+
 	
-	char buffer[80];
-	strftime(buffer, 40, "%a %b %d %H:%M:%S %Y", localtime(&_creationDate));
-	std::string creationDate(buffer);
+	// char buffer[80];
+	// strftime(buffer, 40, "%a %b %d %H:%M:%S %Y", localtime(&_creationDate));
+	// std::string creationDate(buffer);
 
 	sendClient(sd, RPL_WELCOME(user->getNickName()));
 	sendClient(sd, RPL_YOURHOST(user->getNickName()));
-	sendClient(sd, RPL_CREATED(user->getNickName(), creationDate));
+	sendClient(sd, RPL_CREATED(user->getNickName(), _creationDate));
 	sendClient(sd, RPL_MYINFO(user->getNickName()));
 	sendClient(sd, RPL_ISUPPORT(user->getNickName()));
 	sendClient(sd, RPL_ISUPPORT2(user->getNickName()));
-	sendClient(sd, RPL_LUSERCLIENT(user->getNickName(), "1", "1", "1"));
-	sendClient(sd, RPL_LUSEROP(user->getNickName(), "1"));
-	sendClient(sd, RPL_LUSERCHANNELS(user->getNickName(), "1"));
-	sendClient(sd, RPL_LUSERME(user->getNickName(), "1", "1"));
-	sendClient(sd, RPL_LOCALUSERS(user->getNickName(), "1", "1"));
-	sendClient(sd, RPL_GLOBALUSERS(user->getNickName(), "1", "1"));
+	sendClient(sd, RPL_LUSERCLIENT(user->getNickName(), nbusers, nbinvisible, nbservers));
+	sendClient(sd, RPL_LUSEROP(user->getNickName(), nbopers));
+	sendClient(sd, RPL_LUSERCHANNELS(user->getNickName(), nbchannels));
+	sendClient(sd, RPL_LUSERME(user->getNickName(), nbClients, nbservers));
+	sendClient(sd, RPL_LOCALUSERS(user->getNickName(), nbusers, maxuser));
 	sendClient(sd, RPL_MOTDSTART(user->getNickName()));
 	sendClient(sd, RPL_MOTD(user->getNickName(), "Welcome to the Internet Relay Network " + user->getNickName()));
 	sendClient(sd, RPL_MOTDEND(user->getNickName()));

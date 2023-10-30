@@ -14,7 +14,18 @@ Server program(int argc , char *argv[])
 	try {
 		if (argc == 3) {
 			doctest::Context context;
+<<<<<<< HEAD
+            //std::thread contextThread([&context]() {
+            //   runContext(&context);
+            //});
+			while (!gSignalStatus) {
+				std::this_thread::sleep_for(std::chrono::milliseconds(100));
+			}
+			//contextThread.join();
+			server.run(gSignalStatus);
+=======
 			server.run();
+>>>>>>> de1942843bb280cfae7d23446d32754da623d374
 			return server;
 		}
 		else 

@@ -13,7 +13,10 @@ Server::Server( void ) : _nbClients(0) {
 
 Server::Server( char *port, char *passwd ) : _nbClients(0)
 {
-	//_clientSockets.resize(nbClients, 0);
+	
+	char buffer[80];
+	strftime(buffer, 40, "%a %b %d %H:%M:%S %Y", localtime(&_creationTime));
+	_creationDate = buffer;
 	_address.sin_family = AF_INET;
 	_address.sin_addr.s_addr = INADDR_ANY;
 	_address.sin_port = htons( atoi(port) );
@@ -26,6 +29,7 @@ Server::Server( char *port, char *passwd ) : _nbClients(0)
 	_creationDate = std::time(NULL);
 	_passOK = false;
 	_numGuest= 1;
+	_maxUsers = 0;
 }
 
 int		Server::createSocket( void ) {
@@ -143,7 +147,7 @@ void Server::run( void ) {
 					if (generateResponse(&_users[i]) == false){
 						close(_users[i].getSd());
                         _users.erase(_users.begin() + i);
-						return;
+						_clientSockets.erase(_clientSockets.begin() + i);
 					}
 				}
 				else {
@@ -222,7 +226,9 @@ bool Server::generateResponse( User *user ) {
 				}
 			}
 			else{
-
+				if (it->getCommand() == "USER") {
+					userCmd(*it, user);
+				}
 				if (it->getCommand() == "NICK") {
 					nickCmd(*it, user);
 				}
@@ -237,6 +243,10 @@ bool Server::generateResponse( User *user ) {
 				}
 				if (it->getCommand() == "PRIVMSG") {
 					prvMsgCmd(*it, user);
+				}
+				if (it->getCommand() == "QUIT") {
+					quitCmd(*it, user);
+					return (false);
 				}
 				if (it->getCommand() == "PONG") {
 					return (false);

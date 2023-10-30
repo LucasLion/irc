@@ -12,6 +12,7 @@ class Channel {
 									Channel( std::string name );
 									~Channel( void );
 		void						addUser( User* user );
+		void 						removeUser(User* user);
 		bool						isUserInChannel( std::string user );
 
 		std::string					name;
@@ -23,3 +24,4 @@ class Channel {
 	
 	private:
 };
+

@@ -24,3 +24,14 @@ bool	Channel::isUserInChannel( std::string user ) {
 	}
 	return (false);
 }
+
+void Channel::removeUser(User* user) {
+    for (std::vector<User*>::iterator it = userList.begin(); it != userList.end(); ++it) {
+        if (*it == user) {
+			std::cout << "User " << user->getNickName() << " removed from channel " << name << std::endl;
+            userList.erase(it);
+            return;
+    	}
+	}
+}			
+
