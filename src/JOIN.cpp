@@ -18,7 +18,7 @@ void	Server::joinCmd( Message msg, User *user ) {
 	}
 	// check if the channel exists and create it if not
 	if (_channels.find(channel) == _channels.end()) {
-		this->createChannel(channel);
+		this->createChannel(channel, userNick);
 		//user->addChannel(channel, , &(_channels[channel])));
 	}
 	// check if the user is already in the channel
