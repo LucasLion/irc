@@ -252,7 +252,9 @@ bool Server::generateResponse( User *user ) {
 					return (false);
 				}
 				if (it->getCommand() == "MODE") {
-					sendClient(user->getSd(), MODE(user->getNickName(), user->getNickName(), "+i", ""));
+					//sendClient(user->getSd(), MODE(user->getNickName(), user->getNickName(), "+i", ""));
+					//sendClient(user->getSd(),ERR_UMODEUNKNOWNFLAG(user->getNickName()));
+					modeCmd(*it, user);
 				}
 				if (it->getCommand() == "LIST") {
 					//print list of user by nickname

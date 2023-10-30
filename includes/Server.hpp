@@ -29,6 +29,7 @@ public:
 	void				pongCmd( Message msg, User *user );
 	void				topicCmd( Message msg, User *user );
 	void				prvMsgCmd( Message msg, User *user );
+	void				modeCmd( Message msg, User *user );
 	void 				quitCmd(Message msg, User *user); 
 	int					getPortno( void ) const;
 	bool				passOK();

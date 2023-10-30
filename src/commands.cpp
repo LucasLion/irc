@@ -153,6 +153,27 @@ void	Server::userCmd( Message msg, User *user ) {
 		}		
 }
 
+void	Server::modeCmd( Message msg, User *user ) {
+	
+	std::cout << "modeCmd : " << msg.rawMessage	<< std::endl;
+	std::string userMode = msg.getParam(0);
+	std::string channel = msg.getParam(1);
+	std::string modestring = msg.getParam(2);
+	if(channel[0] != '#'){
+		sendClient(user->getSd(), ERR_UMODEUNKNOWNFLAG(user->getNickName()));
+		return;
+	}
+	else if(_channels.find(channel) == _channels.end())
+		sendClient(user->getSd(), ERR_NOSUCHCHANNEL(user->getNickName(), channel));
+	if(modestring.size() == 0)
+		sendClient(user->getSd(), RPL_CHANNELMODEIS(user->getNickName(), channel, "+,-", "i,t,k,o,l"));
+	else  
+		sendClient(user->getSd(), "OOOOOOKKKKKKKK");
+	
+}
+
+
+
 
 
 void	Server::passCmd( Message msg, User *user ) {
