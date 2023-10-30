@@ -4,18 +4,19 @@
 #include "../includes/Channel.hpp"
 
 #include <csignal>
-#include <thread>
 
+int GSIGNALSTATUS = 0;
 
-volatile sig_atomic_t gSignalStatus2 = 0;
-
-Server::Server( void ) : _maxClients(30) {
-	_clientSockets.resize(_maxClients, 0);
+Server::Server( void ) : _nbClients(0) {
+	//_clientSockets.resize(nbClients, 0);
 }
 
-Server::Server( char *port, char *passwd ) : _maxClients(30)
+Server::Server( char *port, char *passwd ) : _nbClients(0)
 {
-	_clientSockets.resize(_maxClients, 0);
+	
+	char buffer[80];
+	strftime(buffer, 40, "%a %b %d %H:%M:%S %Y", localtime(&_creationTime));
+	_creationDate = buffer;
 	_address.sin_family = AF_INET;
 	_address.sin_addr.s_addr = INADDR_ANY;
 	_address.sin_port = htons( atoi(port) );
@@ -25,7 +26,10 @@ Server::Server( char *port, char *passwd ) : _maxClients(30)
 	_max_sd = _masterSocket;
 	_passwd = passwd;
 	_name = "FT_IRC";
-	// rajouter le IP par defaut / 3e parametre optionnel
+	_creationDate = std::time(NULL);
+	_passOK = false;
+	_numGuest= 1;
+	_maxUsers = 0;
 }
 
 int		Server::createSocket( void ) {
@@ -64,7 +68,6 @@ int		Server::createSocket( void ) {
 void Server::newConnection( void )
 {
 	int new_socket;
-	//std::string message = "Welcome to FT_IRC server\r\n";
 
 	if ((new_socket = accept(_masterSocket,
 		(struct sockaddr *)&_address, (socklen_t*)&_addrLen))<0) {
@@ -79,14 +82,12 @@ void Server::newConnection( void )
 		perror("send");
 	//}
 	//add new socket to array of sockets
-	for (int i = 0; i < _maxClients; i++) {
-		//if position is empty
-		if( _clientSockets[i] == 0 ) {
-			_clientSockets[i] = new_socket;
-			std::cout << "Adding to list of sockets as " << i << std::endl;
-			break;
-		}
-	}
+			_nbClients++;
+			User new_user;
+			new_user.setSd(new_socket);
+			_users.push_back(new_user);
+			_clientSockets.push_back(new_socket);
+			std::cout << "Adding to list of sockets as " << _nbClients << std::endl;
 }
 
 void Server::handleConnections( void )
@@ -98,7 +99,7 @@ void Server::handleConnections( void )
 	FD_ZERO(&_readfds);
 	FD_SET(_masterSocket, &_readfds);
 	//add child sockets to set
-	for (int i = 0; i < _maxClients; i++) {
+	for (int i = 0; i < static_cast<int>(_clientSockets.size()); i++) {
 		sd = _clientSockets[i];
 	//if valid socket descriptor then add to read list
 		if(sd > 0)
@@ -125,41 +126,44 @@ void Server::handleConnections( void )
 //		return ;
 //	}
 
-void Server::run( int gSignalStatus ) {
+void Server::run( void ) {
 
-	int				sd;
 	int				valRead;
 	char			buffer[4608];
 	
-	while (!gSignalStatus) {
+	while (true) {
 		handleConnections();
-		// write test to terminal t exec tests
-		//std::string input;
-		//std::getline(std::cin, input);
-		//if (input == "test")
-		//	break;
 
 		//else its some IO operation on some other socket
-		for (int i = 0; i < _maxClients; i++) {
-			sd = _clientSockets[i];
-				
-			if (FD_ISSET(sd, &_readfds)) {
+		for (size_t i = 0; i < _users.size(); i++) {
+			if (FD_ISSET(_users[i].getSd(), &_readfds)) {
 				//incoming message
 				bzero(buffer, 1025);
-				valRead = read(sd, buffer, 1024);
+				valRead = read(_users[i].getSd(), buffer, 1024);
 				_users[i].getBuffer(buffer);
-				if (valRead != 0)
-					generateResponse(&_users[i], sd);
+
+				
+				if (valRead != 0) {
+					if (generateResponse(&_users[i]) == false){
+						close(_users[i].getSd());
+                        _users.erase(_users.begin() + i);
+						return;
+					}
+				}
 				else {
 					//Somebody disconnected , get his details and print
-					getpeername(sd , (struct sockaddr*)&_address, (socklen_t*)&_addrLen);
+					getpeername(_users[i].getSd(), (struct sockaddr*)&_address, (socklen_t*)&_addrLen);
 					std::cout << "Host disconnected, ip: " << inet_ntoa(_address.sin_addr) << " port: " << ntohs(_address.sin_port) << std::endl;
-					//Close the socket and mark as 0 in list for reuse
-					close(sd);
-					_clientSockets[i] = 0;
+					//Close the socket 
+					close(_users[i].getSd());
+					_users.erase(_users.begin() + i);
+					_clientSockets.erase(_clientSockets.begin() + i);
 				}
 			}
 		}
+
+
+
 	}
 }
 
@@ -190,35 +194,81 @@ bool	Server::createChannel( std::string channelName ) {
 		return false;
 	}
 
-	Channel newChannel;
-	newChannel.name = channelName;
+	Channel* newChannel = new Channel; 
+	newChannel->name = channelName;
 	_channels[channelName] = newChannel;
 	std::cout << SUCCESS("Channel \"" + channelName + "\" created") << std::endl;
+	for (std::map<std::string, Channel*>::iterator it = _channels.begin(); it != _channels.end(); it++) {
+		std::cout << "Channel: " << it->first << std::endl;
+		// iterate through the vector of users in the channel 
+		for (int i = 0; i < (int)it->second->userList.size(); i++) {
+			std::cout << "User: " << it->second->userList[i] << std::endl;
+		}
+	}
 	return true;
 }
 
-void Server::generateResponse( User *user, int sd ) {
+bool Server::generateResponse( User *user ) {
+
+
 	for (std::vector<Message>::iterator it = user->messages.begin(); it != user->messages.end();) {
 		std::cout << "COMMAND_RECEIVED: " << it->rawMessage << std::endl;
-		if (it->getCommand() == "CAP") {
-			send(sd, "CAP * LS\r\n", 12, 0 );
-		}
-		if (it->getCommand() == "NICK") {
-			nickCmd(sd, *it, user);
-		}
-		if (it->getCommand() == "USER") {
-			userCmd(sd, *it, user);
-		}
-		if (it->getCommand() == "PASS") {
-			passCmd(sd, *it, user);
-		}
-		if (it->getCommand() == "PING")
-			std::cout << SUCCESS("PONG") << std::endl;
-		if (it->getCommand() == "WHOIS") {
-			send(sd, ":localhost 318 THE_BEST_NICKNAME :End of /WHOIS list", 51, 0);
-		}
+	
+			if(user->isRegistered() == false) {
+				if (it->getCommand() == "NICK") {
+					nickPreRegistration(*it, user);
+				}
+				if (it->getCommand() == "USER") {
+					userCmd(*it, user);
+				}
+				if (it->getCommand() == "PASS") {
+					passCmd(*it, user);
+				}
+			}
+			else{
+				if (it->getCommand() == "USER") {
+					userCmd(*it, user);
+				}
+				if (it->getCommand() == "NICK") {
+					nickCmd(*it, user);
+				}
+				if (it->getCommand() == "PING") {
+					pongCmd(*it, user);
+				}
+				if (it->getCommand() == "JOIN") {
+					joinCmd(*it, user);
+				}
+				if (it->getCommand() == "TOPIC") {
+					topicCmd(*it, user);
+				}
+				if (it->getCommand() == "PRIVMSG") {
+					prvMsgCmd(*it, user);
+				}
+				if (it->getCommand() == "PONG") {
+					return (false);
+				}
+				if (it->getCommand() == "MODE") {
+					sendClient(user->getSd(), MODE(user->getNickName(), user->getNickName(), "+i", ""));
+				}
+				if (it->getCommand() == "LIST") {
+					//print list of user by nickname
+					for (std::vector<User>::iterator it2 = _users.begin(); it2 != _users.end(); ++it2) {
+						std::cout << "User: " << it2->getNickName() << std::endl;
+					}
+				}
+			}
+
 		it = user->messages.erase(it);
     }
+	return (true);
 }
 
+
+
 int	Server::getPortno( void ) const { return _portno; }
+
+std::map<std::string, Channel*>	Server::getChannels( void ) { return _channels; }
+
+bool	Server::passOK() { return _passOK; }
+
+void	Server::setPassOK(bool passOK) { _passOK = passOK;}

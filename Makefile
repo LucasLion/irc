@@ -57,4 +57,4 @@ fclean: clean # Remove executable, obj directory and object files
 
 re: fclean all # Recompile everything
 
-.PHONY: all lean fclean re run debug leaks
+.PHONY: all lean fclean re run debug leaks test

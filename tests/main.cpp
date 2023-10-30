@@ -1,7 +1,6 @@
 
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest/doctest/doctest.h"
-#include <thread>
 
 #include "../includes/header.hpp"
 #include "../includes/Server.hpp"
@@ -9,26 +8,13 @@
 #include "../includes/Message.hpp"
 #include "../includes/Channel.hpp"
 
-int gSignalStatus = 0;
-
-void	handleSignal(int signal) {
-	if (signal == SIGINT) {
-		gSignalStatus = true;
-		std::cout << "signal received: " << signal << std::endl; }
-	}
-
-void	runContext(doctest::Context *context) {
-	int res = context->run();
-	if (context->shouldExit())
-		exit(res);
-}
-
 Server program(int argc , char *argv[])
 {
 	Server server(argv[1], argv[2]);
 	try {
 		if (argc == 3) {
 			doctest::Context context;
+<<<<<<< HEAD
             //std::thread contextThread([&context]() {
             //   runContext(&context);
             //});
@@ -37,6 +23,9 @@ Server program(int argc , char *argv[])
 			}
 			//contextThread.join();
 			server.run(gSignalStatus);
+=======
+			server.run();
+>>>>>>> de1942843bb280cfae7d23446d32754da623d374
 			return server;
 		}
 		else 
@@ -49,13 +38,9 @@ Server program(int argc , char *argv[])
 
 TEST_CASE("testing the initialisation function") {
 
-			signal(SIGINT, handleSignal);
 	int argc = 3;
 	char *argv[] = {(char *)"./ircserv", (char *)"6667", (char *)"test"};
 
 	Server server = program(argc, argv);
-
 	CHECK(server.getPortno() == 6667);
-	//CHECK(server.getPortno() == 0);
-	//CHECK(server.getPortno() == 0);
 }

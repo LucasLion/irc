@@ -11,15 +11,17 @@
 #include <netinet/in.h>
 #include <sys/time.h>
 #include <unistd.h>
-#include <stdlib.h>
 #include <cstdio>
 #include <cerrno>
 #include <vector>
 #include <map>
 #include <sstream>
 #include <locale>
+#include <cstdlib>
 #include <string.h>
+#include <ctime>
 
+#include "defines.hpp"
 
 // Reset
 #define Color_Off "\033[0m"       // Text Reset
