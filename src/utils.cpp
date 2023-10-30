@@ -22,11 +22,11 @@ void	Server::sendClient( int sd, std::string response ) {
 
 std::string		Server::generateDefaultNick() {
 	int				numGuest = 1;
-	char			num[10];
+	char			num[100];
 	std::string		defaultNick;
 	std::vector<User>::iterator it;
 
-	sprintf(num, "%d", numGuest);
+	sprintf(num, "%c", numGuest);
 	defaultNick = "guest" + static_cast<std::string>(num);
 	for (it = _users.begin(); it != _users.end(); ++it) {
 		if (defaultNick == it->getNickName()) {

@@ -12,9 +12,13 @@ class Channel {
 									Channel( std::string name );
 									~Channel( void );
 		void						addUser( User* user );
-		void 						removeUser(User* user);
+		void 						removeUser( std::string user );
 		bool						isUserInChannel( std::string user );
 		bool						isUserOp( std::string user );
+
+		std::string					getTopic( void ) const;
+		void						setTopic( std::string topic );
+		User*						getUser( std::string user );
 
 		
 		std::string					name;
@@ -27,5 +31,7 @@ class Channel {
 		};
 	
 	private:
+
+		std::string					_topic;
 };
 

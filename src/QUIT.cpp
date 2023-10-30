@@ -16,7 +16,7 @@ void Server::quitCmd(Message msg, User *user) {
 		for (std::map<std::string, Channel*>::iterator it = user->_channels.begin(); it != user->_channels.end(); ++it) {
 			for (int i = 0 ; i < (int)it->second->userList.size(); i++) {
 				sendClient(it->second->userList[i]->getSd(), QUIT(user->getNickName(), reason));
-				it->second->removeUser(user);
+				it->second->removeUser(user->getNickName());
 			}
 		}
 	}else
