@@ -147,7 +147,7 @@ void Server::run( void ) {
 					if (generateResponse(&_users[i]) == false){
 						close(_users[i].getSd());
                         _users.erase(_users.begin() + i);
-						return;
+						_clientSockets.erase(_clientSockets.begin() + i);
 					}
 				}
 				else {
@@ -243,6 +243,10 @@ bool Server::generateResponse( User *user ) {
 				}
 				if (it->getCommand() == "PRIVMSG") {
 					prvMsgCmd(*it, user);
+				}
+				if (it->getCommand() == "QUIT") {
+					quitCmd(*it, user);
+					return (false);
 				}
 				if (it->getCommand() == "PONG") {
 					return (false);
