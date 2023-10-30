@@ -20,7 +20,6 @@ public:
 	bool				createChannel( std::string name );
 	void				sendError(std::string code_Error, int sd);
 	bool				generateResponse( User *user );
-	std::string			generateDefaultNick( void );
 	void				userCmd( Message msg, User *user );
 	void				nickCmd( Message msg, User *user );
 	void				nickPreRegistration( Message msg, User *user );

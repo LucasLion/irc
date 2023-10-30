@@ -20,27 +20,6 @@ void	Server::sendClient(int sd, std::string response) {
 	write(sd, response.c_str(), response.length());
 }
 
-
-std::string		Server::generateDefaultNick() {
-	int				numGuest = 1;
-	char			num[10];
-	std::string		defaultNick;
-	std::vector<User>::iterator it;
-
-	sprintf(num, "%d", numGuest);
-	defaultNick = "guest" + static_cast<std::string>(num);
-	for (it = _users.begin(); it != _users.end(); ++it) {
-		if (defaultNick == it->getNickName()) {
-			numGuest++;
-			sprintf(num, "%d", numGuest);
-			defaultNick = "guest" + static_cast<std::string>(num);
-			it = _users.begin();
-		}
-	}
-	return (defaultNick);
-}
-
-
 void	Server::nickPreRegistration( Message msg, User *user ) {
 	
 	std::string new_nick;
@@ -286,7 +265,7 @@ void	Server::prvMsgCmd( Message msg, User *user ) {
 }
 
 void Server::quitCmd(Message msg, User *user) {
-	std::string reason = "Quit :";
+	std::string reason = "Quit: ";
 	if (msg.getParam(0).length()> 0)
 		reason += msg.getParam(0);
     for (std::vector<User>::iterator it = _users.begin(); it != _users.end(); ++it) {
@@ -294,7 +273,7 @@ void Server::quitCmd(Message msg, User *user) {
             sendClient(it->getSd(),QUIT(user->getNickName(), reason));
     }
 
-	if (user->_channels.size() > 0){
+	if (user->_channels.size() > 0) {
 		for (std::map<std::string, Channel*>::iterator it = user->_channels.begin(); it != user->_channels.end(); ++it) {
 			for (int i = 0 ; i < (int)it->second->userList.size(); i++) {
 				sendClient(it->second->userList[i]->getSd(), QUIT(user->getNickName(), reason));
