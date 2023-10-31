@@ -32,6 +32,17 @@ void	Server::joinCmd( Message msg, User *user ) {
 			return ;
 		}
 	}
+	if (_channels[channel]->hasUserLimit && _channels[channel]->usersSd.size() >= _channels[channel]->userLimit) {
+			sendClient(sd, ERR_CHANNELISFULL(userNick, channel));
+		return ;
+	}
+
+	if(_channels[channel]->hasPassword) {
+		if (msg.nbParam() < 2 || msg.getParam(1).length() == 0 || (msg.getParam(1) != _channels[channel]->password) ) {
+			sendClient(sd, ERR_BADCHANNELKEY(userNick, channel));
+			return ;
+		}
+	}
 	_channels[channel]->addUser(user);
 	user->addChannel(channel, _channels[channel]);
 	//sendClient(sd, JOIN(userNick, channel));

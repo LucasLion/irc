@@ -31,7 +31,7 @@ class Channel {
 		bool								isTopicProtected;
 		bool								hasUserLimit;
 		bool								hasPassword;
-		int									userLimit;
+		unsigned long						userLimit;
 		std::string							name;
 		std::vector<std::string>			operList;
 		std::vector<std::string>			inviteList;

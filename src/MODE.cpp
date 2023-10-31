@@ -78,6 +78,7 @@ void Server::parseMode(Channel* channel, User* user, const std::string& target, 
                 if (modeArgs[i].size() > 0) {
                     if (isAdding) {
                         int userLimit = atoi(modeArgs[i].c_str());
+                        i++;
 						std::cout << "on ajoute le mode l" << std::endl;
 						std::cout << "userLimit : " << userLimit << std::endl;
                         channel->userLimit = userLimit;
@@ -89,38 +90,40 @@ void Server::parseMode(Channel* channel, User* user, const std::string& target, 
                     }
                 }  
                 break;
-        //         case 'o':
-        //             if (modeChange.size() > 1) {
-        //                 if (isAdding) {
-        //                     std::string operatorNick = modeChange.substr(1);
-        //                     if (channel->isUserInChannel(operatorNick)) {
-        //                         channel->addOperator(operatorNick);
-        //                         Server::sendClient(sd, RPL_CHANNELMODEIS(nick, "+", "o"));
-        //                     } else {
-        //                         Server::sendClient(sd, ERR_NOTONCHANNEL(nick, target));
-        //                     }
-        //                 } else {
-        //                     std::string operatorNick = modeChange.substr(1);
-        //                     if (channel->isOperator(operatorNick)) {
-        //                         channel->removeOperator(operatorNick);
-        //                         Server::sendClient(sd, RPL_CHANNELMODEIS(nick, "-", "o"));
-        //                     }
-        //                 }
-        //             }
-        //             break;
-        //         case 'k':
-        //             if (modeChange.size() > 1) {
-        //                 if (isAdding) {
-        //                     std::string pass = modeChange.substr(1);
-        //                     channel->password = pass;
-        //                     Server::sendClient(sd, RPL_CHANNELMODEIS(nick, target, "+", "k"));
-        //                 } else {
-        //                     if (channel->isPasswordSet()) {
-        //                         channel->removePassword();
-        //                         Server::sendClient(sd, RPL_CHANNELMODEIS(nick, target, "-", "l"));
-        //                     }
-        //                }
-        //             break;
+                case 'o':
+                    if (modeArgs[i].size() > 0) {
+                        std::string operatorNick = modeArgs[i];
+                        i++;
+                        if (isAdding) {
+                            if (channel->isUserInChannel(operatorNick)) {
+                                channel->addOperator(operatorNick);
+                                Server::sendClient(sd, RPL_CHANNELMODEIS(nick, target, "+", "o"));
+                            } else {
+                                Server::sendClient(sd, ERR_NOTONCHANNEL(nick, target));
+                            }
+                        } else {
+                            if (channel->isUserOp(operatorNick)) {
+                                channel->removeOperator(operatorNick);
+                                Server::sendClient(sd, RPL_CHANNELMODEIS(nick, target, "-", "o"));
+                            }
+                        }
+                    }
+                    break;
+                case 'k':
+                    if (modeArgs[i].size() > 0) {
+                        if (isAdding) {
+                            std::string pass = modeArgs[i];
+                            i++;
+                            channel->password = pass;
+                            channel->hasPassword = true;
+                            Server::sendClient(sd, RPL_CHANNELMODEIS(nick, target, "+", "k"));
+                        } else {
+                            if (channel->hasPassword) {
+                                channel->hasPassword = false;
+                                Server::sendClient(sd, RPL_CHANNELMODEIS(nick, target, "-", "l"));
+                            }
+                       }
+                    break;
                 default:
 					std::cout << "on envoie le mode inconnu" << std::endl;
                     Server::sendClient(sd, ERR_UMODEUNKNOWNFLAG(nick));
@@ -128,7 +131,7 @@ void Server::parseMode(Channel* channel, User* user, const std::string& target, 
             }
         }
     }
-
+}
 
 
 
