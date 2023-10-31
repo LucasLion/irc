@@ -2,9 +2,19 @@
 #include "../includes/header.hpp"
 #include "../includes/Channel.hpp"
 
-Channel::Channel( void ) { }
+Channel::Channel( void ) {
+    isInviteOnly = false;
+    isTopicProtected = false;
+    hasUserLimit = false;
+    hasPassword = false;
+ }
 
-Channel::Channel( std::string nom ) : name(nom) { (void)name; }
+Channel::Channel( std::string nom ) : name(nom) { 
+    isInviteOnly = false;
+    isTopicProtected = false;
+    hasUserLimit = false;
+    hasPassword = false;
+    (void)name; }
 
 Channel::~Channel( void ) { }
 
@@ -67,11 +77,11 @@ std::string Channel::getCurrentModes() {
     if (isTopicProtected) 
         modes += "t";
     
-    if (hasUserLimit) 
+    if (hasUserLimit) {
         modes += "l";
-    
+    }
 	if (hasPassword)
-		mode+= "k"
+		modes+= "k";
 
 
     return modes;

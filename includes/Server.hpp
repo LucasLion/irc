@@ -30,6 +30,8 @@ public:
 	void				topicCmd( Message msg, User *user );
 	void				prvMsgCmd( Message msg, User *user );
 	void				modeCmd( Message msg, User *user );
+	void 				splitMode(const std::string& modeArg, std::vector<std::string>& modeChanges);
+	void				parseMode(Channel* channel, User* user, const std::string& target, const std::string* modeArgs, int nbArgs);
 	void 				quitCmd(Message msg, User *user); 
 	int					getPortno( void ) const;
 	bool				passOK( void );
@@ -63,3 +65,4 @@ private:
 	int								_numGuest;
 	unsigned long					_maxUsers;
 };
+
