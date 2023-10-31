@@ -219,12 +219,12 @@ bool Server::generateResponse( User *user ) {
 					userCmd(*it, user);
 				if (it->getCommand() == "PASS")
 					passCmd(*it, user);
-				if (it->getCommand() == "CAP")
-					send( user->getSd(), "CAP * LS\r\n", 12, 0 );
+				//if (it->getCommand() == "CAP")
+				//	send( user->getSd(), "CAP * LS\r\n", 12, 0 );
 			}
 			else {
-				if (it->getCommand() == "CAP")
-					send( user->getSd(), "CAP * LS\r\n", 12, 0 );
+				//if (it->getCommand() == "CAP")
+				//	send( user->getSd(), "CAP * LS\r\n", 12, 0 );
 				if (it->getCommand() == "USER")
 					userCmd(*it, user);
 				if (it->getCommand() == "NICK")

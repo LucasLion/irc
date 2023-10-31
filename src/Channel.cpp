@@ -23,15 +23,21 @@ const char*	Channel::ChannelAlreadyExistsException::what() const throw() {
 }
 
 void	Channel::addUser( User* user ) {
-	userList.push_back(user);
+   // std::cout << user->getNickName() <<" added" << std::endl;
+	//userList.push_back(user);
+    usersSd[user->getNickName()] = user->getSd();
 }
 
 bool	Channel::isUserInChannel( std::string user ) {
-	for (std::vector<User*>::iterator it = userList.begin(); it != userList.end(); it++) {
-		if ((*it)->getNickName() == user)
-			return (true);
-	}
-	return (false);
+	
+    // for (std::vector<User*>::iterator it = userList.begin(); it != userList.end(); ++it) {
+    //     if ((*it)->getNickName() == user)
+	// 		return (true);
+	// }
+	// return (false);
+    if (usersSd.find(user) != usersSd.end())
+        return (true);
+    return (false);
 }
 
 void Channel::removeUser( std::string user ) {
@@ -44,7 +50,7 @@ void Channel::removeUser( std::string user ) {
 }			
 
 bool Channel::isUserOp( std::string user ) {
-	for (std::vector<std::string>::iterator it = operList.begin(); it != operList.end(); it++) {
+	for (std::vector<std::string>::iterator it = operList.begin(); it != operList.end(); ++it) {
 		if (*it == user)
 			return (true);
 	}
@@ -63,6 +69,10 @@ void Channel::addOperator(std::string user) {
     operList.push_back(user);
 }
 
+void Channel::addInvite(std::string user) {
+    inviteList.push_back(user);
+}
+
 void Channel::removeOperator(std::string user) {
     for (std::vector<std::string>::iterator it = operList.begin(); it != operList.end(); ++it) {
         if (*it == user) {
@@ -71,6 +81,24 @@ void Channel::removeOperator(std::string user) {
         }
     }
 }
+
+void Channel::removeInvite(std::string user) {
+    for (std::vector<std::string>::iterator it = inviteList.begin(); it != inviteList.end(); ++it) {
+        if (*it == user) {
+            inviteList.erase(it);
+            return;
+        }
+    }
+}    
+
+bool Channel::isUserInvite( std::string user ) {
+    for (std::vector<std::string>::iterator it = inviteList.begin(); it != inviteList.end(); ++it) {
+        if (*it == user)
+            return (true);
+    }
+    return (false);
+}
+
 
 std::string Channel::getCurrentModes() {
     std::string modes;

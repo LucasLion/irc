@@ -22,9 +22,10 @@ void	Server::prvMsgCmd( Message msg, User *user ) {
 	// send the message to all the users in the channel
 	if (reciever[0] == '#') {
 		// segfault quand on essaye d'acceder a un salon qui n'existe pas !!!!!!!
-		for (int i = 0; i < (int)_channels[reciever]->userList.size(); i++) {
-			if (_channels[reciever]->userList[i]->getNickName() != userNick) {
-				sendClient(_channels[reciever]->userList[i]->getSd(), PRIVMSG(userNick, reciever, message));
+		std::map<std::string, int>::iterator it;	
+		for (it =_channels[reciever]->usersSd.begin(); it != _channels[reciever]->usersSd.end(); ++it) {
+			if (it->first != userNick) {
+				sendClient(it->second, PRIVMSG(userNick, reciever, message));
 			}
 		}
 	}

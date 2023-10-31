@@ -27,10 +27,6 @@ void Server::splitMode(const std::string& modeArg, std::vector<std::string>& mod
 void Server::parseMode(Channel* channel, User* user, const std::string& target, const std::string* modeArgs, int nbArgs) {
     std::string nick = user->getNickName();
     int sd = user->getSd();
-	(void) sd;
-	(void) nick;
-	(void) target;
-	(void) channel;
 	std::cout << "parseMode" << std::endl;
 	std::cout << "nbArgs : " << nbArgs << std::endl;
 
@@ -39,11 +35,13 @@ void Server::parseMode(Channel* channel, User* user, const std::string& target, 
         std::string modeArg = modeArgs[i];
 		std::cout << "modeArg : " << modeArg << std::endl;
         std::vector<std::string> modeChanges;
-        //splitMode(modeArg, modeChanges);
+        // if (modeArgs[0][0] != '+' && modeArg[0][0] != '-')
+		// 		sendClient(sd, ERR_MODESTRINGERR(nick, modeArgs[0]));
 
         for (int j = 0; j < (int)modeArg.size(); j++) {
             char modeLetter = modeArg[j];
 			bool isAdding;
+			
 			if (modeLetter == '+' ) 
 			{
 				isAdding = true;
@@ -84,20 +82,21 @@ void Server::parseMode(Channel* channel, User* user, const std::string& target, 
                         sendClient(sd, RPL_CHANNELMODEIS(nick, target, "-", "t"));
                     }
                     break;
-        //         case 'l':
-        //              if (modeChange.size() > 1) {
-        //                 if (isAdding) {
-        //                     //changer le stoi
-        //                     int userLimit = std::stoi(modeChange.substr(1));
-        //                     channel->userLimit = userLimit;
-        //                     channel->hasUserLimit = true;
-        //                     Server::sendClient(sd, RPL_CHANNELMODEIS(nick, target, "+", "l"));
-        //                 } else {
-        //                     channel->hasUserLimit = false;
-        //                     Server::sendClient(sd, RPL_CHANNELMODEIS(nick, target, "-", "l"));
-        //                 }
-        //             }
-        //             break;
+                // case 'l':
+                //      if (modeChange.size() > 1) {
+                //         if (isAdding) {
+                //             int userLimit = atoi(modeArgs[i + 1]);
+				// 			std::cout << "on ajoute le mode l" << std::endl;
+				// 			std::cout << "userLimit : " << userLimit << std::endl;
+                //             channel->userLimit = userLimit;
+                //             channel->hasUserLimit = true;
+                //             Server::sendClient(sd, RPL_CHANNELMODEIS(nick, target, "+", "l"));
+                //         } else {
+                //             channel->hasUserLimit = false;
+                //             Server::sendClient(sd, RPL_CHANNELMODEIS(nick, target, "-", "l"));
+                //         }
+                //     }
+                //     break;
         //         case 'o':
         //             if (modeChange.size() > 1) {
         //                 if (isAdding) {
@@ -144,8 +143,6 @@ void Server::parseMode(Channel* channel, User* user, const std::string& target, 
 void	Server::modeCmd( Message msg, User *user ) {
 	
 	std::cout << "modeCmd : " << msg.rawMessage	<< std::endl;
-	Channel *channel;
-	std::map<std::string, Channel*>::iterator it;
 	std::string nick = user->getNickName();
 	std::string target = msg.getParam(0);
 	int sd = user->getSd();
@@ -161,27 +158,19 @@ void	Server::modeCmd( Message msg, User *user ) {
 			sendClient(sd, ERR_NOSUCHCHANNEL(nick, target));
 			return;
 		}
-        //find the channel
-		for (it = getChannels()->begin(); it != getChannels()->end(); ++it) {
-				if (it->first == target)
-					channel = it->second;
-				std::cout << "Channel: " << it->first << std::endl;
-		}
-		// retouver les modes du channels
-		if (nbArgs == 0) {
-	  		sendClient(sd, RPL_CHANNELMODEIS(nick, target, "+", channel->getCurrentModes() ));
+		if (nbArgs == 0){
+	  		sendClient(sd, RPL_CHANNELMODEIS(nick, target, "+", _channels[target]->getCurrentModes() ));
 			return;
 		}
-		//check if the user is in the channel && is op
-		if (channel->isUserInChannel(nick) == false) {
+		if (_channels[target]->isUserInChannel(nick) == false){
 			sendClient(sd, ERR_NOTONCHANNEL(nick, target));
 			return;
 		}
-		if (channel->isUserOp(nick) == false) {
+		if (_channels[target]->isUserOp(nick) == false){
 			sendClient(sd, ERR_CHANOPRIVSNEEDED(nick, target));
 			return;
 		}
 		 else  
-		 	parseMode(channel, user, target, modeArgs, nbArgs);
+		 	parseMode(_channels[target], user, target, modeArgs, nbArgs);
 	}
 }

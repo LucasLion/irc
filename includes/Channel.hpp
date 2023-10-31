@@ -18,23 +18,26 @@ class Channel {
 		bool						isUserInvite( std::string user );
 		std::string					getCurrentModes ( void );
 		void						addOperator (std::string user );
+		void						addInvite (std::string user );
 		void 						removeOperator(std::string user);
+		void						removeInvite(std::string user);
 		std::string					getTopic( void ) const;
 		void						setTopic( std::string topic );
 		User*						getUser( std::string user );
 
 		
 		
-		bool						isInviteOnly;
-		bool						isTopicProtected;
-		bool						hasUserLimit;
-		bool						hasPassword;
-		int							userLimit;
-		std::string					name;
-		std::vector<User*>			userList;
-		std::vector<std::string>	operList;
-		std::vector<std::string>	inviteList;
-		std::string					password;
+		bool								isInviteOnly;
+		bool								isTopicProtected;
+		bool								hasUserLimit;
+		bool								hasPassword;
+		int									userLimit;
+		std::string							name;
+		std::vector<User*>					userList;
+		std::vector<std::string>			operList;
+		std::vector<std::string>			inviteList;
+		std::string							password;
+		std::map<std::string, int>			usersSd;
 
 		class ChannelAlreadyExistsException : public std::exception {
 				virtual const char*	what() const throw();

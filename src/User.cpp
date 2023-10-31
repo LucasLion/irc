@@ -70,6 +70,7 @@ std::string	User::getRealName( void ) {
 }
 
 std::string	User::getNickName( void ) {
+    std::cout << "nick dans getnickname e" << _nickName << std::endl;
 	return _nickName;
 }
 
