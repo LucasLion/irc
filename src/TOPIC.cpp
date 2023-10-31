@@ -33,18 +33,17 @@ void	Server::topicCmd( Message msg, User *user ) {
 	std::map<std::string, int>::iterator it;
 	for(it = _channels[channel]->usersSd.begin(); it != _channels[channel]->usersSd.end(); ++it) {
 		std::string everyusernick = it->first;
-		int userSd = it->second;
 		if (_channels[channel]->getTopic().empty()) {
 			std::cout << "topic is empty" << std::endl;
-			sendClient(userSd, RPL_NOTOPIC(everyusernick, channel));
+			sendClient(it->second, RPL_NOTOPIC(everyusernick, channel));
 		}
 		else {
-			sendClient(userSd, RPL_TOPIC(everyusernick, channel, msg.getParam(1)));
+			sendClient(it->second, RPL_TOPIC(everyusernick, channel, msg.getParam(1)));
+			sendClient(it->second, TOPIC(userNick, channel, msg.getParam(1)));
 
 			// TODO fonctionne mal
-			sendClient(userSd, RPL_TOPICWHOTIME(everyusernick, channel, userNick, creationDate2));
+			//sendClient(userSd, RPL_TOPICWHOTIME(everyusernick, channel, userNick, creationDate2));
 		}
-		sendClient(it->second, TOPIC(userNick, channel, msg.getParam(1)));
 	}
 }
 

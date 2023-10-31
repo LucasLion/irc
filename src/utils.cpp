@@ -1,4 +1,3 @@
-
 #include "../includes/header.hpp"
 #include "../includes/Server.hpp"
 
@@ -17,6 +16,7 @@ bool Server::is_valid( const std::string nickname ) {
 }
 
 void	Server::sendClient( int sd, std::string response ) {
+	std::cout << "COMMAND_SENT: " << response; 
 	write(sd, response.c_str(), response.length());
 }
 

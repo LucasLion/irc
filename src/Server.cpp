@@ -213,7 +213,7 @@ bool	Server::createChannel( std::string channelName, std::string user) {
 bool Server::generateResponse( User *user ) {
 	for (std::vector<Message>::iterator it = user->messages.begin(); it != user->messages.end();) {
 		std::cout << "COMMAND_RECEIVED: " << it->rawMessage << std::endl;
-			if(user->isRegistered() == false) {
+		if(user->isRegistered() == false) {
 				if (it->getCommand() == "NICK")
 					nickPreRegistration(*it, user);
 				if (it->getCommand() == "USER") 
