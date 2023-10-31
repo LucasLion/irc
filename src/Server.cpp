@@ -210,48 +210,39 @@ bool	Server::createChannel( std::string channelName, std::string user) {
 }
 
 bool Server::generateResponse( User *user ) {
-
-
 	for (std::vector<Message>::iterator it = user->messages.begin(); it != user->messages.end();) {
 		std::cout << "COMMAND_RECEIVED: " << it->rawMessage << std::endl;
-	
 			if(user->isRegistered() == false) {
-				if (it->getCommand() == "NICK") {
+				if (it->getCommand() == "NICK")
 					nickPreRegistration(*it, user);
-				}
-				if (it->getCommand() == "USER") {
+				if (it->getCommand() == "USER") 
 					userCmd(*it, user);
-				}
-				if (it->getCommand() == "PASS") {
+				if (it->getCommand() == "PASS")
 					passCmd(*it, user);
-				}
+				if (it->getCommand() == "CAP")
+					send( user->getSd(), "CAP * LS\r\n", 12, 0 );
 			}
-			else{
-				if (it->getCommand() == "USER") {
+			else {
+				if (it->getCommand() == "CAP")
+					send( user->getSd(), "CAP * LS\r\n", 12, 0 );
+				if (it->getCommand() == "USER")
 					userCmd(*it, user);
-				}
-				if (it->getCommand() == "NICK") {
+				if (it->getCommand() == "NICK")
 					nickCmd(*it, user);
-				}
-				if (it->getCommand() == "PING") {
+				if (it->getCommand() == "PING")
 					pongCmd(*it, user);
-				}
-				if (it->getCommand() == "JOIN") {
+				if (it->getCommand() == "JOIN")
 					joinCmd(*it, user);
-				}
-				if (it->getCommand() == "TOPIC") {
+				if (it->getCommand() == "TOPIC")
 					topicCmd(*it, user);
-				}
-				if (it->getCommand() == "PRIVMSG") {
+				if (it->getCommand() == "PRIVMSG")
 					prvMsgCmd(*it, user);
-				}
-				if (it->getCommand() == "QUIT") {
-					quitCmd(*it, user);
+				if (it->getCommand() == "PONG")
 					return (false);
-				}
-				if (it->getCommand() == "PONG") {
-					return (false);
-				}
+				if (it->getCommand() == "KICK")
+					kickCmd(*it, user);
+				if (it->getCommand() == "INVITE")
+					inviteCmd(*it, user);
 				if (it->getCommand() == "MODE") {
 					//sendClient(user->getSd(), MODE(user->getNickName(), user->getNickName(), "+i", ""));
 					//sendClient(user->getSd(),ERR_UMODEUNKNOWNFLAG(user->getNickName()));
@@ -262,6 +253,10 @@ bool Server::generateResponse( User *user ) {
 					for (std::vector<User>::iterator it2 = _users.begin(); it2 != _users.end(); ++it2) {
 						std::cout << "User: " << it2->getNickName() << std::endl;
 					}
+				}
+				if (it->getCommand() == "QUIT") {
+					quitCmd(*it, user);
+					return (false);
 				}
 			}
 
@@ -282,14 +277,16 @@ void	Server::connectServer( int sd, User *user) {
 	std::string nbinvisible = "0";
 	std::string nbClients = "1";
 
-	
-	// char buffer[80];
-	// strftime(buffer, 40, "%a %b %d %H:%M:%S %Y", localtime(&_creationDate));
-	// std::string creationDate(buffer);
+	time_t rawDate;
+//	struct tm * timeinfo;
+	rawDate = time(NULL);
+	char buffer[80];
+	strftime(buffer, 40, "%a %b %d %H:%M:%S %Y", localtime(&rawDate));
+	std::string creationDate(buffer);
 
 	sendClient(sd, RPL_WELCOME(user->getNickName()));
 	sendClient(sd, RPL_YOURHOST(user->getNickName()));
-	sendClient(sd, RPL_CREATED(user->getNickName(), _creationDate));
+	sendClient(sd, RPL_CREATED(user->getNickName(), creationDate));
 	sendClient(sd, RPL_MYINFO(user->getNickName()));
 	sendClient(sd, RPL_ISUPPORT(user->getNickName()));
 	sendClient(sd, RPL_ISUPPORT2(user->getNickName()));

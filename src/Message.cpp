@@ -15,7 +15,6 @@ void	Message::parseParam( std::string params ) {
 
     while ((esp = params.find(" ", start)) != std::string::npos) {
 		if (params[start] == ':') {
-			std::cout << "Couocu: " << params.substr(start + 1) << std::endl;
 			_param.push_back(params.substr(start + 1));
 			return;
 		}

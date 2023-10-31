@@ -12,12 +12,16 @@ class Channel {
 									Channel( std::string name );
 									~Channel( void );
 		void						addUser( User* user );
-		void 						removeUser(User* user);
+		void 						removeUser( std::string user );
 		bool						isUserInChannel( std::string user );
 		bool						isUserOp( std::string user );
 		std::string					getCurrentModes ( void );
 		void						addOperator (std::string user );
 		void 						removeOperator(std::string user);
+		std::string					getTopic( void ) const;
+		void						setTopic( std::string topic );
+		User*						getUser( std::string user );
+
 		
 		
 		bool						isInviteOnly;
@@ -36,5 +40,7 @@ class Channel {
 		};
 	
 	private:
+
+		std::string					_topic;
 };
 

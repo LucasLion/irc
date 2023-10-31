@@ -24,7 +24,6 @@ const char*	Channel::ChannelAlreadyExistsException::what() const throw() {
 
 void	Channel::addUser( User* user ) {
 	userList.push_back(user);
-	std::cout << "User " << user->getNickName() << " added to channel " << name << std::endl;
 }
 
 bool	Channel::isUserInChannel( std::string user ) {
@@ -35,10 +34,9 @@ bool	Channel::isUserInChannel( std::string user ) {
 	return (false);
 }
 
-void Channel::removeUser(User* user) {
+void Channel::removeUser( std::string user ) {
     for (std::vector<User*>::iterator it = userList.begin(); it != userList.end(); ++it) {
-        if (*it == user) {
-			std::cout << "User " << user->getNickName() << " removed from channel " << name << std::endl;
+        if ((*it)->getNickName() == user) {
             userList.erase(it);
             return;
     	}
@@ -83,6 +81,22 @@ std::string Channel::getCurrentModes() {
 	if (hasPassword)
 		modes+= "k";
 
-
     return modes;
+}
+
+
+std::string	Channel::getTopic( void ) const {
+	return (_topic);
+}
+
+void	Channel::setTopic( std::string topic ) {
+	_topic = topic;
+}
+
+User*	Channel::getUser( std::string user ) {
+	for (std::vector<User*>::iterator it = userList.begin(); it != userList.end(); it++) {
+		if ((*it)->getNickName() == user)
+			return (*it);
+	}
+	return (NULL);
 }
