@@ -27,8 +27,9 @@ void	Server::nickCmd( Message msg, User *user ) {
 	user->setNickName(newNick);
 	if (user->_channels.size() > 0){
 		for (it2 = user->_channels.begin(); it2 != user->_channels.end(); ++it2) {
-			for (int i = 0 ; i < (int)it2->second->userList.size(); i++) {
-				sendClient(it2->second->userList[i]->getSd(), NICK(oldNick, newNick));
+			std::map<std::string, int>::iterator it3;
+			for(it3 = it2->second->usersSd.begin(); it3 != it2->second->usersSd.end(); ++it3) {
+				sendClient(it3->second, NICK(oldNick, newNick));
 			}
 		}
 	}else

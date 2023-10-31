@@ -48,21 +48,25 @@ void	Server::joinCmd( Message msg, User *user ) {
 	//sendClient(sd, RPL_TOPIC(userNick, channel, "default topic (has to change)"));
 	// create the list of users in the channels
 	std::string response = ":localhost 353 " + userNick + " = " + channel + " :";
-
-	for (int i = 0; i < (int)_channels[channel]->userList.size(); i++) {
-		response += _channels[channel]->userList[i]->getNickName() + " ";
+	std::map<std::string, int>::iterator it;
+	
+	for(it = _channels[channel]->usersSd.begin(); it != _channels[channel]->usersSd.end(); ++it) {
+		response += it->first + " ";
 	}
 	response += "\r\n";
 	// send the list to everyone in the channel
-	for (int i = 0; i < (int)_channels[channel]->userList.size(); i++) {
-		int chanUserSd = _channels[channel]->userList[i]->getSd();
-		send(chanUserSd, response.c_str(), response.length(), 0);
+	for(it = _channels[channel]->usersSd.begin(); it != _channels[channel]->usersSd.end(); ++it) {
+		sendClient(it->second, JOIN(userNick, channel));
+		send(it->second, response.c_str(), response.length(), 0);
+		sendClient(it->second, RPL_ENDOFNAMES(userNick, channel));
+		
 	}
+
 	// loop with iterator to send the list to everyone in the channels
-	std::vector<User*>::iterator it;
-	for (it = _channels[channel]->userList.begin(); it != _channels[channel]->userList.end(); ++it) {
-		sendClient((*it)->getSd(), RPL_NAMREPLY(userNick, "=", channel, "", (*it)->getNickName()));
-	};	
-	for (int i = 0; i < (int)user->getChannels()[channel]->userList.size(); i++)
-		send(_users[i].getSd(), response.c_str(), response.length(), 0);
+	// std::vector<User*>::iterator it;
+	// for (it = _channels[channel]->userList.begin(); it != _channels[channel]->userList.end(); ++it) {
+	// 	sendClient((*it)->getSd(), RPL_NAMREPLY(userNick, "=", channel, "", (*it)->getNickName()));
+	// 	sendClient(sd, RPL_ENDOFNAMES(userNick, channel));
+	// };
+
 }

@@ -23,7 +23,7 @@ class Channel {
 		void						removeInvite(std::string user);
 		std::string					getTopic( void ) const;
 		void						setTopic( std::string topic );
-		User*						getUser( std::string user );
+	
 
 		
 		
@@ -33,7 +33,6 @@ class Channel {
 		bool								hasPassword;
 		int									userLimit;
 		std::string							name;
-		std::vector<User*>					userList;
 		std::vector<std::string>			operList;
 		std::vector<std::string>			inviteList;
 		std::string							password;
