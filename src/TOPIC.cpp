@@ -17,10 +17,9 @@ void	Server::topicCmd( Message msg, User *user ) {
 		return ;
 	}
 	// if protected topic (+t) and client does not have permissions
-	//		sendClient(user->getSd(), ERR_CHANOPRIVSNEEDED(user->getNickName(), msg.getParam(0)));
+	if (_channels[channel]->isTopicProtected && !(_channels[channel]->isUserOp(userNick)))
+		sendClient(user->getSd(), ERR_CHANOPRIVSNEEDED(user->getNickName(), msg.getParam(0)));
 
-	// check if user has rights
-	
 	time_t rawDate;
 	rawDate = time(NULL);
 	char buffer[80];

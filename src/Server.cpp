@@ -49,7 +49,7 @@ int		Server::createSocket( void ) {
 		perror("setsockopt");
 		exit(EXIT_FAILURE);
 	}
-	//bind the socket to localhost port 8888
+	//bind the socket to localhost port 6667
 	if (bind(masterSocket, (struct sockaddr *)&_address, sizeof(_address)) < 0) {
 		perror("bind failed");
 		exit(EXIT_FAILURE);

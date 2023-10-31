@@ -57,6 +57,14 @@ bool Channel::isUserOp( std::string user ) {
 	return (false);
 }
 
+bool Channel::isUserInvite( std::string user ) {
+	for (std::vector<std::string>::iterator it = inviteList.begin(); it != inviteList.end(); it++) {
+		if (*it == user)
+			return (true);
+	}
+	return (false);
+}
+
 void Channel::addOperator(std::string user) {
     operList.push_back(user);
 }
