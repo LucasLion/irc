@@ -140,24 +140,28 @@ void	Server::modeCmd( Message msg, User *user ) {
 	std::cout << "modeCmd : " << msg.rawMessage	<< std::endl;
 	std::string nick = user->getNickName();
 	std::string target = msg.getParam(0);
-    std::string modestring = msg.getParam(1);
+  // if(msg.getParam(1).length() > 0){
+        std::string modestring = msg.getParam(1);
+   // }
 	int sd = user->getSd();
-	int nbArgs = msg.nbParam() - 2;
+	int nbArgs = msg.nbParam() - 1;
 	std::string modeArgs[nbArgs];
 	for(int i = 0; i < nbArgs; i++)
-		modeArgs[i] = msg.getParam(2 + i);
+		modeArgs[i] = msg.getParam(1 + i);
 	
-	if(target[0] != '#')
+	if(target[0] != '#'){
 	 	sendClient(sd, ERR_UMODEUNKNOWNFLAG(nick));
-	else {
-		if(_channels.find(target) == _channels.end()){
-			sendClient(sd, ERR_NOSUCHCHANNEL(nick, target));
-			return;
-		}
-		if (nbArgs == 0){
-	  		sendClient(sd, RPL_CHANNELMODEIS(nick, target, "+", _channels[target]->getCurrentModes() ));
-			return;
-		}
+        return;
+    }
+	if(_channels.find(target) == _channels.end()){
+		sendClient(sd, ERR_NOSUCHCHANNEL(nick, target));
+		return;
+	}
+	if (nbArgs == 0){
+		sendClient(sd, RPL_CHANNELMODEIS(nick, target, "+", _channels[target]->getCurrentModes() ));
+		return;
+	}
+
 		if (_channels[target]->isUserInChannel(nick) == false){
 			sendClient(sd, ERR_NOTONCHANNEL(nick, target));
 			return;
@@ -169,4 +173,4 @@ void	Server::modeCmd( Message msg, User *user ) {
 		 else  
 		 	parseMode(_channels[target], user, target,modestring, modeArgs, nbArgs);
 	}
-}
+
