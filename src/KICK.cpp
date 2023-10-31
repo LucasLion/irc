@@ -34,18 +34,18 @@ void	Server::kickCmd( Message msg, User* user ) {
 		return ;
 	}
 	// kick the target
-	int targetSd = _channels[channel]->usersSd[target];
-	_channels[channel]->removeUser(target);
-	// send the kick message to the target
-	//
-	//
-	// get the target's sd
-	
-
-	sendClient(targetSd, KICK(userNick, channel, target, reason));
-	// send the kick message to everyone in the channel
-	std::map<std::string, int>::iterator it;
-	for(it = _channels[channel]->usersSd.begin(); it != _channels[channel]->usersSd.end(); ++it) {
-		sendClient(it->second, KICK(userNick, channel, target, reason));
+	if (_channels[channel]->isUserOp(userNick)) {
+		int targetSd = _channels[channel]->usersSd[target];
+		_channels[channel]->removeUser(target);
+		if (reason.length() == 0)
+			reason = "You've been kicked for no reason ^^";
+		sendClient(targetSd, KICK(userNick, channel, target, reason));
+		// send the kick message to everyone in the channel
+		std::map<std::string, int>::iterator it;
+		for(it = _channels[channel]->usersSd.begin(); it != _channels[channel]->usersSd.end(); ++it) {
+			sendClient(it->second, KICK(userNick, channel, target, reason));
+		}
 	}
+	else
+		sendClient(user->getSd(), ERR_CHANOPRIVSNEEDED(user->getNickName(), msg.getParam(0)));
 }
