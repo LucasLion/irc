@@ -26,6 +26,12 @@ void	Server::joinCmd( Message msg, User *user ) {
 		sendClient(sd, ERR_USERONCHANNEL(userNick, userNick, channel));
 		return ;
 	}
+	if (_channels[channel]->isInviteOnly) {
+		if (!_channels[channel]->isUserInvite(userNick)) {
+			sendClient(sd, ERR_INVITEONLYCHAN(userNick, channel));
+			return ;
+		}
+	}
 	_channels[channel]->addUser(user);
 	user->addChannel(channel, _channels[channel]);
 	sendClient(sd, JOIN(userNick, channel));

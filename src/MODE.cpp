@@ -161,25 +161,23 @@ void	Server::modeCmd( Message msg, User *user ) {
 			sendClient(sd, ERR_NOSUCHCHANNEL(nick, target));
 			return;
 		}
-
         //find the channel
 		for (it = getChannels()->begin(); it != getChannels()->end(); ++it) {
 				if (it->first == target)
 					channel = it->second;
 				std::cout << "Channel: " << it->first << std::endl;
-			}
+		}
 		// retouver les modes du channels
-		if (nbArgs == 0){
+		if (nbArgs == 0) {
 	  		sendClient(sd, RPL_CHANNELMODEIS(nick, target, "+", channel->getCurrentModes() ));
 			return;
 		}
-	
 		//check if the user is in the channel && is op
-		if (channel->isUserInChannel(nick) == false){
+		if (channel->isUserInChannel(nick) == false) {
 			sendClient(sd, ERR_NOTONCHANNEL(nick, target));
 			return;
 		}
-		if (channel->isUserOp(nick) == false){
+		if (channel->isUserOp(nick) == false) {
 			sendClient(sd, ERR_CHANOPRIVSNEEDED(nick, target));
 			return;
 		}

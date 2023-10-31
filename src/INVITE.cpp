@@ -32,13 +32,12 @@ void	Server::inviteCmd( Message msg, User* user ) {
 		sendClient(sd, ERR_USERONCHANNEL(userNick, target, channel));
 		return ;
 	}
-	// invite the target
-	// mais y'a un segfault ici
-	//int targetSd = _channels[channel]->getUser(target)->getSd();
-	//User* targetUser = _channels[channel]->getUser(target);
-	//_channels[channel]->addUser(targetUser);
-
-	//sendClient(sd, RPL_INVITING(userNick, target, channel));
-	//sendClient(targetSd, INVITE(userNick, target, channel));
-
+	if (_channels[channel]->isUserOp(userNick)) {
+		_channels[channel]->inviteList.push_back(target);
+		int targetSd = _channels[channel]->getUser(target)->getSd();
+		sendClient(sd, RPL_INVITING(userNick, target, channel));
+		sendClient(targetSd, INVITE(userNick, target, channel));
+	}
+	else
+		sendClient(sd, ERR_CHANOPRIVSNEEDED(userNick, target));
 }
