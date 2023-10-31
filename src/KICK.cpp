@@ -34,7 +34,7 @@ void	Server::kickCmd( Message msg, User* user ) {
 		return ;
 	}
 	// kick the target
-	int targetSd = _channels[channel]->getUser(target)->getSd();
+	int targetSd = _channels[channel]->usersSd[target];
 	_channels[channel]->removeUser(target);
 	// send the kick message to the target
 	//
@@ -44,8 +44,8 @@ void	Server::kickCmd( Message msg, User* user ) {
 
 	sendClient(targetSd, KICK(userNick, channel, target, reason));
 	// send the kick message to everyone in the channel
-	std::vector<User*>::iterator it;
-	for (it = _channels[channel]->userList.begin(); it != _channels[channel]->userList.end(); ++it) {
-		sendClient((*it)->getSd(), KICK(userNick, channel, target, reason));
+	std::map<std::string, int>::iterator it;
+	for(it = _channels[channel]->usersSd.begin(); it != _channels[channel]->usersSd.end(); ++it) {
+		sendClient(it->second, KICK(userNick, channel, target, reason));
 	}
 }

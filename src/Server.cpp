@@ -202,8 +202,9 @@ bool	Server::createChannel( std::string channelName, std::string user) {
 	for (std::map<std::string, Channel*>::iterator it = _channels.begin(); it != _channels.end(); it++) {
 		std::cout << "Channel: " << it->first << std::endl;
 		// iterate through the vector of users in the channel 
-		for (int i = 0; i < (int)it->second->userList.size(); i++) {
-			std::cout << "User: " << it->second->userList[i] << std::endl;
+		std::map<std::string, int>::iterator it2;
+		for(it2 = it->second->usersSd.begin(); it2 != it->second->usersSd.end(); ++it2) {
+			std::cout << "User: " << it2->first << std::endl;
 		}
 	}
 	return true;

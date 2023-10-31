@@ -23,31 +23,19 @@ const char*	Channel::ChannelAlreadyExistsException::what() const throw() {
 }
 
 void	Channel::addUser( User* user ) {
-   // std::cout << user->getNickName() <<" added" << std::endl;
-	//userList.push_back(user);
     usersSd[user->getNickName()] = user->getSd();
 }
 
 bool	Channel::isUserInChannel( std::string user ) {
 	
-    // for (std::vector<User*>::iterator it = userList.begin(); it != userList.end(); ++it) {
-    //     if ((*it)->getNickName() == user)
-	// 		return (true);
-	// }
-	// return (false);
     if (usersSd.find(user) != usersSd.end())
         return (true);
     return (false);
 }
 
 void Channel::removeUser( std::string user ) {
-    for (std::vector<User*>::iterator it = userList.begin(); it != userList.end(); ++it) {
-        if ((*it)->getNickName() == user) {
-            userList.erase(it);
-            return;
-    	}
-	}
-}			
+    usersSd.erase(user);
+}		
 
 bool Channel::isUserOp( std::string user ) {
 	for (std::vector<std::string>::iterator it = operList.begin(); it != operList.end(); ++it) {
@@ -57,13 +45,6 @@ bool Channel::isUserOp( std::string user ) {
 	return (false);
 }
 
-bool Channel::isUserInvite( std::string user ) {
-	for (std::vector<std::string>::iterator it = inviteList.begin(); it != inviteList.end(); it++) {
-		if (*it == user)
-			return (true);
-	}
-	return (false);
-}
 
 void Channel::addOperator(std::string user) {
     operList.push_back(user);
@@ -129,10 +110,4 @@ void	Channel::setTopic( std::string topic ) {
 	_topic = topic;
 }
 
-User*	Channel::getUser( std::string user ) {
-	for (std::vector<User*>::iterator it = userList.begin(); it != userList.end(); it++) {
-		if ((*it)->getNickName() == user)
-			return (*it);
-	}
-	return (NULL);
-}
+

@@ -17,9 +17,10 @@ void	Server::topicCmd( Message msg, User *user ) {
 		return ;
 	}
 	// if protected topic (+t) and client does not have permissions
-	if (_channels[channel]->isTopicProtected && !(_channels[channel]->isUserOp(userNick)))
+	if (_channels[channel]->isTopicProtected && !(_channels[channel]->isUserOp(userNick))) {
 		sendClient(user->getSd(), ERR_CHANOPRIVSNEEDED(user->getNickName(), msg.getParam(0)));
-
+		return ;
+	}
 	time_t rawDate;
 	rawDate = time(NULL);
 	char buffer[80];
@@ -29,11 +30,10 @@ void	Server::topicCmd( Message msg, User *user ) {
 	std::cout << "creationDate: " << creationDate2 << std::endl;
 
 	_channels[channel]->setTopic(msg.getParam(1));
-	for (int i = 0; i < (int)_channels[channel]->userList.size(); i++) {
-
-		std::string everyusernick = _channels[channel]->userList[i]->getNickName();
-		int userSd = _channels[channel]->userList[i]->getSd();
-		std::cout << "everyusernick: " << everyusernick << std::endl;
+	std::map<std::string, int>::iterator it;
+	for(it = _channels[channel]->usersSd.begin(); it != _channels[channel]->usersSd.end(); ++it) {
+		std::string everyusernick = it->first;
+		int userSd = it->second;
 		if (_channels[channel]->getTopic().empty()) {
 			std::cout << "topic is empty" << std::endl;
 			sendClient(userSd, RPL_NOTOPIC(everyusernick, channel));
@@ -44,6 +44,7 @@ void	Server::topicCmd( Message msg, User *user ) {
 			// TODO fonctionne mal
 			sendClient(userSd, RPL_TOPICWHOTIME(everyusernick, channel, userNick, creationDate2));
 		}
+		sendClient(it->second, TOPIC(userNick, channel, msg.getParam(1)));
 	}
 }
 
