@@ -23,9 +23,9 @@ const char*	Channel::ChannelAlreadyExistsException::what() const throw() {
 }
 
 void	Channel::addUser( User* user ) {
-    std::cout << user->getNickName() <<" added" << std::endl;
-	userList.push_back(user);
-    userSd[user->getNickName()] = user->getSd();
+   // std::cout << user->getNickName() <<" added" << std::endl;
+	//userList.push_back(user);
+    usersSd[user->getNickName()] = user->getSd();
 }
 
 bool	Channel::isUserInChannel( std::string user ) {
@@ -35,7 +35,7 @@ bool	Channel::isUserInChannel( std::string user ) {
 	// 		return (true);
 	// }
 	// return (false);
-    if (userSd.find(user) != userSd.end())
+    if (usersSd.find(user) != usersSd.end())
         return (true);
     return (false);
 }

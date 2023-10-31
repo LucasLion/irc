@@ -37,7 +37,7 @@ class Channel {
 		std::vector<std::string>			operList;
 		std::vector<std::string>			inviteList;
 		std::string							password;
-		std::map<std::string, int>			userSd;
+		std::map<std::string, int>			usersSd;
 
 		class ChannelAlreadyExistsException : public std::exception {
 				virtual const char*	what() const throw();
