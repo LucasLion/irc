@@ -42,3 +42,37 @@ bool Channel::isUserOp( std::string user ) {
 	}
 	return (false);
 }
+
+void Channel::addOperator(std::string user) {
+    operList.push_back(user);
+}
+
+void Channel::removeOperator(std::string user) {
+    for (std::vector<std::string>::iterator it = operList.begin(); it != operList.end(); ++it) {
+        if (*it == user) {
+            operList.erase(it);
+            return;
+        }
+    }
+}
+
+std::string Channel::getCurrentModes() {
+    std::string modes;
+
+	modes += "o";
+
+    if (isInviteOnly) 
+        modes += "i";
+    
+    if (isTopicProtected) 
+        modes += "t";
+    
+    if (hasUserLimit) 
+        modes += "l";
+    
+	if (hasPassword)
+		mode+= "k"
+
+
+    return modes;
+}

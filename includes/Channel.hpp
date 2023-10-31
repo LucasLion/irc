@@ -16,16 +16,20 @@ class Channel {
 		bool						isUserInChannel( std::string user );
 		bool						isUserOp( std::string user );
 		std::string					getCurrentModes ( void );
+		void						addOperator (std::string user );
+		void 						removeOperator(std::string user);
 		
 		
 		bool						isInviteOnly;
 		bool						isTopicProtected;
 		bool						hasUserLimit;
+		bool						hasPassword;
 		int							userLimit;
 		std::string					name;
 		std::vector<User*>			userList;
 		std::vector<std::string>	operList;
 		std::vector<std::string>	bannedList;
+		std::string					password;
 
 		class ChannelAlreadyExistsException : public std::exception {
 				virtual const char*	what() const throw();

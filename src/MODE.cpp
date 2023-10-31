@@ -1,9 +1,14 @@
 #include "../includes/Server.hpp"
 
+#include <iostream>
+#include <string>
+#include <vector>
+
 void splitMode(const std::string& modeArg, std::vector<std::string>& modeChanges) {
     std::string currentChange;
     bool isAdding = true;  // True for adding modes, false for removing
-    for (char c : modeArg) {
+    for (std::string::const_iterator it = modeArg.begin(); it != modeArg.end(); ++it) {
+        char c = *it;
         if (c == '+' || c == '-') {
             if (!currentChange.empty()) {
                 modeChanges.push_back(currentChange);
@@ -29,49 +34,84 @@ void parseMode(Channel* channel, User* user, const std::string& target, const st
         std::vector<std::string> modeChanges;
         splitMode(modeArg, modeChanges);
 
-        for (const std::string& modeChange : modeChanges) {
+        for (std::vector<std::string>::iterator it = modeChanges.begin(); it != modeChanges.end(); ++it) {
+            std::string modeChange = *it;
             char modeLetter = modeChange[0];
             bool isAdding = (modeChange[0] == '+');
-            
-            // Flag to indicate if the mode was handled
-            bool modeHandled = true;
 
             switch (modeLetter) {
                 case 'i':
-                    // Handle Invite-Only (i) Channel Mode
-                    // ... (as previously implemented)
+                     if (isAdding && !channel->isInviteOnly) {
+                        channel->isInviteOnly == true;
+                        sendClient(sd, RPL_CHANNELMODEIS(nick, target, "+i"));
+                    } else if (!isAdding && channel->isInviteOnly()) {
+                        channel->setInviteOnly(false);
+                        sendClient(sd, RPL_CHANNELMODEIS(nick, target, "-i"));
+                    }
                     break;
                 case 't':
-                    // Handle Protected Topic (t) Channel Mode
-                    // ... (as previously implemented)
+                    if (isAdding && !channel->isTopicProtected) {
+                        channel->isTopicProtected == true;
+                        sendClient(sd, RPL_CHANNELMODEIS(nick, target, "+t"));
+                    } else if (!isAdding && channel->isTopicProtected) {
+                        channel->isTopicProtected = false;
+                        sendClient(sd, RPL_CHANNELMODEIS(nick, target, "-t"));
+                    }
                     break;
                 case 'l':
-                    // Handle User Limit (l) Channel Mode
-                    // ... (as previously implemented)
+                     if (modeChange.size() > 1) {
+                        if (isAdding) {
+                            //changer le stoi
+                            int userLimit = std::stoi(modeChange.substr(1));
+                            channel->userLimit = userLimit;
+                            channel->hasUserLimit = true;
+                            sendClient(sd, RPL_CHANNELMODEIS(nick, target, modeChange));
+                        } else {
+                            channel->hasUserLimit = false;
+                            sendClient(sd, RPL_CHANNELMODEIS(nick, target, modeChange));
+                        }
+                    }
                     break;
                 case 'o':
-                    // Handle Operator (o) Channel Mode
-                    // ... (as previously implemented)
+                    if (modeChange.size() > 1) {
+                        if (isAdding) {
+                            std::string operatorNick = modeChange.substr(1);
+                            if (channel->isUserInChannel(operatorNick)) {
+                                channel->addOperator(operatorNick);
+                                sendClient(sd, RPL_CHANNELMODEIS(nick, target, modeChange));
+                            } else {
+                                sendClient(sd, ERR_NOTONCHANNEL(nick, target));
+                            }
+                        } else {
+                            std::string operatorNick = modeChange.substr(1);
+                            if (channel->isOperator(operatorNick)) {
+                                channel->removeOperator(operatorNick);
+                                sendClient(sd, RPL_CHANNELMODEIS(nick, target, modeChange));
+                            }
+                        }
+                    }
                     break;
                 case 'k':
-                    // Handle Password (k) Channel Mode
-                    // ... (as previously implemented)
+                    if (modeChange.size() > 1) {
+                        if (isAdding) {
+                            std::string pass = modeChange.substr(1);
+                            channel->password = pass;
+                            sendClient(sd, RPL_CHANNELMODEIS(nick, target, modeChange));
+                        } else {
+                            if (channel->isPasswordSet()) {
+                                channel->removePassword();
+                                sendClient(sd, RPL_CHANNELMODEIS(nick, target, modeChange));
+                            }
+                       }
                     break;
                 default:
-                    // Mode not supported, return ERR_UMODEUNKNOWNFLAG
-                    modeHandled = false;
+                    sendClient(sd, ERR_UMODEUNKNOWNFLAG(nick));
                     break;
-            }
-
-            if (modeHandled) {
-                // Send appropriate responses if the mode was handled
-            } else {
-                // Mode not supported, return ERR_UMODEUNKNOWNFLAG
-                sendClient(sd, ERR_UMODEUNKNOWNFLAG(nick));
             }
         }
     }
 }
+
 
 
 void	Server::modeCmd( Message msg, User *user ) {
@@ -95,17 +135,18 @@ void	Server::modeCmd( Message msg, User *user ) {
 			return;
 		}
 
-		// retouver les modes du channels
-		if (nbArgs == 0){
-	  		sendClient(sd, RPL_CHANNELMODEIS(nick, target, "+,-", "i,t,k,o,l"));
-			return;
-		}
-		//find the channel
+        //find the channel
 		for (it = getChannels()->begin(); it != getChannels()->end(); ++it) {
 				if (it->first == target)
 					channel = it->second;
 				std::cout << "Channel: " << it->first << std::endl;
 			}
+		// retouver les modes du channels
+		if (nbArgs == 0){
+	  		sendClient(sd, RPL_CHANNELMODEIS(nick, target, "+", channel->getCurrentModes() ));
+			return;
+		}
+	
 		//check if the user is in the channel && is op
 		if (channel->isUserInChannel(nick) == false){
 			sendClient(sd, ERR_NOTONCHANNEL(nick, target));
