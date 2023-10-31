@@ -308,3 +308,5 @@ std::map<std::string, Channel*>	*Server::getChannels( void ) { return &_channels
 bool	Server::passOK() { return _passOK; }
 
 void	Server::setPassOK(bool passOK) { _passOK = passOK;}
+
+

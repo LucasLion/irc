@@ -2,9 +2,19 @@
 #include "../includes/header.hpp"
 #include "../includes/Channel.hpp"
 
-Channel::Channel( void ) { }
+Channel::Channel( void ) {
+    isInviteOnly = false;
+    isTopicProtected = false;
+    hasUserLimit = false;
+    hasPassword = false;
+ }
 
-Channel::Channel( std::string nom ) : name(nom) { (void)name; }
+Channel::Channel( std::string nom ) : name(nom) { 
+    isInviteOnly = false;
+    isTopicProtected = false;
+    hasUserLimit = false;
+    hasPassword = false;
+    (void)name; }
 
 Channel::~Channel( void ) { }
 
@@ -40,6 +50,40 @@ bool Channel::isUserOp( std::string user ) {
 	}
 	return (false);
 }
+
+void Channel::addOperator(std::string user) {
+    operList.push_back(user);
+}
+
+void Channel::removeOperator(std::string user) {
+    for (std::vector<std::string>::iterator it = operList.begin(); it != operList.end(); ++it) {
+        if (*it == user) {
+            operList.erase(it);
+            return;
+        }
+    }
+}
+
+std::string Channel::getCurrentModes() {
+    std::string modes;
+
+	modes += "o";
+
+    if (isInviteOnly) 
+        modes += "i";
+    
+    if (isTopicProtected) 
+        modes += "t";
+    
+    if (hasUserLimit) {
+        modes += "l";
+    }
+	if (hasPassword)
+		modes+= "k";
+
+    return modes;
+}
+
 
 std::string	Channel::getTopic( void ) const {
 	return (_topic);
