@@ -23,6 +23,7 @@ class Channel {
 		void						removeInvite(std::string user);
 		std::string					getTopic( void ) const;
 		void						setTopic( std::string topic );
+		void						sendMessgeToAllUsers( std::string message );
 	
 
 		

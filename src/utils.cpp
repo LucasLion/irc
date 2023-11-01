@@ -86,3 +86,23 @@ void	Server::nickPreRegistration( Message msg, User *user ) {
 	}
 
 }
+
+bool	Server::isUserInServer( std::string nickname ) {
+	std::vector<User>::iterator it;
+
+	for (it = _users.begin(); it != _users.end(); ++it) {
+		if (nickname == it->getNickName())
+			return (true);
+	}
+	return (false);
+}
+
+int		Server::getUserSd( std::string nickname ) {
+	std::vector<User>::iterator it;
+
+	for (it = _users.begin(); it != _users.end(); ++it) {
+		if (nickname == it->getNickName())
+			return (it->getSd());
+	}
+	return (-1);
+}
