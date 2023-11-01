@@ -67,14 +67,13 @@ void	Server::joinCmd( Message msg, User *user ) {
 		std::cout << "else"	<< std::endl;
 
 		std::map<std::string, int>::iterator it2;
-		for(it2 = _channels[channel]->usersSd.begin(); it2 != _channels[channel]->usersSd.end(); ++it2)
-			sendClient(sd, RPL_NAMREPLY(userNick, "=", channel, "", it2->first));
-		
+		for(it2 = _channels[channel]->usersSd.begin(); it2 != _channels[channel]->usersSd.end(); ++it2){
+			std::string nickOp = _channels[channel]->getChanNick(it2->first);
+			sendClient(sd, RPL_NAMREPLY(userNick, "=", channel, "", nickOp));
+		}
 		std::map<std::string, int>::iterator it;
 		for(it = _channels[channel]->usersSd.begin(); it != _channels[channel]->usersSd.end(); ++it) {
-			//send(it->second, response.c_str(), response.length(), 0);
 			sendClient(it->second, RPL_ENDOFNAMES(userNick, channel));
-			//sendClient(it->second, RPL_TOPICWHOTIME(it->first, channel, userNick, _creationDate));
 			sendClient(it->second, JOIN(userNick, channel));
 		}
 	}

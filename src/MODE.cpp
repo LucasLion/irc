@@ -25,6 +25,7 @@ void Server::splitMode(const std::string& modeArg, std::vector<std::string>& mod
 }
 
 void Server::parseMode(Channel* channel, User* user, const std::string& target, const std::string& modestring, const std::string* modeArgs, int nbArgs) {
+    //std::string nick = channel->getChanNick(user->getNickName());
     std::string nick = user->getNickName();
     int sd = user->getSd();
 	std::cout << "parseMode" << std::endl;
@@ -32,6 +33,9 @@ void Server::parseMode(Channel* channel, User* user, const std::string& target, 
     int i = 0;
     bool isAdding = true;
 
+    if (modestring[0] == 'b')
+        return;
+    
     if ((modestring[0] != '+') && (modestring[0] != '-')){
         sendClient(sd, ERR_MODESTRINGERR(nick, modestring));
         return;
