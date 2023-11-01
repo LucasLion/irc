@@ -54,7 +54,7 @@ void Channel::addInvite(std::string user) {
     inviteList.push_back(user);
 }
 
-void Channel::removeOperator(std::string user) {
+void Channel::removeOperator(std::string user) {    
     for (std::vector<std::string>::iterator it = operList.begin(); it != operList.end(); ++it) {
         if (*it == user) {
             operList.erase(it);
@@ -114,5 +114,33 @@ void	Channel::setTopic( std::string topic ) {
 void    Channel::sendMessgeToAllUsers( std::string message ) {
     for (std::map<std::string, int>::iterator it = usersSd.begin(); it != usersSd.end(); ++it) {
         write(it->second, message.c_str(), message.length());
+    }
+}
+
+std::string	Channel::getChanNick( std::string user ) {
+    if (isUserOp(user))
+        return ("@" + user);
+    else 
+        return (user);
+}
+
+void    Channel::changeNick( std::string prevNick, std::string newNick ) {
+    int sd = usersSd[prevNick];
+    usersSd.erase(prevNick);
+    usersSd[newNick] = sd;
+
+    //check if user is op and replace nick in operList
+    for (std::vector<std::string>::iterator it = operList.begin(); it != operList.end(); ++it) {
+        if (*it == prevNick) {
+            *it = newNick;
+            break;
+        }
+    }
+    //check if user is invite and replace nick in inviteList
+    for (std::vector<std::string>::iterator it = inviteList.begin(); it != inviteList.end(); ++it) {
+        if (*it == prevNick) {
+            *it = newNick;
+            break;
+        }
     }
 }

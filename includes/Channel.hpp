@@ -24,7 +24,8 @@ class Channel {
 		std::string					getTopic( void ) const;
 		void						setTopic( std::string topic );
 		void						sendMessgeToAllUsers( std::string message );
-	
+		std::string					getChanNick( std::string user );
+		void						changeNick( std::string prevNick, std::string newNick );	
 
 		
 		

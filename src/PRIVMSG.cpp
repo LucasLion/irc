@@ -25,6 +25,8 @@ void	Server::prvMsgCmd( Message msg, User *user ) {
 		std::map<std::string, int>::iterator it;	
 		for (it =_channels[reciever]->usersSd.begin(); it != _channels[reciever]->usersSd.end(); ++it) {
 			if (it->first != userNick) {
+				//std::string nickop = _channels[reciever]->getChanNick(userNick);
+
 				sendClient(it->second, PRIVMSG(userNick, reciever, message));
 			}
 		}
