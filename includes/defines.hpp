@@ -98,6 +98,9 @@
 # define ERR_UMODEUNKNOWNFLAG(client)	(":localhost 501 " + client + " :Unknown MODE flag\r\n")
 # define ERR_USERSDONTMATCH(client)		(":localhost 502 " + client + " :Cant change mode for other user\r\n")
 
+# define ERR_INVALIDMODEPARAM(client, \
+				target, char, param, reason)	(":localhost 696 " + client + " " + target + " " + char + " " + param + " :Invalid mode parameter (" + reason + ")\r\n")
+
 # define	ERR_ISFOUNDER(client, nick)		(":localhost 701 " + client + " " + nick + " :Couldn't perform action because user is founder\r\n")
 # define ERR_TOOLONG(client, size, limit)(":localhost 702 " + client + " " + size + " :size too long (limit is " + limit + ")\r\n")
 

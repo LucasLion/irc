@@ -32,12 +32,17 @@ void	Server::inviteCmd( Message msg, User* user ) {
 		sendClient(sd, ERR_USERONCHANNEL(userNick, target, channel));
 		return ;
 	}
-	if (_channels[channel]->isUserOp(userNick)) {
-		_channels[channel]->inviteList.push_back(target);
-		int targetSd = _channels[channel]->usersSd[target];
-		sendClient(sd, RPL_INVITING(userNick, target, channel));
-		sendClient(targetSd, INVITE(userNick, target, channel));
+	//check if the target is in server
+	if (isUserInServer(target) == false) {
+		sendClient(sd, ERR_NOSUCHNICK(userNick, target));
+	}else{
+		if (_channels[channel]->isUserOp(userNick)) {
+			_channels[channel]->inviteList.push_back(target);
+			sendClient(sd, RPL_INVITING(userNick, target, channel));
+			sendClient(getUserSd(target), INVITE(userNick, target, channel));
+		}
+		else
+			sendClient(sd, ERR_CHANOPRIVSNEEDED(userNick, target));
+
 	}
-	else
-		sendClient(sd, ERR_CHANOPRIVSNEEDED(userNick, target));
 }

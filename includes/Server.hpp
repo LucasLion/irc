@@ -41,6 +41,8 @@ public:
 	void				connectServer( int sd , User *user );
 	void				sendClient( int sd, std::string response );
 	bool				is_valid( const std::string nickname );
+	bool				isUserInServer( std::string nickname );
+	int					getUserSd( std::string nickname );
 
 
 	std::map<std::string, Channel*>	*getChannels( void ) ;

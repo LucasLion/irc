@@ -111,3 +111,8 @@ void	Channel::setTopic( std::string topic ) {
 }
 
 
+void    Channel::sendMessgeToAllUsers( std::string message ) {
+    for (std::map<std::string, int>::iterator it = usersSd.begin(); it != usersSd.end(); ++it) {
+        write(it->second, message.c_str(), message.length());
+    }
+}
