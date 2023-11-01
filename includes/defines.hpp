@@ -57,11 +57,13 @@
 							setter, at)	(":localhost 333 " + client + " " + chan + " " + setter + " " + at + "\r\n")
 # define RPL_INVITING(client, nick,chan)	(":localhost 341 " + client + " " + nick + " " + chan + "\r\n")
 # define RPL_WHOREPLY(client, chan, \
-				user, nick, realname)	(":localhost 352 " + client + " " + chan + " " + user + " " + "localhost" + " " \
+				user, nick, realname)	(":localhost 352 " + client + " " + chan + " " + user + " localhost " \
 										+ " FT_IRC " + nick + " H :0 " + realname + "\r\n")
 # define RPL_NAMREPLY(client, symbol, \
 					chan, prefix, nick)	(":localhost 353 " + client + " " + symbol + " " + chan + " :" + prefix + nick + "\r\n")
 # define RPL_ENDOFNAMES(client, chan)	(":localhost 366 " + client + " " + chan + " :End of /NAMES list\r\n")
+# define RPL_BANLIST(client, chan, mask)(":localhost 367 " + client + " " + chan + " " + mask + "\r\n");
+# define RPL_ENDOFBANLIST(client, chan)	(":localhost 368 " + client + " " + chan + " :End of channel ban list\r\n")
 # define RPL_MOTDSTART(client)			(":localhost 375 " + client + " :- FT_IRC Message of the day - \r\n")
 # define RPL_MOTD(client, line)			(":localhost 372 " + client + " :" + line + "\r\n")
 # define RPL_MOTDEND(client)				(":localhost 376 " + client + " :End of /MOTD command.\r\n")
@@ -118,7 +120,3 @@
 #endif
 
 
-
-// NICK amouly
-// USER useramouly 0 * :realamouly
-// NICK moulnick

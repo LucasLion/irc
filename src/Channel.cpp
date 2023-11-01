@@ -34,6 +34,8 @@ bool	Channel::isUserInChannel( std::string user ) {
 }
 
 void Channel::removeUser( std::string user ) {
+    removeInvite(user);
+    removeOperator(user);
     usersSd.erase(user);
 }		
 

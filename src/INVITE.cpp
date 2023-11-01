@@ -44,6 +44,8 @@ void	Server::inviteCmd( Message msg, User* user ) {
 	}else{
 		if (_channels[channel]->isUserOp(userNick)) {
 			_channels[channel]->inviteList.push_back(target);
+			//std::string opNick = _channels[channel]->getChanNick(userNick);
+			//sendClient(sd, RPL_INVITING(opNick, target, channel));
 			sendClient(sd, RPL_INVITING(userNick, target, channel));
 			sendClient(getUserSd(target), INVITE(userNick, target, channel));
 		}

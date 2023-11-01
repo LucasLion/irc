@@ -244,8 +244,8 @@ bool Server::generateResponse( User *user ) {
 					kickCmd(*it, user);
 				if (it->getCommand() == "INVITE")
 					inviteCmd(*it, user);
-				if (it->getCommand() == "WHO")
-					whoCmd(*it, user);
+				//if (it->getCommand() == "WHO")
+				//	whoCmd(*it, user);
 				if (it->getCommand() == "MODE") {
 					if(it->getParam(0) == user->getNickName() && it->getParam(1) == "+i")
 						sendClient(user->getSd(), MODE(user->getNickName(), user->getNickName(), "+i", ""));
