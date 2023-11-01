@@ -6,6 +6,7 @@ void	Server::joinCmd( Message msg, User *user ) {
 	int sd = user->getSd();
 	std::string userNick = user->getNickName();
 	std::string channel = msg.getParam(0);
+	bool create = false;
 
 	if (channel.length() == 0) {
 		sendClient(sd, ERR_NEEDMOREPARAMS(userNick, msg.getCommand()));
@@ -19,6 +20,7 @@ void	Server::joinCmd( Message msg, User *user ) {
 	// check if the channel exists and create it if not
 	if (_channels.find(channel) == _channels.end()) {
 		this->createChannel(channel, userNick);
+		create = true;
 		//user->addChannel(channel, , &(_channels[channel])));
 	}
 	// check if the user is already in the channel
@@ -56,19 +58,33 @@ void	Server::joinCmd( Message msg, User *user ) {
 		//sendClient(sd, RPL_TOPICWHOTIME(userNick, channel, userNick, "creationDate"));
 	}
 
-	std::string response = ":localhost 353 " + userNick + " = " + channel + " :";
-	std::map<std::string, int>::iterator it;
 	
-	for(it = _channels[channel]->usersSd.begin(); it != _channels[channel]->usersSd.end(); ++it) {
-		response += it->first + " ";
+	if(create){
+		sendClient(sd, JOIN(userNick, channel));
+		sendClient(sd, MODE(userNick, channel, "+o", ""));
+		std::string opNick = _channels[channel]->getChanNick(userNick);
+		std::string test = ":localhost 353 " + opNick + " = " + channel + " :\r\n";
+		std::cout << "COMMAND_SENT " << test << std::endl;
+		send(sd, test.c_str(), test.length(),0);
+		sendClient(sd, RPL_ENDOFNAMES(opNick, channel));
+	}else{
+		std::cout << "else"	<< std::endl;
+		std::string response = ":localhost 353 " + userNick + " = " + channel + " :";
+		std::map<std::string, int>::iterator it;
+	
+		for(it = _channels[channel]->usersSd.begin(); it != _channels[channel]->usersSd.end(); ++it) {
+			response += it->first + " ";
+		}
+		response += "\r\n";
+		// send the list to everyone in the channel
+		//Server::sendClient(sd, RPL_CHANNELMODEIS(userNick, channel, "+", "o"));
+	
+		for(it = _channels[channel]->usersSd.begin(); it != _channels[channel]->usersSd.end(); ++it) {
+			sendClient(it->second, RPL_TOPICWHOTIME(it->first, channel, userNick, _creationDate));
+			sendClient(it->second, JOIN(userNick, channel));
+			send(it->second, response.c_str(), response.length(), 0);
+			sendClient(it->second, RPL_ENDOFNAMES(userNick, channel));
+		}
 	}
-	response += "\r\n";
-	// send the list to everyone in the channel
-	//Server::sendClient(sd, RPL_CHANNELMODEIS(userNick, channel, "+", "o"));
-	send(it->second, response.c_str(), response.length(), 0);
-	sendClient(it->second, RPL_ENDOFNAMES(userNick, channel));
-	for(it = _channels[channel]->usersSd.begin(); it != _channels[channel]->usersSd.end(); ++it) {
-		sendClient(it->second, RPL_TOPICWHOTIME(it->first, channel, userNick, _creationDate));
-		sendClient(it->second, JOIN(userNick, channel));
-	}
+
 }

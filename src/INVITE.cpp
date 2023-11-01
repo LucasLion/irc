@@ -48,7 +48,7 @@ void	Server::inviteCmd( Message msg, User* user ) {
 			sendClient(getUserSd(target), INVITE(userNick, target, channel));
 		}
 		else
-			sendClient(sd, ERR_CHANOPRIVSNEEDED(userNick, target));
+			sendClient(sd, ERR_CHANOPRIVSNEEDED(userNick, channel));
 
 	}
 }

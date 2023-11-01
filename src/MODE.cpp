@@ -56,24 +56,20 @@ void Server::parseMode(Channel* channel, User* user, const std::string& target, 
         switch (modeLetter) {
             case 'i':
                 if (isAdding && !channel->isInviteOnly) {
-                    std::cout << "on ajoute le mode i" << std::endl;
 					channel->isInviteOnly = true;
-                    channel->sendMessgeToAllUsers(RPL_CHANNELMODEIS(nick, target, "+", "i"));
+                    channel->sendMessgeToAllUsers(MODE(nick, target, "+i", ""));
                 } else if (!isAdding && channel->isInviteOnly) {
                     channel->isInviteOnly= false;
-					std::cout << "on enleve le mode i" << std::endl;
-                    channel->sendMessgeToAllUsers(RPL_CHANNELMODEIS(nick, target, "-", "i"));
+                    channel->sendMessgeToAllUsers(MODE(nick, target, "-i", ""));
                 }
                 break;
             case 't':
                 if (isAdding && !channel->isTopicProtected) {
-					std::cout << "on ajoute le mode t" << std::endl;
                     channel->isTopicProtected = true;
-                    channel->sendMessgeToAllUsers(RPL_CHANNELMODEIS(nick, target, "+", "t"));
+                    channel->sendMessgeToAllUsers(MODE(nick, target, "+t", ""));
                 } else if (!isAdding && channel->isTopicProtected) {
-				    std::cout << "on enleve le mode t" << std::endl;
                     channel->isTopicProtected = false;
-                    channel->sendMessgeToAllUsers(RPL_CHANNELMODEIS(nick, target, "-", "t"));
+                    channel->sendMessgeToAllUsers(MODE(nick, target, "-t", ""));
                 }
                 break;
             case 'l':
@@ -82,15 +78,14 @@ void Server::parseMode(Channel* channel, User* user, const std::string& target, 
                         i++;
                         channel->userLimit = userLimit;
                         channel->hasUserLimit = true;
-                        channel->sendMessgeToAllUsers(RPL_CHANNELMODEIS(nick, target, "+", "l"));
+                        channel->sendMessgeToAllUsers(MODE(nick, target, "+l", ""));
                     } else if (!isAdding && channel->hasUserLimit){
                         channel->hasUserLimit = false;
-                        channel->sendMessgeToAllUsers(RPL_CHANNELMODEIS(nick, target, "+", "l"));
+                        channel->sendMessgeToAllUsers(MODE(nick, target, "-l", ""));
                     } 
                 break;
             case 'o':
-                if (modeArgs[i].size() > 0) {
-                    std::cout << "on ajoute le mode o" << std::endl;
+                if (nbArgs != 0 && modeArgs[i].size() > 0) {
                     std::string operatorNick = modeArgs[i];
                     i++;
                     if (channel->isUserInChannel(operatorNick)) {
@@ -108,6 +103,10 @@ void Server::parseMode(Channel* channel, User* user, const std::string& target, 
                     } else {
                         Server::sendClient(sd,ERR_USERNOTINCHANNEL(nick, operatorNick, target));
                     }
+                } else {
+                        std::string opNick = channel->getChanNick(nick);
+                        channel->sendMessgeToAllUsers(MODE(nick, target, "+o", ""));
+                     //sendClient(sd, MODE(opNick, target, "+o", ""));
                 }
                 break;
             case 'k':
@@ -116,10 +115,10 @@ void Server::parseMode(Channel* channel, User* user, const std::string& target, 
                     i++;
                     channel->password = pass;
                     channel->hasPassword = true;
-                    channel->sendMessgeToAllUsers(RPL_CHANNELMODEIS(nick, target, "+", "k"));
+                    channel->sendMessgeToAllUsers(MODE(nick, target, "+k", ""));
                 } else if (!isAdding && channel->hasPassword){
                     channel->hasPassword = false;
-                    channel->sendMessgeToAllUsers(RPL_CHANNELMODEIS(nick, target, "-", "k"));
+                    channel->sendMessgeToAllUsers(MODE(nick, target, "-k", ""));
                     }
                 break;
             default:
@@ -132,7 +131,7 @@ void Server::parseMode(Channel* channel, User* user, const std::string& target, 
 
 void	Server::modeCmd( Message msg, User *user ) {
 	
-	std::cout << "modeCmd : " << msg.rawMessage	<< std::endl;
+    std::cout << "modeCmd : " << msg.rawMessage	<< std::endl;
 	std::string nick = user->getNickName();
     std::cout << "nbParam : " << msg.nbParam() << std::endl;
     int nbArgs = msg.nbParam();
@@ -151,7 +150,8 @@ void	Server::modeCmd( Message msg, User *user ) {
 			return;
 	}
 	if (nbArgs == 1){
-		sendClient(sd, RPL_CHANNELMODEIS(nick, target, "+", _channels[target]->getCurrentModes() ));
+        std::string opNick = _channels[target]->getChanNick(nick);
+		sendClient(sd, RPL_CHANNELMODEIS(opNick, target, "+", _channels[target]->getCurrentModes() ));
     }
     else{
         std::string modestring = msg.getParam(1);

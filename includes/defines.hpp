@@ -57,7 +57,7 @@
 							setter, at)	(":localhost 333 " + client + " " + chan + " " + setter + " " + at + "\r\n")
 # define RPL_INVITING(client, nick,chan)	(":localhost 341 " + client + " " + nick + " " + chan + "\r\n")
 # define RPL_WHOREPLY(client, chan, \
-				user, nick, realname)	(":localhost 352 " + client + " " + chan + " " + user + " " + g_host + " " \
+				user, nick, realname)	(":localhost 352 " + client + " " + chan + " " + user + " " + "localhost" + " " \
 										+ " FT_IRC " + nick + " H :0 " + realname + "\r\n")
 # define RPL_NAMREPLY(client, symbol, \
 					chan, prefix, nick)	(":localhost 353 " + client + " " + symbol + " " + chan + " :" + prefix + nick + "\r\n")
