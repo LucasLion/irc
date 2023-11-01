@@ -47,6 +47,7 @@ bool Channel::isUserOp( std::string user ) {
 
 
 void Channel::addOperator(std::string user) {
+    
     operList.push_back(user);
 }
 
