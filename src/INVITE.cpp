@@ -5,12 +5,18 @@ void	Server::inviteCmd( Message msg, User* user ) {
 	
 	int sd = user->getSd();
 	std::string userNick = user->getNickName();
+
+	if (msg.nbParam() < 2) {
+		sendClient(sd, ERR_NEEDMOREPARAMS(userNick, msg.getCommand()));
+		return ;
+	}
+
 	std::string channel = msg.getParam(0);
 	std::string target = msg.getParam(1);
 
-	if (channel.length() == 0 || target.length() == 0) {
-		sendClient(sd, ERR_NEEDMOREPARAMS(userNick, msg.getCommand()));
-		return ;
+	if (channel[0] != '#' && target[0] == '#') {
+		channel = msg.getParam(1);
+		target = msg.getParam(0);
 	}
 	// check if the channel name is valid
 	if (channel[0] != '#') {

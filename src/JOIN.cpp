@@ -64,6 +64,7 @@ void	Server::joinCmd( Message msg, User *user ) {
 	}
 	response += "\r\n";
 	// send the list to everyone in the channel
+	//Server::sendClient(sd, RPL_CHANNELMODEIS(userNick, channel, "+", "o"));
 	send(it->second, response.c_str(), response.length(), 0);
 	sendClient(it->second, RPL_ENDOFNAMES(userNick, channel));
 	for(it = _channels[channel]->usersSd.begin(); it != _channels[channel]->usersSd.end(); ++it) {
