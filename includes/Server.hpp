@@ -35,6 +35,7 @@ public:
 	void 				quitCmd(Message msg, User *user); 
 	void				kickCmd( Message msg, User *user );
 	void				inviteCmd( Message msg, User *user );
+	void				whoCmd( Message msg, User* user );
 	int					getPortno( void ) const;
 	bool				passOK( void );
 	void				setPassOK( bool passOK );

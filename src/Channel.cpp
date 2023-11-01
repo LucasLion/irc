@@ -115,6 +115,7 @@ void    Channel::sendMessgeToAllUsers( std::string message ) {
     for (std::map<std::string, int>::iterator it = usersSd.begin(); it != usersSd.end(); ++it) {
         write(it->second, message.c_str(), message.length());
     }
+    std::cout << "COMMAND_SENT: " << message << std::endl;
 }
 
 std::string	Channel::getChanNick( std::string user ) {
