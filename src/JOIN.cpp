@@ -19,7 +19,6 @@ void	Server::joinCmd( Message msg, User *user ) {
 	// check if the channel exists and create it if not
 	if (_channels.find(channel) == _channels.end()) {
 		this->createChannel(channel, userNick);
-		//user->addChannel(channel, , &(_channels[channel])));
 	}
 	// check if the user is already in the channel
 	if (_channels[channel]->isUserInChannel(userNick)) {
@@ -45,7 +44,6 @@ void	Server::joinCmd( Message msg, User *user ) {
 	}
 	_channels[channel]->addUser(user);
 	user->addChannel(channel, _channels[channel]);
-	//sendClient(sd, JOIN(userNick, channel));
 	// channel's topic
 	std::cout << "Channel's topic: " << _channels[channel]->getTopic() << std::endl;
 	if (_channels[channel]->getTopic().empty())
@@ -56,19 +54,24 @@ void	Server::joinCmd( Message msg, User *user ) {
 		//sendClient(sd, RPL_TOPICWHOTIME(userNick, channel, userNick, "creationDate"));
 	}
 
-	std::string response = ":localhost 353 " + userNick + " = " + channel + " :";
-	std::map<std::string, int>::iterator it;
-	
-	for(it = _channels[channel]->usersSd.begin(); it != _channels[channel]->usersSd.end(); ++it) {
-		response += it->first + " ";
-	}
-	response += "\r\n";
+	// change the "=" sign to mach the status of the channel
+	//std::string response = ":localhost 353 " + userNick + " = " + channel + " :";
+	//for(it = _channels[channel]->usersSd.begin(); it != _channels[channel]->usersSd.end(); ++it) {
+	//	response += it->first + " ";
+	//}
+	//response += "\r\n";
+	//
 	// send the list to everyone in the channel
-	//Server::sendClient(sd, RPL_CHANNELMODEIS(userNick, channel, "+", "o"));
-	send(it->second, response.c_str(), response.length(), 0);
-	sendClient(it->second, RPL_ENDOFNAMES(userNick, channel));
+	std::map<std::string, int>::iterator it2;
+	for(it2 = _channels[channel]->usersSd.begin(); it2 != _channels[channel]->usersSd.end(); ++it2)
+		sendClient(sd, RPL_NAMREPLY(userNick, "=", channel, "", it2->first));
+	
+	std::map<std::string, int>::iterator it;
 	for(it = _channels[channel]->usersSd.begin(); it != _channels[channel]->usersSd.end(); ++it) {
-		sendClient(it->second, RPL_TOPICWHOTIME(it->first, channel, userNick, _creationDate));
+		//send(it->second, response.c_str(), response.length(), 0);
+		sendClient(it->second, RPL_ENDOFNAMES(userNick, channel));
+		//sendClient(it->second, RPL_TOPICWHOTIME(it->first, channel, userNick, _creationDate));
 		sendClient(it->second, JOIN(userNick, channel));
 	}
 }
+//# define RPL_NAMREPLY(client, symbol, chan, prefix, nick)	(":localhost 353 " + client + " " + symbol + " " + chan + " :" + prefix + nick + "\r\n")

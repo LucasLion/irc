@@ -23,11 +23,11 @@ void	Server::topicCmd( Message msg, User *user ) {
 	}
 	time_t rawDate;
 	rawDate = time(NULL);
-	char buffer[80];
-	strftime(buffer, 80, "%a %b %d %H:%M:%S %Y", localtime(&rawDate));
-	std::string creationDate2(buffer);
+	char buffer[20];
+	strftime(buffer, 20, "%a %b %d %H:%M:%S %Y", localtime(&rawDate));
+	std::string creationDate(buffer);
 	
-	std::cout << "creationDate: " << creationDate2 << std::endl;
+	std::cout << "creationDate: " << creationDate << std::endl;
 
 	_channels[channel]->setTopic(msg.getParam(1));
 	std::map<std::string, int>::iterator it;
@@ -42,7 +42,7 @@ void	Server::topicCmd( Message msg, User *user ) {
 			sendClient(it->second, TOPIC(userNick, channel, msg.getParam(1)));
 
 			// TODO fonctionne mal
-			//sendClient(userSd, RPL_TOPICWHOTIME(everyusernick, channel, userNick, creationDate2));
+		//	sendClient(it->second, RPL_TOPICWHOTIME(everyusernick, channel, userNick, creationDate));
 		}
 	}
 }
