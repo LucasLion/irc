@@ -7,7 +7,7 @@ User::User( void ) {
     setRegistered(false);
     setNickNameSet(false);
     setRealNameSet(false);
-    _passOK = false;
+    _passOk = false;
 }
 
 void User::printCommands( void ) {

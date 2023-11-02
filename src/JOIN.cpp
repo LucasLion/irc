@@ -53,20 +53,13 @@ void	Server::joinCmd( Message msg, User *user ) {
 		sendClient(sd, RPL_TOPIC(userNick, channel, _channels[channel]->getTopic()));
 	}
 
-	
 	if (create) {
-		std::time_t	Time;
-		std::string	Date;
-		char buffer[80];
-		strftime(buffer, 40, "%a %b %d %H:%M:%S %Y", localtime(&Time));
-		Date = buffer;
-
 		sendClient(sd, JOIN(userNick, channel));
 		sendClient(sd, MODE(userNick, channel, "+o", ""));
 		std::string opNick = _channels[channel]->getChanNick(userNick);
 		sendClient(sd, RPL_NAMREPLY(opNick, "=", channel, "", opNick));
 		sendClient(sd, RPL_ENDOFNAMES(opNick, channel));
-		sendClient(sd, RPL_CREATIONTIME(opNick, channel, Date));
+		sendClient(sd, RPL_CREATIONTIME(opNick, channel, currentDate()));
 	}
 	else {
 		std::map<std::string, int>::iterator it2;

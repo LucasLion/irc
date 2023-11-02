@@ -97,3 +97,13 @@ int		Server::getUserSd( std::string nickname ) {
 	}
 	return (-1);
 }
+
+std::string	Server::currentDate() {
+	time_t rawDate;
+	rawDate = time(NULL);
+	char buffer[90];
+	strftime(buffer, 90, "%a %b %d %H:%M:%S %Y", localtime(&rawDate));
+	std::string creationDate(buffer);
+	return creationDate;
+}
+

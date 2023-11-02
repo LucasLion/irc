@@ -43,6 +43,7 @@ class Server {
 		bool				is_valid( const std::string nickname );
 		bool				isUserInServer( std::string nickname );
 		int					getUserSd( std::string nickname );
+		std::string			currentDate( void );
 
 		std::map<std::string, Channel*>	*getChannels( void ) ;
 

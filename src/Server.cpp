@@ -276,16 +276,19 @@ void	Server::connectServer( int sd, User *user) {
 	std::string nbopers = "0";
 	std::string nbinvisible = "0";
 	std::string nbClients = "1";
-
-	time_t rawDate;
-	rawDate = time(NULL);
-	char buffer[80];
-	strftime(buffer, 40, "%a %b %d %H:%M:%S %Y", localtime(&rawDate));
-	std::string creationDate(buffer);
+	std::string modt =
+"\n   _____ _____           ___ ____   ____\n \
+ |  ___|_   _|         |_ _|  _ \\ / ___|\n \
+ | |_    | |            | || |_) | |\n \
+ |  _|   | |    _____   | ||  _ <| |___\n \
+ |_|     |_|   |_____| |___|_| \\_\\\\____|\n\
+       Welcome to the FT_IRC Server\n\
+            42 school Project\n\
+\n";
 
 	sendClient(sd, RPL_WELCOME(user->getNickName()));
 	sendClient(sd, RPL_YOURHOST(user->getNickName()));
-	sendClient(sd, RPL_CREATED(user->getNickName(), creationDate));
+	sendClient(sd, RPL_CREATED(user->getNickName(), currentDate()));
 	sendClient(sd, RPL_MYINFO(user->getNickName()));
 	sendClient(sd, RPL_ISUPPORT(user->getNickName()));
 	sendClient(sd, RPL_ISUPPORT2(user->getNickName()));
@@ -295,7 +298,7 @@ void	Server::connectServer( int sd, User *user) {
 	sendClient(sd, RPL_LUSERME(user->getNickName(), nbClients, nbservers));
 	sendClient(sd, RPL_LOCALUSERS(user->getNickName(), nbusers, maxuser));
 	sendClient(sd, RPL_MOTDSTART(user->getNickName()));
-	sendClient(sd, RPL_MOTD(user->getNickName(), "Welcome to the Internet Relay Network " + user->getNickName()));
+	sendClient(sd, RPL_MOTD(user->getNickName(),modt));
 	sendClient(sd, RPL_MOTDEND(user->getNickName()));
 }
 
