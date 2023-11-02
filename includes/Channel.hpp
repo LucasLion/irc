@@ -23,6 +23,8 @@ class Channel {
 		void						removeInvite(std::string user);
 		std::string					getTopic( void ) const;
 		void						setTopic( std::string topic );
+		std::string					getTimeCreation( void ) const;
+		void						setTimeCreation( std::string time );
 		void						sendMessgeToAllUsers( std::string message );
 		std::string					getChanNick( std::string user );
 		void						changeNick( std::string prevNick, std::string newNick );	
@@ -47,5 +49,6 @@ class Channel {
 	private:
 
 		std::string					_topic;
+		std::string					_timeCreation;
 };
 
