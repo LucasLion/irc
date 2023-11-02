@@ -25,6 +25,11 @@
 
 ### bugs
 
+- Quand on join un channel, la date de creation du channel s'affiche mal
 
+### a faire
 
+- gerer les erreurs (throw etc...)
+- fermet le serveur proprement
+- leaks
 
