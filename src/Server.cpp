@@ -214,57 +214,61 @@ bool Server::generateResponse( User *user ) {
 	for (std::vector<Message>::iterator it = user->messages.begin(); it != user->messages.end();) {
 		std::cout << "COMMAND_RECEIVED: " << it->rawMessage << std::endl;
 		if(user->isRegistered() == false) {
-			std::cout << "non enregistre" << std::endl;
-			if (it->getCommand() == "NICK")
-				nickPreRegistration(*it, user);
-			if (it->getCommand() == "USER") 
-				userCmd(*it, user);
-			if (it->getCommand() == "PASS")
-				passCmd(*it, user);
-			if (it->getCommand() == "CAP")
-				send( user->getSd(), "CAP * LS\r\n", 12, 0 );
-		} else {
-			//if (it->getCommand() == "CAP")
-			//	send( user->getSd(), "CAP * LS\r\n", 12, 0 );
-			if (it->getCommand() == "USER")
-				userCmd(*it, user);
-			if (it->getCommand() == "NICK")
-				nickCmd(*it, user);
-			if (it->getCommand() == "PING")
-				pongCmd(*it, user);
-			if (it->getCommand() == "JOIN")
-				joinCmd(*it, user);
-			if (it->getCommand() == "TOPIC")
-				topicCmd(*it, user);
-			if (it->getCommand() == "PRIVMSG")
-				prvMsgCmd(*it, user);
-			if (it->getCommand() == "PONG")
-				return (false);
-			if (it->getCommand() == "KICK")
-				kickCmd(*it, user);
-			if (it->getCommand() == "INVITE")
-				inviteCmd(*it, user);
-			if (it->getCommand() == "WHO")
-				whoCmd(*it, user);
-			if (it->getCommand() == "MODE") {
-				if(it->getParam(0) == user->getNickName() && it->getParam(1) == "+i")
-					sendClient(user->getSd(), MODE(user->getNickName(), user->getNickName(), "+i", ""));
-				else
-					modeCmd(*it, user);
+				if (it->getCommand() == "NICK")
+					nickPreRegistration(*it, user);
+				if (it->getCommand() == "USER") 
+					userCmd(*it, user);
+				if (it->getCommand() == "PASS")
+					passCmd(*it, user);
+				if (it->getCommand() == "CAP")
+					send( user->getSd(), "CAP * LS\r\n", 12, 0 );
 			}
-			if (it->getCommand() == "LIST") {
-				for (std::vector<User>::iterator it2 = _users.begin(); it2 != _users.end(); ++it2) {
-					std::cout << "User: " << it2->getNickName() << std::endl;
+			else {
+				if (it->getCommand() == "CAP")
+					send( user->getSd(), "CAP * LS\r\n", 12, 0 );
+				if (it->getCommand() == "USER")
+					userCmd(*it, user);
+				if (it->getCommand() == "NICK")
+					nickCmd(*it, user);
+				if (it->getCommand() == "PING")
+					pongCmd(*it, user);
+				if (it->getCommand() == "JOIN")
+					joinCmd(*it, user);
+				if (it->getCommand() == "TOPIC")
+					topicCmd(*it, user);
+				if (it->getCommand() == "PRIVMSG")
+					prvMsgCmd(*it, user);
+				if (it->getCommand() == "PONG")
+					return (false);
+				if (it->getCommand() == "KICK")
+					kickCmd(*it, user);
+				if (it->getCommand() == "INVITE")
+					inviteCmd(*it, user);
+				// if (it->getCommand() == "WHO")
+				// 	whoCmd(*it, user);
+				if (it->getCommand() == "MODE") {
+					if(it->getParam(0) == user->getNickName() && it->getParam(1) == "+i")
+						sendClient(user->getSd(), MODE(user->getNickName(), user->getNickName(), "+i", ""));
+					else
+						modeCmd(*it, user);
+				}
+				if (it->getCommand() == "LIST") {
+					//print list of user by nickname
+					for (std::vector<User>::iterator it2 = _users.begin(); it2 != _users.end(); ++it2) {
+						std::cout << "User: " << it2->getNickName() << std::endl;
+					}
+				}
+				if (it->getCommand() == "QUIT") {
+					quitCmd(*it, user);
+					return (false);
 				}
 			}
 			if (it->getCommand() == "QUIT") {
 				quitCmd(*it, user);
 				return (false);
 			}
+			it = user->messages.erase(it);
 		}
-
-		it = user->messages.erase(it);
-    }
 	return (true);
 }
 

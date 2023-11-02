@@ -17,9 +17,14 @@
     - INVITE (invite un client dans un salon)
     - TOPIC (change ou affiche le topic du salon)
     - MODE (change le mode du salon):
-        - i: active/desactive Invite-only (salon prive?) channel
+        0- i: active/desactive Invite-only (salon prive?) channel
         - t: active/desactive les restrictions de la commande TOPIC des moderateursk
         - k: active/desactive le mode de passe du salon
         - o: accorde/retire les privileges de moderateur d'un salon
         - l: active/desactive la limite d'utilisateurs d'un salon
+
+### bugs
+
+
+
 
