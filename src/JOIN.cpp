@@ -53,25 +53,40 @@ void	Server::joinCmd( Message msg, User *user ) {
 		sendClient(sd, RPL_TOPIC(userNick, channel, _channels[channel]->getTopic()));
 	}
 
-	if (create) {
+	
+	if(create){
+
+		std::time_t rawTime;
+		std::time(&rawTime);
+		std::stringstream ss;
+		ss << rawTime;
+		std::string Time = ss.str();
+		std::string		irc = "FT_IRC";
+
 		sendClient(sd, JOIN(userNick, channel));
-		sendClient(sd, MODE(userNick, channel, "+o", ""));
+		_channels[channel]->setTimeCreation(Time);
+		_channels[channel]->sendMessgeToAllUsers(MODE(irc, channel, "+o", ""));
 		std::string opNick = _channels[channel]->getChanNick(userNick);
 		sendClient(sd, RPL_NAMREPLY(opNick, "=", channel, "", opNick));
 		sendClient(sd, RPL_ENDOFNAMES(opNick, channel));
-		sendClient(sd, RPL_CREATIONTIME(opNick, channel, currentDate()));
-	}
-	else {
+		sendClient(sd, RPL_CREATIONTIME(opNick, channel, Time));
+
+	}else{
 		std::map<std::string, int>::iterator it2;
 		for(it2 = _channels[channel]->usersSd.begin(); it2 != _channels[channel]->usersSd.end(); ++it2){
 			std::string nickOp = _channels[channel]->getChanNick(it2->first);
 			sendClient(sd, RPL_NAMREPLY(userNick, "=", channel, "", nickOp));
+			sendClient(it2->second, JOIN(userNick, channel));
 		}
-		std::map<std::string, int>::iterator it;
-		for(it = _channels[channel]->usersSd.begin(); it != _channels[channel]->usersSd.end(); ++it) {
-			sendClient(it->second, RPL_ENDOFNAMES(userNick, channel));
-			sendClient(it->second, JOIN(userNick, channel));
-			sendClient(sd, MODE(userNick, channel, "+", _channels[channel]->getCurrentModes()));
-		}
+		// std::map<std::string, int>::iterator it;
+		// for(it = _channels[channel]->usersSd.begin(); it != _channels[channel]->usersSd.end(); ++it) {
+		// 	sendClient(it->second, RPL_ENDOFNAMES(userNick, channel));
+		// 	sendClient(it->second, JOIN(userNick, channel));
+		// 	//sendClient(it->second, MODE(userNick, channel, "+", _channels[channel]->getCurrentModes()));
+		// }
+		//_channels[channel]->sendMessgeToAllUsers(JOIN(userNick, channel));
+		sendClient(sd, RPL_ENDOFNAMES(userNick, channel));
+		sendClient(sd, RPL_CREATIONTIME(userNick, channel, _channels[channel]->getTimeCreation()));
+		sendClient(sd, MODE(userNick, channel, _channels[channel]->getCurrentModes(), ""));
 	}
 }

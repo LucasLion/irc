@@ -125,3 +125,11 @@ void    Channel::changeNick( std::string prevNick, std::string newNick ) {
         }
     }
 }
+
+std::string	Channel::getTimeCreation( void ) const {
+    return (_timeCreation);
+}
+
+void    Channel::setTimeCreation( std::string time ) {
+    _timeCreation = time;
+}

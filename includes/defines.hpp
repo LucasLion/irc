@@ -111,7 +111,7 @@
 # define JOIN(sender, target)			(":" + sender + "@localhost JOIN :" + target + "\r\n")
 # define INVITE(sender, target, chan)	(":" + sender + "@localhost INVITE " + target + " " + chan + "\r\n")
 # define TOPIC(sender, chan, topic)		(":" + sender + "@localhost TOPIC " + chan + " :" + topic + "\r\n")
-# define MODE(sender, target, mode, arg)	(":" + sender + "@localhost MODE " + target + " " + mode + " " + arg + "\r\n")
+# define MODE(sender, target, mode, arg)	(":" + sender + " MODE " + target + " " + mode + " " + arg + "\r\n")
 # define PART(sender, chan, reason)		(":" + sender + "@localhost PART " + chan + " :" + reason + "\r\n")
 # define KICK(sender, chan, nick, reason)(":" + sender + "@localhost KICK " + chan + " " + nick + " :" + reason + "\r\n")
 # define QUIT(sender, reason)			(":" + sender + "@localhost QUIT :" + reason + "\r\n")
