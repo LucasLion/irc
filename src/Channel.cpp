@@ -18,10 +18,6 @@ Channel::Channel( std::string nom ) : name(nom) {
 
 Channel::~Channel( void ) { }
 
-const char*	Channel::ChannelAlreadyExistsException::what() const throw() {
-	return (ERROR("Channel already exists"));
-}
-
 void	Channel::addUser( User* user ) { usersSd[user->getNickName()] = user->getSd(); }
 std::string	Channel::getTopic( void ) const { return (_topic); }
 void	Channel::setTopic( std::string topic ) { _topic = topic; }
