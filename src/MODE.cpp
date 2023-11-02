@@ -4,28 +4,16 @@
 #include <string>
 #include <vector>
 
-void Server::splitMode(const std::string& modeArg, std::vector<std::string>& modeChanges) {
-    std::string currentChange;
-    bool isAdding = true;  
-    for (std::string::const_iterator it = modeArg.begin(); it != modeArg.end(); ++it) {
-        char c = *it;
-        if (c == '+' || c == '-') {
-            if (!currentChange.empty()) {
-                modeChanges.push_back(currentChange);
-            }
-            currentChange = c;
-            isAdding = (c == '+');
-        } else {
-            currentChange += c;
+bool onlyDigits(const std::string& str) {
+    for (size_t i = 0; i < str.length(); ++i) {
+        if (!isdigit(str[i])) {
+            return false;
         }
     }
-    if (!currentChange.empty()) {
-        modeChanges.push_back(currentChange);
-    }
+    return true;
 }
 
 void Server::parseMode(Channel* channel, User* user, const std::string& target, const std::string& modestring, const std::string* modeArgs, int nbArgs) {
-    //std::string nick = channel->getChanNick(user->getNickName());
     std::string nick = user->getNickName();
     int sd = user->getSd();
 	std::cout << "parseMode" << std::endl;
@@ -77,31 +65,30 @@ void Server::parseMode(Channel* channel, User* user, const std::string& target, 
                 }
                 break;
             case 'l':
-                if (isAdding && modeArgs[i].size() > 0 && isdigit(modeArgs[i][0])) {
+                if (isAdding && (i < nbArgs) && onlyDigits(modeArgs[i])) {
                         int userLimit = atoi(modeArgs[i].c_str());
-                        i++;
+                         i++;
                         channel->userLimit = userLimit;
                         channel->hasUserLimit = true;
                         channel->sendMessgeToAllUsers(MODE(nick, target, "+l", ""));
                     } else if (!isAdding && channel->hasUserLimit){
                         channel->hasUserLimit = false;
                         channel->sendMessgeToAllUsers(MODE(nick, target, "-l", ""));
-                    } 
+                    } else if ((i < nbArgs) && !(onlyDigits(modeArgs[i])))
+                        sendClient(sd, ERR_INVALIDMODEPARAM(nick, target, modeLetter, modeArgs[i], "parameter is not a number"));
                 break;
             case 'o':
-                if (nbArgs != 0 && modeArgs[i].size() > 0) {
+                if (nbArgs != 0 && (i < nbArgs)) {
                     std::string operatorNick = modeArgs[i];
                     i++;
                     if (channel->isUserInChannel(operatorNick)) {
                         if (isAdding && !channel->isUserOp(operatorNick)) {
                             channel->addOperator(operatorNick);
-                            Server::sendClient(channel->usersSd[operatorNick], RPL_CHANNELMODEIS(operatorNick, target, "+", "o"));
-                            Server::sendClient(sd, RPL_CHANNELMODEIS(operatorNick, target, "+", "o"));
+                            channel->sendMessgeToAllUsers(MODE(nick, target, "+o", operatorNick));
                         } else {
                             if (channel->isUserOp(operatorNick)) {
                                 channel->removeOperator(operatorNick);
-                                Server::sendClient(sd, RPL_CHANNELMODEIS(operatorNick, target, "-", "o"));
-                                Server::sendClient(channel->usersSd[operatorNick], RPL_CHANNELMODEIS(operatorNick, target, "-", "o"));
+                                channel->sendMessgeToAllUsers(MODE(nick, target, "-o", operatorNick));
                             }
                         }
                     } else {
@@ -110,11 +97,10 @@ void Server::parseMode(Channel* channel, User* user, const std::string& target, 
                 } else {
                         std::string opNick = channel->getChanNick(nick);
                         channel->sendMessgeToAllUsers(MODE(nick, target, "+o", ""));
-                     //sendClient(sd, MODE(opNick, target, "+o", ""));
-                }
+                    }
                 break;
             case 'k':
-                if (isAdding && (modeArgs[i].size() > 0)) {       
+                if (isAdding && (i < nbArgs)) {       
                     std::string pass = modeArgs[i];
                     i++;
                     channel->password = pass;
