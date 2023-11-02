@@ -43,10 +43,6 @@ class Channel {
 		std::string							password;
 		std::map<std::string, int>			usersSd;
 
-		class ChannelAlreadyExistsException : public std::exception {
-				virtual const char*	what() const throw();
-		};
-	
 	private:
 
 		std::string					_topic;

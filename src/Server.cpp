@@ -178,13 +178,6 @@ void	Server::getBuffer( char *buf ) {
 }
 
 bool	Server::createChannel( std::string channelName, std::string user ) {
-	try {
-		if (_channels.find(channelName) != _channels.end())
-			throw Channel::ChannelAlreadyExistsException();
-	} catch	(std::exception &e) {
-		std::cout << e.what() << std::endl;
-		return false;
-	}
 	Channel* newChannel = new Channel; 
 	newChannel->name = channelName;
 	std::cout << "User: " << user << std::endl;
@@ -237,8 +230,8 @@ bool Server::generateResponse( User *user ) {
 				kickCmd(*it, user);
 			if (it->getCommand() == "INVITE")
 				inviteCmd(*it, user);
-			// if (it->getCommand() == "WHO")
-			// 	whoCmd(*it, user);
+			if (it->getCommand() == "WHO")
+			 	whoCmd(*it, user);
 			if (it->getCommand() == "MODE") {
 				if(it->getParam(0) == user->getNickName() && it->getParam(1) == "+i")
 					sendClient(user->getSd(), MODE(user->getNickName(), user->getNickName(), "+i", ""));

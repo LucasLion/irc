@@ -4,6 +4,7 @@ void	Server::whoCmd( Message msg, User* user ) {
     std::string userNick = user->getNickName();
     std::string mask = msg.getParam(0);
     if (mask.length() == 0) {
+		std::cout << "coucou" << std::endl;
         sendClient(user->getSd(), ERR_NEEDMOREPARAMS(userNick, msg.getCommand()));
         return ;
     }

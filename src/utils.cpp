@@ -7,7 +7,8 @@ bool Server::is_valid( const std::string nickname ) {
     const std::string validChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_[]{}\\|";
     for (size_t i = 0; i < nickname.length(); ++i) {
         char c = nickname[i];
-        if (i == 0 && !isalpha(c) && c != '[' && c != '{' && c != '\\' && c != '|')
+		// ajout de carateres ici
+        if (i == 0 && !isalpha(c) && c != '[' && c != '{' && c != '\\' && c != '|' && c != ']' && c != '}' && c != '_')
             return false;
         if (i > 0 && validChars.find(c) == std::string::npos)
             return false;

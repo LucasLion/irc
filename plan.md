@@ -32,4 +32,9 @@
 - gerer les erreurs (throw etc...)
 - fermet le serveur proprement
 - leaks
+- /nick _nickname_ fait erroneus (devrait fonctionner)  (resolu a verifier)
+- il faut gerer le /who (la commande /who envoie a tous les users du channel et mal)
+- il faut gerer le /leave / /join (messages bien distincts sur chaque channel)
+- /topic (quand pas de topic) affiche dans le hub (pas bien)
+
 
