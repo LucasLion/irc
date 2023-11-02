@@ -52,17 +52,22 @@ void	Server::joinCmd( Message msg, User *user ) {
 		sendClient(sd, RPL_NOTOPIC(userNick, channel));
 	else {
 		sendClient(sd, RPL_TOPIC(userNick, channel, _channels[channel]->getTopic()));
-		// TODO fonctionne mal
-		//sendClient(sd, RPL_TOPICWHOTIME(userNick, channel, userNick, "creationDate"));
 	}
 
 	
 	if(create){
+		std::time_t						Time;
+		std::string						Date;
+		char buffer[80];
+		strftime(buffer, 40, "%a %b %d %H:%M:%S %Y", localtime(&Time));
+		Date = buffer;
+
 		sendClient(sd, JOIN(userNick, channel));
 		sendClient(sd, MODE(userNick, channel, "+o", ""));
 		std::string opNick = _channels[channel]->getChanNick(userNick);
 		sendClient(sd, RPL_NAMREPLY(opNick, "=", channel, "", opNick));
 		sendClient(sd, RPL_ENDOFNAMES(opNick, channel));
+		sendClient(sd, RPL_CREATIONTIME(opNick, channel, Date));
 	}else{
 		std::cout << "else"	<< std::endl;
 
