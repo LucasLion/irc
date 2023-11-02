@@ -75,6 +75,7 @@ void	Server::joinCmd( Message msg, User *user ) {
 		for(it = _channels[channel]->usersSd.begin(); it != _channels[channel]->usersSd.end(); ++it) {
 			sendClient(it->second, RPL_ENDOFNAMES(userNick, channel));
 			sendClient(it->second, JOIN(userNick, channel));
+			sendClient(sd, MODE(userNick, channel, "+", _channels[channel]->getCurrentModes()));
 		}
 	}
 }
