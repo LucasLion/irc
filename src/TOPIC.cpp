@@ -26,9 +26,6 @@ void	Server::topicCmd( Message msg, User *user ) {
 	char buffer[20];
 	strftime(buffer, 20, "%a %b %d %H:%M:%S %Y", localtime(&rawDate));
 	std::string creationDate(buffer);
-	
-	std::cout << "creationDate: " << creationDate << std::endl;
-
 	_channels[channel]->setTopic(msg.getParam(1));
 	std::map<std::string, int>::iterator it;
 	for(it = _channels[channel]->usersSd.begin(); it != _channels[channel]->usersSd.end(); ++it) {
@@ -40,9 +37,6 @@ void	Server::topicCmd( Message msg, User *user ) {
 		else {
 			sendClient(it->second, RPL_TOPIC(everyusernick, channel, msg.getParam(1)));
 			sendClient(it->second, TOPIC(userNick, channel, msg.getParam(1)));
-
-			// TODO fonctionne mal
-		//	sendClient(it->second, RPL_TOPICWHOTIME(everyusernick, channel, userNick, creationDate));
 		}
 	}
 }

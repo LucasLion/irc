@@ -20,7 +20,7 @@ void	Server::sendClient( int sd, std::string response ) {
 	write(sd, response.c_str(), response.length());
 }
 
-std::string		Server::generateDefaultNick() {
+std::string		Server::generateDefaultNick( void ) {
 	int				numGuest = 1;
 	char			num[100];
 	std::string		defaultNick;
@@ -51,22 +51,15 @@ void	Server::nickPreRegistration( Message msg, User *user ) {
 	if (msg.getParam(0).length() == 0) {
 		new_nick = generateDefaultNick();
 		sendClient(sd, ERR_NONICKNAMEGIVEN(new_nick));
-		//response = "we gave you the nickname : " + new_nick + "\r\n";
-		//sendClient(sd, response);
 		return;
 	}
-
 	new_nick = msg.getParam(0);
 	for (it = _users.begin(); it != _users.end(); ++it) {
 		if (new_nick == it->getNickName()) {
-			//new_nick = generateDefaultNick();
 			sendClient(sd, ERR_NICKNAMEINUSE(msg.getParam(0), new_nick));
-			//response = "we gave you the nickname : " + new_nick + "\r\n";
-			//sendClient(sd, response);
 			return;
 		}
 	}
-
 	if (!is_valid(new_nick)) {
 			std::cout << "new_nick: " << new_nick << std::endl;
 			std::cout << "size: " << new_nick.length() << std::endl;
@@ -76,7 +69,6 @@ void	Server::nickPreRegistration( Message msg, User *user ) {
 			//response = "we gave you the nickname : " + new_nick + "\r\n";
 			//sendClient(sd, response);
 	}
-
 	user->setNickName(new_nick);
 	user->setNickNameSet(true);
 	if(user->isPassOK() && user->isRealNameSet()){
@@ -84,7 +76,6 @@ void	Server::nickPreRegistration( Message msg, User *user ) {
 		std::cout << "user registered dans NICK" << std::endl;
 		connectServer(sd, user);
 	}
-
 }
 
 bool	Server::isUserInServer( std::string nickname ) {

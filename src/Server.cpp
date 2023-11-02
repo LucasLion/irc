@@ -119,7 +119,7 @@ void Server::handleConnections( void )
 	}
 }
 
-std::string		ft_itoa(int n){
+std::string		ft_itoa(int n) {
 	char num[10];
 	sprintf(num, "%d", n);
 	return (static_cast<std::string>(num));
@@ -132,7 +132,6 @@ void Server::run( void ) {
 	
 	while (true) {
 		handleConnections();
-
 		//else its some IO operation on some other socket
 		for (size_t i = 0; i < _users.size(); i++) {
 			if (FD_ISSET(_users[i].getSd(), &_readfds)) {
@@ -141,7 +140,6 @@ void Server::run( void ) {
 				valRead = read(_users[i].getSd(), buffer, 1024);
 				_users[i].getBuffer(buffer);
 
-				
 				if (valRead != 0) {
 					if (generateResponse(&_users[i]) == false){
 						close(_users[i].getSd());
@@ -160,9 +158,6 @@ void Server::run( void ) {
 				}
 			}
 		}
-
-
-
 	}
 }
 
@@ -173,7 +168,6 @@ void	Server::getBuffer( char *buf ) {
 
     _buffer.assign(buf, strlen(buf));
 
-	std::cout << "buffer : " << _buffer << std::endl;
     while ((crlfPos = _buffer.find("\r\n", start)) != std::string::npos) {
         Message msg;
         msg.rawMessage = (_buffer.substr(start, crlfPos - start));
@@ -183,7 +177,7 @@ void	Server::getBuffer( char *buf ) {
     }
 }
 
-bool	Server::createChannel( std::string channelName, std::string user) {
+bool	Server::createChannel( std::string channelName, std::string user ) {
 	try {
 		if (_channels.find(channelName) != _channels.end())
 			throw Channel::ChannelAlreadyExistsException();
@@ -191,7 +185,6 @@ bool	Server::createChannel( std::string channelName, std::string user) {
 		std::cout << e.what() << std::endl;
 		return false;
 	}
-
 	Channel* newChannel = new Channel; 
 	newChannel->name = channelName;
 	std::cout << "User: " << user << std::endl;
@@ -214,58 +207,61 @@ bool Server::generateResponse( User *user ) {
 	for (std::vector<Message>::iterator it = user->messages.begin(); it != user->messages.end();) {
 		std::cout << "COMMAND_RECEIVED: " << it->rawMessage << std::endl;
 		if(user->isRegistered() == false) {
-				if (it->getCommand() == "NICK")
-					nickPreRegistration(*it, user);
-				if (it->getCommand() == "USER") 
-					userCmd(*it, user);
-				if (it->getCommand() == "PASS")
-					passCmd(*it, user);
-				//if (it->getCommand() == "CAP")
-				//	send( user->getSd(), "CAP * LS\r\n", 12, 0 );
+			if (it->getCommand() == "NICK")
+				nickPreRegistration(*it, user);
+			if (it->getCommand() == "USER") 
+				userCmd(*it, user);
+			if (it->getCommand() == "PASS")
+				passCmd(*it, user);
+			if (it->getCommand() == "CAP")
+				send( user->getSd(), "CAP * LS\r\n", 12, 0 );
+		}
+		else {
+			if (it->getCommand() == "CAP")
+				send( user->getSd(), "CAP * LS\r\n", 12, 0 );
+			if (it->getCommand() == "USER")
+				userCmd(*it, user);
+			if (it->getCommand() == "NICK")
+				nickCmd(*it, user);
+			if (it->getCommand() == "PING")
+				pongCmd(*it, user);
+			if (it->getCommand() == "JOIN")
+				joinCmd(*it, user);
+			if (it->getCommand() == "TOPIC")
+				topicCmd(*it, user);
+			if (it->getCommand() == "PRIVMSG")
+				prvMsgCmd(*it, user);
+			if (it->getCommand() == "PONG")
+				return (false);
+			if (it->getCommand() == "KICK")
+				kickCmd(*it, user);
+			if (it->getCommand() == "INVITE")
+				inviteCmd(*it, user);
+			// if (it->getCommand() == "WHO")
+			// 	whoCmd(*it, user);
+			if (it->getCommand() == "MODE") {
+				if(it->getParam(0) == user->getNickName() && it->getParam(1) == "+i")
+					sendClient(user->getSd(), MODE(user->getNickName(), user->getNickName(), "+i", ""));
+				else
+					modeCmd(*it, user);
 			}
-			else {
-				//if (it->getCommand() == "CAP")
-				//	send( user->getSd(), "CAP * LS\r\n", 12, 0 );
-				if (it->getCommand() == "USER")
-					userCmd(*it, user);
-				if (it->getCommand() == "NICK")
-					nickCmd(*it, user);
-				if (it->getCommand() == "PING")
-					pongCmd(*it, user);
-				if (it->getCommand() == "JOIN")
-					joinCmd(*it, user);
-				if (it->getCommand() == "TOPIC")
-					topicCmd(*it, user);
-				if (it->getCommand() == "PRIVMSG")
-					prvMsgCmd(*it, user);
-				if (it->getCommand() == "PONG")
-					return (false);
-				if (it->getCommand() == "KICK")
-					kickCmd(*it, user);
-				if (it->getCommand() == "INVITE")
-					inviteCmd(*it, user);
-				// if (it->getCommand() == "WHO")
-				// 	whoCmd(*it, user);
-				if (it->getCommand() == "MODE") {
-					if(it->getParam(0) == user->getNickName() && it->getParam(1) == "+i")
-						sendClient(user->getSd(), MODE(user->getNickName(), user->getNickName(), "+i", ""));
-					else
-						modeCmd(*it, user);
-				}
-				if (it->getCommand() == "LIST") {
-					//print list of user by nickname
-					for (std::vector<User>::iterator it2 = _users.begin(); it2 != _users.end(); ++it2) {
-						std::cout << "User: " << it2->getNickName() << std::endl;
-					}
-				}
-				if (it->getCommand() == "QUIT") {
-					quitCmd(*it, user);
-					return (false);
+			if (it->getCommand() == "LIST") {
+				//print list of user by nickname
+				for (std::vector<User>::iterator it2 = _users.begin(); it2 != _users.end(); ++it2) {
+					std::cout << "User: " << it2->getNickName() << std::endl;
 				}
 			}
-
+			if (it->getCommand() == "QUIT") {
+				quitCmd(*it, user);
+				return (false);
+			}
+		}
+		if (it->getCommand() == "QUIT") {
+			quitCmd(*it, user);
+			return (false);
+		}
 		it = user->messages.erase(it);
-    }
+	}
 	return (true);
 }
 
@@ -282,7 +278,6 @@ void	Server::connectServer( int sd, User *user) {
 	std::string nbClients = "1";
 
 	time_t rawDate;
-//	struct tm * timeinfo;
 	rawDate = time(NULL);
 	char buffer[80];
 	strftime(buffer, 40, "%a %b %d %H:%M:%S %Y", localtime(&rawDate));
@@ -304,13 +299,7 @@ void	Server::connectServer( int sd, User *user) {
 	sendClient(sd, RPL_MOTDEND(user->getNickName()));
 }
 
-
 int	Server::getPortno( void ) const { return _portno; }
-
 std::map<std::string, Channel*>	*Server::getChannels( void ) { return &_channels; }
-
 bool	Server::passOK() { return _passOK; }
-
 void	Server::setPassOK(bool passOK) { _passOK = passOK;}
-
-
