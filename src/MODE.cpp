@@ -6,7 +6,8 @@
 
 void Server::splitMode(const std::string& modeArg, std::vector<std::string>& modeChanges) {
     std::string currentChange;
-    bool isAdding = true;  
+	// variable inutilisee
+    //bool isAdding = true;  
     for (std::string::const_iterator it = modeArg.begin(); it != modeArg.end(); ++it) {
         char c = *it;
         if (c == '+' || c == '-') {
@@ -14,7 +15,7 @@ void Server::splitMode(const std::string& modeArg, std::vector<std::string>& mod
                 modeChanges.push_back(currentChange);
             }
             currentChange = c;
-            isAdding = (c == '+');
+            //isAdding = (c == '+');
         } else {
             currentChange += c;
         }
@@ -131,8 +132,6 @@ void Server::parseMode(Channel* channel, User* user, const std::string& target, 
         }
     }
 
-
-
 void	Server::modeCmd( Message msg, User *user ) {
 	
     std::cout << "modeCmd : " << msg.rawMessage	<< std::endl;
@@ -145,7 +144,7 @@ void	Server::modeCmd( Message msg, User *user ) {
 	 	sendClient(sd, ERR_UMODEUNKNOWNFLAG(nick));
         return;
     }
-    if(_channels.find(target) == _channels.end()){
+    if(_channels.find(target) == _channels.end()) {
 		sendClient(sd, ERR_NOSUCHCHANNEL(nick, target));
 		return;
 	}
@@ -155,21 +154,18 @@ void	Server::modeCmd( Message msg, User *user ) {
 	}
 	if (nbArgs == 1){
         std::string opNick = _channels[target]->getChanNick(nick);
-		sendClient(sd, RPL_CHANNELMODEIS(opNick, target, "+", _channels[target]->getCurrentModes() ));
-    }
-    else{
+		sendClient(sd, RPL_CHANNELMODEIS(opNick, target, "+", _channels[target]->getCurrentModes()));
+    } else {
         std::string modestring = msg.getParam(1);
         nbArgs = msg.nbParam() - 2;
 	    std::string modeArgs[nbArgs];
 	    for(int i = 0; i < nbArgs; i++)
 		    modeArgs[i] = msg.getParam(2 + i);
 	
-		if (_channels[target]->isUserOp(nick) == false){
+		if (_channels[target]->isUserOp(nick) == false) {
 			sendClient(sd, ERR_CHANOPRIVSNEEDED(nick, target));
 			return;
-		}
-		 else  
+		} else  
 		 	parseMode(_channels[target], user, target,modestring, modeArgs, nbArgs);
 	}
 }
-
