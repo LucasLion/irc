@@ -80,14 +80,14 @@ std::string Channel::getCurrentModes( void ) {
     std::string modes;
 
 	modes += "o";
-    if (isInviteOnly) 
-        modes += "i";
-    if (isTopicProtected) 
-        modes += "t";
-    if (hasUserLimit)
-        modes += "l";
+	if (isInviteOnly) 
+		modes += "i";
+	if (isTopicProtected) 
+		modes += "t";
+	if (hasUserLimit)
+		modes += "l";
 	if (hasPassword)
-		modes+= "k";
+		modes += "k";
     return modes;
 }
 

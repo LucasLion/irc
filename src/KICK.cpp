@@ -38,7 +38,7 @@ void	Server::kickCmd( Message msg, User* user ) {
 		int targetSd = _channels[channel]->usersSd[target];
 		_channels[channel]->removeUser(target);
 		if (reason.length() == 0)
-			reason = "You've been kicked for no reason ^^";
+			reason = "You've been kicked for no reason";
 		sendClient(targetSd, KICK(userNick, channel, target, reason));
 		// send the kick message to everyone in the channel
 		std::map<std::string, int>::iterator it;

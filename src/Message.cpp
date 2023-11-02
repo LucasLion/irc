@@ -39,7 +39,7 @@ void	Message::parseInput( void ) {
 		spacePos = -1; 
 
     size_t spacePos2 = rawMessage.find (' ', spacePos + 1);
-    if (spacePos2 == std::string::npos)
+	if (spacePos2 == std::string::npos)
         return;
 
 	Part = rawMessage.substr(spacePos + 1, spacePos2 - spacePos - 1);
