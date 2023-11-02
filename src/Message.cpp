@@ -2,16 +2,12 @@
 #include "../includes/header.hpp"
 #include "../includes/Message.hpp"
 
-void	Message::parseArgs( void ) {
-	return;	
-}
+void	Message::parseArgs( void ) { return; }
 
 void	Message::parseParam( std::string params ) {
 
 	size_t	                start = 0;
     size_t	                esp;
-
-
 
     while ((esp = params.find(" ", start)) != std::string::npos) {
 		if (params[start] == ':') {
@@ -29,39 +25,36 @@ void	Message::parseParam( std::string params ) {
     _param.push_back(para); 
 }
 
-
- void	Message::parseInput( void ) {
+void	Message::parseInput( void ) {
 
     size_t spacePos = rawMessage.find(' ');
 
-    if (spacePos == std::string::npos) {
-        return;
-    }
+    if (spacePos == std::string::npos)
+		return;
 
     std::string Part = rawMessage.substr(0, spacePos);
-    if (Part[0] == '@') {
-        _tag = Part.substr(1); 
-    } else 
+	if (Part[0] == '@')
+		_tag = Part.substr(1); 
+	else
 		spacePos = -1; 
+
     size_t spacePos2 = rawMessage.find (' ', spacePos + 1);
-    if (spacePos2 == std::string::npos) {
+	if (spacePos2 == std::string::npos)
         return;
-    }
 
 	Part = rawMessage.substr(spacePos + 1, spacePos2 - spacePos - 1);
-    if (Part[0] == ':') {
+	if (Part[0] == ':')
         _source = Part.substr(1); 
-    } else 
-	spacePos2 = spacePos;
+	else 
+		spacePos2 = spacePos;
 
     size_t spacePos3 = rawMessage.find(' ', spacePos2 + 1);
-
-    if (spacePos3 == std::string::npos) {
+	if (spacePos3 == std::string::npos)
         _command = rawMessage.substr(spacePos2 + 1);
-    } else {
+	else {
         _command = rawMessage.substr(spacePos2 + 1, spacePos3 - spacePos2 - 1);
         _paramstrng = rawMessage.substr(spacePos3 + 1);
-       parseParam(rawMessage.substr(spacePos3 + 1));
+		parseParam(rawMessage.substr(spacePos3 + 1));
     }
 }
 
@@ -82,38 +75,6 @@ void    Message::printCommand( void ) {
 	}
 	std::cout << std::endl << "-------------" << std::endl;
 }
-
-//void Message::generateResponse( int sd ) {
-//
-//	//std::cout << "COMMAND_RECEIVED: " << rawMessage << std::endl;
-//	printCommand();
-//	std::cout << std::endl;
-//	if (_command == "CAP") {
-//		send(sd, "CAP * LS\r\n", 12, 0 );
-//	}
-//	if (_command == "NICK") {
-//		std::string protocol = ":localhost 001 utilisateur :Welcome to FT_IRC ";
-//		std::string name = _param[0].append("\r\n");
-//		protocol.append(name);
-//		send(sd, protocol.c_str(), protocol.length(), 0 );
-//	}
-//	if (_command == "USER") {
-//		user( sd, *this );
-//	}
-//	if (_command == "PASS") {
-//		if (_param[0] != "test") {
-//			send(sd, ":localhost 464 utilisateur :Password incorrect\r\n", 51, 0 );
-//			throw std::exception();
-//		}
-//		else
-//			send(sd, ":localhost 001 utilisateur :Bienvenue sur le serveur IRC, utilisateur\r\n", 71, 0);
-//	}
-//	if (_command == "PING")
-//		std::cout << SUCCESS("PONG") << std::endl;
-//	if (_command == "WHOIS") {
-//		send(sd, ":localhost 318 THE_BEST_NICKNAME :End of /WHOIS list", 51, 0);
-//	}
-//}
 
 std::string Message::getCommand( void ) { return _command; }
 std::string Message::getSource( void ) { return _source; }

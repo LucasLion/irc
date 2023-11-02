@@ -22,9 +22,11 @@ const char*	Channel::ChannelAlreadyExistsException::what() const throw() {
 	return (ERROR("Channel already exists"));
 }
 
-void	Channel::addUser( User* user ) {
-    usersSd[user->getNickName()] = user->getSd();
-}
+void	Channel::addUser( User* user ) { usersSd[user->getNickName()] = user->getSd(); }
+std::string	Channel::getTopic( void ) const { return (_topic); }
+void	Channel::setTopic( std::string topic ) { _topic = topic; }
+void Channel::addOperator( std::string user ) { operList.push_back(user); }
+void Channel::addInvite(std::string user) { inviteList.push_back(user); }
 
 bool	Channel::isUserInChannel( std::string user ) {
 	
@@ -47,16 +49,7 @@ bool Channel::isUserOp( std::string user ) {
 	return (false);
 }
 
-
-void Channel::addOperator(std::string user) {
-    operList.push_back(user);
-}
-
-void Channel::addInvite(std::string user) {
-    inviteList.push_back(user);
-}
-
-void Channel::removeOperator(std::string user) {    
+void Channel::removeOperator( std::string user ) {    
     for (std::vector<std::string>::iterator it = operList.begin(); it != operList.end(); ++it) {
         if (*it == user) {
             operList.erase(it);
@@ -65,7 +58,7 @@ void Channel::removeOperator(std::string user) {
     }
 }
 
-void Channel::removeInvite(std::string user) {
+void Channel::removeInvite( std::string user ) {
     for (std::vector<std::string>::iterator it = inviteList.begin(); it != inviteList.end(); ++it) {
         if (*it == user) {
             inviteList.erase(it);
@@ -82,36 +75,21 @@ bool Channel::isUserInvite( std::string user ) {
     return (false);
 }
 
+std::string Channel::getCurrentModes( void ) {
 
-std::string Channel::getCurrentModes() {
     std::string modes;
 
 	modes += "o";
-
-    if (isInviteOnly) 
-        modes += "i";
-    
-    if (isTopicProtected) 
-        modes += "t";
-    
-    if (hasUserLimit) {
-        modes += "l";
-    }
+	if (isInviteOnly) 
+		modes += "i";
+	if (isTopicProtected) 
+		modes += "t";
+	if (hasUserLimit)
+		modes += "l";
 	if (hasPassword)
-		modes+= "k";
-
+		modes += "k";
     return modes;
 }
-
-
-std::string	Channel::getTopic( void ) const {
-	return (_topic);
-}
-
-void	Channel::setTopic( std::string topic ) {
-	_topic = topic;
-}
-
 
 void    Channel::sendMessgeToAllUsers( std::string message ) {
     for (std::map<std::string, int>::iterator it = usersSd.begin(); it != usersSd.end(); ++it) {

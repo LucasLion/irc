@@ -6,11 +6,6 @@
 class Message {
     
 	public :
-
-	//								Command( void );
-	//								Command( std::string raw );
-	//								Command( Command const & src );
-	//								~Command( void );
 		void                        parseInput( void );
 		void                        parseArgs( void );
 		void						generateResponse( int sd );
@@ -23,9 +18,7 @@ class Message {
 		std::string                 rawMessage;
 		int 						nbParam( void );
 
-
 	private : 
-
 		std::string                 				_tag;
 		std::string                 				_source;
 		std::string                 				_command;

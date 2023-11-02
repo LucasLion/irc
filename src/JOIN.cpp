@@ -47,7 +47,6 @@ void	Server::joinCmd( Message msg, User *user ) {
 	_channels[channel]->addUser(user);
 	user->addChannel(channel, _channels[channel]);
 	// channel's topic
-	std::cout << "Channel's topic: " << _channels[channel]->getTopic() << std::endl;
 	if (_channels[channel]->getTopic().empty())
 		sendClient(sd, RPL_NOTOPIC(userNick, channel));
 	else {
@@ -73,7 +72,6 @@ void	Server::joinCmd( Message msg, User *user ) {
 		sendClient(sd, RPL_CREATIONTIME(opNick, channel, Time));
 
 	}else{
-		std::cout << "else"	<< std::endl;
 		std::map<std::string, int>::iterator it2;
 		for(it2 = _channels[channel]->usersSd.begin(); it2 != _channels[channel]->usersSd.end(); ++it2){
 			std::string nickOp = _channels[channel]->getChanNick(it2->first);
