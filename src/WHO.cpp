@@ -1,10 +1,10 @@
+
 #include "../includes/Server.hpp"
 
 void	Server::whoCmd( Message msg, User* user ) {
     std::string userNick = user->getNickName();
     std::string mask = msg.getParam(0);
     if (mask.length() == 0) {
-		std::cout << "coucou" << std::endl;
         sendClient(user->getSd(), ERR_NEEDMOREPARAMS(userNick, msg.getCommand()));
         return ;
     }
@@ -16,7 +16,7 @@ void	Server::whoCmd( Message msg, User* user ) {
         std::map<std::string, int>::iterator it;
         for (it = _channels[mask]->usersSd.begin(); it != _channels[mask]->usersSd.end(); ++it) {
             std::string nick = _channels[mask]->getChanNick(it->first);
-            sendClient(it->second, RPL_WHOREPLY(nick, mask, user->getUserName(), nick, user->getRealName()));
+            sendClient(user->getSd(), RPL_WHOREPLY(userNick, user->getUserName(), nick, nick, user->getRealName()));
         }
         std::string nickOp = _channels[mask]->getChanNick(userNick);
         sendClient(user->getSd(), RPL_ENDOFWHO(nickOp, mask));
