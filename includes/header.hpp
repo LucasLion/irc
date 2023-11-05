@@ -20,6 +20,7 @@
 #include <cstdlib>
 #include <string.h>
 #include <ctime>
+#include <csignal>
 
 #include "defines.hpp"
 

@@ -32,6 +32,7 @@ Server::Server( char *port, char *passwd ) : _nbClients(0)
 	_maxUsers = 0;
 }
 
+
 int		Server::createSocket( void ) {
 
 	int opt = true;
@@ -125,6 +126,7 @@ std::string		ft_itoa(int n) {
 	return (static_cast<std::string>(num));
 }
 
+
 void Server::run( void ) {
 
 	int				valRead;
@@ -180,20 +182,10 @@ void	Server::getBuffer( char *buf ) {
 bool	Server::createChannel( std::string channelName, std::string user ) {
 	Channel* newChannel = new Channel; 
 	newChannel->name = channelName;
-	std::cout << "User: " << user << std::endl;
 	newChannel->operList.push_back(user);
 	_channels[channelName] = newChannel;
-
 	std::cout << SUCCESS("Channel \"" + channelName + "\" created") << std::endl;
-	for (std::map<std::string, Channel*>::iterator it = _channels.begin(); it != _channels.end(); it++) {
-		std::cout << "Channel: " << it->first << std::endl;
-		// iterate through the vector of users in the channel 
-		std::map<std::string, int>::iterator it2;
-		for(it2 = it->second->usersSd.begin(); it2 != it->second->usersSd.end(); ++it2) {
-			std::cout << "User: " << it2->first << std::endl;
-		}
-	}
-	return true;
+	return (true);
 }
 
 bool Server::generateResponse( User *user ) {
