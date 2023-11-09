@@ -25,6 +25,7 @@ class User {
 		std::map<std::string, Channel*>	getChannels( void );
 
 		void							addChannel( std::string channelName, Channel* channel );
+		void							removeChannel( std::string channelName );
 		bool                            isRegistered( void );
 		bool                            isPassOK( void );
 		void                            setRegistered( bool isRegistered );

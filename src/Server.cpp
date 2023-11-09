@@ -224,14 +224,10 @@ bool Server::generateResponse( User *user ) {
 				inviteCmd(*it, user);
 			if (it->getCommand() == "WHO")
 			 	whoCmd(*it, user);
+			if (it->getCommand() == "PART")
+			 	partCmd(*it, user);
 			if (it->getCommand() == "MODE") 
 					modeCmd(*it, user);
-			if (it->getCommand() == "LIST") {
-				//print list of user by nickname
-				for (std::vector<User>::iterator it2 = _users.begin(); it2 != _users.end(); ++it2) {
-					std::cout << "User: " << it2->getNickName() << std::endl;
-				}
-			}
 			if (it->getCommand() == "QUIT") {
 				quitCmd(*it, user);
 				return (false);

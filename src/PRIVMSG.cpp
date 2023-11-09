@@ -19,6 +19,7 @@ void	Server::prvMsgCmd( Message msg, User *user ) {
 		sendClient(user->getSd(), ERR_NOSUCHNICK(userNick, reciever));
 		return ;
 	}
+	
 	// send the message to all the users in the channel
 	if (reciever[0] == '#') {
 		if (_channels.find(reciever) != _channels.end()) {
