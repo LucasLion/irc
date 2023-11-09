@@ -47,11 +47,9 @@ void	Server::joinCmd( Message msg, User *user ) {
 	_channels[channel]->addUser(user);
 	user->addChannel(channel, _channels[channel]);
 	// channel's topic
-	if (_channels[channel]->getTopic().empty())
-		sendClient(sd, RPL_NOTOPIC(userNick, channel));
-	else {
+	if (!_channels[channel]->getTopic().empty())
+
 		sendClient(sd, RPL_TOPIC(userNick, channel, _channels[channel]->getTopic()));
-	}
 
 	
 	if(create){

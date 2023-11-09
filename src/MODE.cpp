@@ -117,6 +117,11 @@ void	Server::modeCmd( Message msg, User *user ) {
     int nbArgs = msg.nbParam();
 	std::string target = msg.getParam(0);
     int sd = user->getSd();
+    if (msg.getParam(0) == nick && msg.getParam(1) == "+i") {
+        sendClient(sd, MODE(nick, nick, "+i", ""));
+        return;
+    }
+
     if(target[0] != '#'){
 	 	sendClient(sd, ERR_UMODEUNKNOWNFLAG(nick));
         return;
@@ -140,7 +145,10 @@ void	Server::modeCmd( Message msg, User *user ) {
 	    for(int i = 0; i < nbArgs; i++)
 		    modeArgs[i] = msg.getParam(2 + i);
 	
-		if (_channels[target]->isUserOp(nick) == false) {
+		if (modestring[0] == 'b') 
+            return;
+        
+        if (_channels[target]->isUserOp(nick) == false) {
 			sendClient(sd, ERR_CHANOPRIVSNEEDED(nick, target));
 			return;
 		}
