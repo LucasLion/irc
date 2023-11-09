@@ -198,12 +198,12 @@ bool Server::generateResponse( User *user ) {
 				userCmd(*it, user);
 			if (it->getCommand() == "PASS")
 				passCmd(*it, user);
-			if (it->getCommand() == "CAP")
-				send( user->getSd(), "CAP * LS\r\n", 12, 0 );
+			//if (it->getCommand() == "CAP")
+			//	send( user->getSd(), "CAP * LS\r\n", 12, 0 );
 		}
 		else {
-			if (it->getCommand() == "CAP")
-				send( user->getSd(), "CAP * LS\r\n", 12, 0 );
+			//if (it->getCommand() == "CAP")
+			//	send( user->getSd(), "CAP * LS\r\n", 12, 0 );
 			if (it->getCommand() == "USER")
 				userCmd(*it, user);
 			if (it->getCommand() == "NICK")
@@ -224,12 +224,8 @@ bool Server::generateResponse( User *user ) {
 				inviteCmd(*it, user);
 			if (it->getCommand() == "WHO")
 			 	whoCmd(*it, user);
-			if (it->getCommand() == "MODE") {
-				if(it->getParam(0) == user->getNickName() && it->getParam(1) == "+i")
-					sendClient(user->getSd(), MODE(user->getNickName(), user->getNickName(), "+i", ""));
-				else
+			if (it->getCommand() == "MODE") 
 					modeCmd(*it, user);
-			}
 			if (it->getCommand() == "LIST") {
 				//print list of user by nickname
 				for (std::vector<User>::iterator it2 = _users.begin(); it2 != _users.end(); ++it2) {
