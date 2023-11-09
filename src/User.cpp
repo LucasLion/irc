@@ -43,6 +43,7 @@ void	User::getBuffer( char *buf ) {
 }
 
 void							User::addChannel( std::string chanName, Channel* channel ) { _channels[chanName] = channel; }
+void							User::removeChannel( std::string chanName ) { _channels.erase(chanName); }
 void							User::setRealName( std::string realName ) { _realName = realName; }
 void							User::setNickName( std::string nickName ) { _nickName = nickName; }
 void							User::setSd( int sd ) { _sd = sd; }
