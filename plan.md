@@ -35,7 +35,7 @@
 - verifier que ca fonctionne avec IPv6 [OK]
 - il faut gerer le /leave / /join (messages bien distincts sur chaque channel)
 - /topic (quand pas de topic) affiche dans le hub (pas bien)
-- fermet le serveur proprement
+- fermer le serveur proprement
 - leaks
 
 ### bonus
