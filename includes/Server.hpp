@@ -11,6 +11,7 @@ class Server {
 	public:
 							Server( void );
 							Server( char *port, char *passwd );
+							~Server( void );
 		std::string			getLocalIp( void );
 		int					createSocket( void );
 		void				handleConnections( void );
@@ -46,8 +47,8 @@ class Server {
 		bool				isUserInServer( std::string nickname );
 		int					getUserSd( std::string nickname );
 		std::string			currentDate( void );
+		void				serverFree( void );
 
-		//void				signal( int sig );
 
 		std::map<std::string, Channel*>	*getChannels( void ) ;
 

@@ -107,8 +107,3 @@ std::string	Server::currentDate() {
 	std::string creationDate(buffer);
 	return creationDate;
 }
-
-//void	Server::sigint( int sig ) {
-//	std::cout << "Signal" << std::endl;
-//}
-

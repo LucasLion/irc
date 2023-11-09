@@ -11,6 +11,25 @@ Server::Server( void ) : _nbClients(0) {
 	//_clientSockets.resize(nbClients, 0);
 }
 
+Server::~Server( void ) {
+	
+	for (std::map<std::string, Channel*>::iterator it = _channels.begin(); it != _channels.end(); ++it) {
+		delete it->second;
+		//_channels.erase(it->first);
+	}
+	//for (std::vector<User*>::iterator it2 = _users.begin(); it2 != _users.end(); ++it2) {
+	//for (size_t i = 0; i < _users.size(); ++i) {
+	//	std::cout << "2" << std::endl;
+	//	//_users.erase(it2);
+	//	close(_users[i].getSd());
+	//	_users.erase(_users.begin() + i);
+	//	_clientSockets.erase(_clientSockets.begin() + i);
+
+	//	//delete _users[i];
+	//}
+}
+
+
 Server::Server( char *port, char *passwd ) : _nbClients(0)
 {
 	
@@ -126,6 +145,7 @@ std::string		ft_itoa(int n) {
 	sprintf(num, "%d", n);
 	return (static_cast<std::string>(num));
 }
+
 
 void	sigint( int sig ) {
 	(void)sig;
