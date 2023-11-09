@@ -1,6 +1,7 @@
 
 #pragma once
 
+
 #include "header.hpp"
 #include "Channel.hpp"
 #include "User.hpp"
@@ -45,6 +46,8 @@ class Server {
 		bool				isUserInServer( std::string nickname );
 		int					getUserSd( std::string nickname );
 		std::string			currentDate( void );
+
+		//void				signal( int sig );
 
 		std::map<std::string, Channel*>	*getChannels( void ) ;
 

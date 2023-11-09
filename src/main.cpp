@@ -11,9 +11,9 @@ int main( int argc , char *argv[] ) {
 			server.run();
 		}
 		else 
-			throw std::runtime_error(ERROR("Usage: ./server <port> <password>"));
+			throw std::runtime_error(ERROR("Error: Usage: ./server <port> <password>"));
 	} catch (std::exception &e) {
-		std::cout << ERROR("Error: ") << e.what() << std::endl;
+		std::cout << e.what() << std::endl;
 	}
 	return (0);
 }

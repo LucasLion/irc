@@ -15,6 +15,7 @@ Server::Server( char *port, char *passwd ) : _nbClients(0)
 {
 	
 	char buffer[80];
+	_creationTime = time(NULL);
 	strftime(buffer, 40, "%a %b %d %H:%M:%S %Y", localtime(&_creationTime));
 	_creationDate = buffer;
 	_address.sin_family = AF_INET;
@@ -126,12 +127,17 @@ std::string		ft_itoa(int n) {
 	return (static_cast<std::string>(num));
 }
 
+void	sigint( int sig ) {
+	(void)sig;
+	throw std::runtime_error(ERROR("SERVER CLOSED PROPERLY ;)"));
+}
 
 void Server::run( void ) {
 
 	int				valRead;
 	char			buffer[4608];
 	
+	signal(SIGINT, sigint);
 	while (true) {
 		handleConnections();
 		//else its some IO operation on some other socket
