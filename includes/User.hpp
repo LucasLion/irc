@@ -11,7 +11,6 @@ class User {
 
     public : 
 										User( void );
-		void                	        printCommands( void );
 		void                	        getBuffer( char * buf );
 		void							setRealName( std::string realName );
 		void							setNickName( std::string nickName );

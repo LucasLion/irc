@@ -14,6 +14,7 @@ class Channel {
 									~Channel( void );
 		void						addUser( User* user );
 		void 						removeUser( std::string user );
+		int 						getNbUsers( void );
 		bool						isUserInChannel( std::string user );
 		bool						isUserOp( std::string user );
 		bool						isUserInvite( std::string user );

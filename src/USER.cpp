@@ -3,20 +3,23 @@
 
 void	Server::userCmd( Message msg, User *user ) {
 	
-	if (!msg.getParam(0).length())
+	if (msg.nbParam() < 4 || msg.nbParam() > 5){
 		sendClient(user->getSd(), ERR_NEEDMOREPARAMS(user->getNickName(), msg.getCommand()));
-	if (user->isRegistered() || user->isRealNameSet())
+		return;
+	}
+
+	if (user->isRegistered() || user->isRealNameSet()){
 		sendClient(user->getSd(), ERR_ALREADYREGISTERED(user->getNickName()));
+		return;
+	}
+	user->setUserName(msg.getParam(0));
+	user->setRealName(msg.getParam(3));
+	user->setRealNameSet(true);
 	if (user->isPassOK() == false)
 		sendClient(user->getSd(), ERR_PASSWDMISMATCH(user->getNickName()));
-	else {
-		user->setUserName(msg.getParam(0));
-		user->setRealName(msg.getParam(3));
-		user->setRealNameSet(true);
-	}
+	
 	if (user->isNickNameSet() && user->isPassOK()) {
 			user->setRegistered(true);
-			std::cout << "user registered dans USER" << std::endl;
 			connectServer(user->getSd(), user);
 	}
 }

@@ -7,7 +7,6 @@ bool Server::is_valid( const std::string nickname ) {
     const std::string validChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_[]{}\\|";
     for (size_t i = 0; i < nickname.length(); ++i) {
         char c = nickname[i];
-		// ajout de carateres ici
         if (i == 0 && !isalpha(c) && c != '[' && c != '{' && c != '\\' && c != '|' && c != ']' && c != '}' && c != '_')
             return false;
         if (i > 0 && validChars.find(c) == std::string::npos)
@@ -17,7 +16,6 @@ bool Server::is_valid( const std::string nickname ) {
 }
 
 void	Server::sendClient( int sd, std::string response ) {
-	std::cout << "COMMAND_SENT: " << response; 
 	write(sd, response.c_str(), response.length());
 }
 
@@ -61,20 +59,12 @@ void	Server::nickPreRegistration( Message msg, User *user ) {
 			return;
 		}
 	}
-	if (!is_valid(new_nick)) {
-			std::cout << "new_nick: " << new_nick << std::endl;
-			std::cout << "size: " << new_nick.length() << std::endl;
+	if (!is_valid(new_nick)) 
 			new_nick = generateDefaultNick();
-			std::cout << "new_nick: " << new_nick << std::endl;
-			//sendClient(sd, ERR_ERRONEUSNICKNAME(user->getNickName(), new_nick));
-			//response = "we gave you the nickname : " + new_nick + "\r\n";
-			//sendClient(sd, response);
-	}
 	user->setNickName(new_nick);
 	user->setNickNameSet(true);
 	if(user->isPassOK() && user->isRealNameSet()){
 		user->setRegistered(true);
-		std::cout << "user registered dans NICK" << std::endl;
 		connectServer(sd, user);
 	}
 }
@@ -106,4 +96,26 @@ std::string	Server::currentDate() {
 	strftime(buffer, 90, "%a %b %d %H:%M:%S %Y", localtime(&rawDate));
 	std::string creationDate(buffer);
 	return creationDate;
+}
+
+
+void 	Server::disconnectChannels( std::string userNick ){
+	std::map<std::string, Channel*>::iterator channelit;
+	for (channelit = _channels.begin(); channelit != _channels.end(); ++channelit) {
+		Channel* channel = channelit->second;
+		if (channel->isUserInChannel(userNick)) {
+			std::string chanName = channel->name;
+			std::string reason = "User disconnected";
+            for(std::map<std::string, int>::iterator userit = channel->usersSd.begin(); userit != channel->usersSd.end(); ++userit){
+			    std::string nickOp = channel->getChanNick(userit->first);
+			   	sendClient(userit->second, PART(userNick, chanName, reason));
+            }
+            channel->removeUser(userNick);
+            if (channel->usersSd.size() == 0) {
+                delete channel;
+                _channels.erase(chanName);
+            }
+
+		}
+	}
 }

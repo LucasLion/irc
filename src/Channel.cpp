@@ -88,10 +88,8 @@ std::string Channel::getCurrentModes( void ) {
 }
 
 void    Channel::sendMessgeToAllUsers( std::string message ) {
-    for (std::map<std::string, int>::iterator it = usersSd.begin(); it != usersSd.end(); ++it) {
+    for (std::map<std::string, int>::iterator it = usersSd.begin(); it != usersSd.end(); ++it) 
         write(it->second, message.c_str(), message.length());
-    }
-    std::cout << "COMMAND_SENT: " << message << std::endl;
 }
 
 std::string	Channel::getChanNick( std::string user ) {
@@ -106,14 +104,12 @@ void    Channel::changeNick( std::string prevNick, std::string newNick ) {
     usersSd.erase(prevNick);
     usersSd[newNick] = sd;
 
-    //check if user is op and replace nick in operList
     for (std::vector<std::string>::iterator it = operList.begin(); it != operList.end(); ++it) {
         if (*it == prevNick) {
             *it = newNick;
             break;
         }
     }
-    //check if user is invite and replace nick in inviteList
     for (std::vector<std::string>::iterator it = inviteList.begin(); it != inviteList.end(); ++it) {
         if (*it == prevNick) {
             *it = newNick;
@@ -128,4 +124,9 @@ std::string	Channel::getTimeCreation( void ) const {
 
 void    Channel::setTimeCreation( std::string time ) {
     _timeCreation = time;
+}
+
+
+int Channel::getNbUsers( void ) {
+    return (usersSd.size());
 }

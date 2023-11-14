@@ -58,24 +58,6 @@ void	Message::parseInput( void ) {
     }
 }
 
-void    Message::printCommand( void ) {
-
-	std::vector<std::string>::iterator it;
-    
-	std::cout << "-------------" << std::endl;
-    std::cout << "rawMessage : " <<  rawMessage << std::endl;
-    std::cout << "TAG         : " <<  _tag << std::endl;
-    std::cout << "SOURCE      : " <<  _source << std::endl;
-    std::cout << "COMMAND     : " <<  _command << std::endl;
-    std::cout << "PARAMSTRING : " << _paramstrng <<std::endl;
-	std::cout << "PARAMS      : " ;
-
-    for (it = _param.begin(); it != _param.end(); ++it) {
-        std::cout << *it << " --- ";
-	}
-	std::cout << std::endl << "-------------" << std::endl;
-}
-
 std::string Message::getCommand( void ) { return _command; }
 std::string Message::getSource( void ) { return _source; }
 std::string Message::getTag( void ) { return _tag; }

@@ -14,9 +14,9 @@ class Server {
 							~Server( void );
 		std::string			getLocalIp( void );
 		int					createSocket( void );
+		void				disconnectChannels( std::string nickname );
 		void				handleConnections( void );
 		void				newConnection( void );
-		void                getBuffer( char * buf );
 		void				run( void );
 		bool				createChannel( std::string namechannel, std::string user );
 		void				sendError(std::string code_Error, int sd);

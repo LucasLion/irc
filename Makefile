@@ -8,22 +8,14 @@ CXXFLAGS		= -ggdb3 -Wall -Wextra -Werror -std=c++98 -Wshadow
 RM				= rm -f
 SRC_DIR 		= src
 OBJ_DIR 		= obj
-OBJ_DIR_NOFLAG	= objNoFlag
 
 SOURCES			= $(wildcard $(SRC_DIR)/*.cpp)
 OBJECTS			= $(patsubst $(SRC_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(SOURCES))
-
-SOURCES_NOFLAG	= $(filter-out $(SRC_DIR)/main.cpp, $(wildcard $(SRC_DIR)/*.cpp))
-OBJECTS_NOFLAG	= $(patsubst $(SRC_DIR_NOFLAG)/%.cpp, $(OBJ_DIR_NOFLAG)/%.o, $(SOURCES_NOFLAG))
 
 all: $(NAME)
 
 $(OBJ_DIR)/.dummy: # Create obj directory
 	mkdir -p $(OBJ_DIR)
-	touch $@
-
-$(OBJ_DIR_NOFLAG)/.dummy: # Create obj directory
-	mkdir -p $(OBJ_DIR_NOFLAG)
 	touch $@
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp $(OBJ_DIR)/.dummy # Compile .cpp files
@@ -44,10 +36,6 @@ run: $(OBJECTS) # Compile executable and run it
 	$(CXX) $(CXXFLAGS) -o $(NAME) $(OBJECTS)
 	@./$(COMMAND)
 
-test: $(OBJECTS_NOFLAG) # Compile executable and run it
-	$(CXX) -o $(NAME) $(OBJECTS_NOFLAG) tests/main.cpp
-	@./$(COMMAND)
-
 clean: # Remove object files and obj directory
 	rm -rf $(OBJ_DIR)
 	rm -rf $(OBJ_DIR_NOFLAG)
@@ -57,4 +45,4 @@ fclean: clean # Remove executable, obj directory and object files
 
 re: fclean all # Recompile everything
 
-.PHONY: all lean fclean re run debug leaks test
+.PHONY: all clean fclean re run debug leaks test

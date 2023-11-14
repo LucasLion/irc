@@ -9,7 +9,6 @@ class Message {
 		void                        parseInput( void );
 		void                        parseArgs( void );
 		void						generateResponse( int sd );
-		void                        printCommand( void );
 		void						parseParam( std::string params );
 		std::string 				getCommand( void );
 		std::string					getParam( int i );

@@ -20,7 +20,6 @@ void	Server::prvMsgCmd( Message msg, User *user ) {
 		return ;
 	}
 	
-	// send the message to all the users in the channel
 	if (reciever[0] == '#') {
 		if (_channels.find(reciever) != _channels.end()) {
 			std::map<std::string, int>::iterator it;	
@@ -33,9 +32,7 @@ void	Server::prvMsgCmd( Message msg, User *user ) {
 			sendClient(user->getSd(), ERR_NOSUCHCHANNEL(userNick, reciever));
 		
 	}
-	// send private message to the user
 	else {
-		// check if user exists
 		bool userFound = false;
 		for (std::vector<User>::iterator it = _users.begin(); it != _users.end(); ++it) {
 			if (it->getNickName() == reciever) {

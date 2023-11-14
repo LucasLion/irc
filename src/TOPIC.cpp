@@ -16,7 +16,6 @@ void	Server::topicCmd( Message msg, User *user ) {
 		sendClient(sd, ERR_NOTONCHANNEL(userNick, channel));
 		return ;
 	}
-	// if protected topic (+t) and client does not have permissions
 	if (_channels[channel]->isTopicProtected && !(_channels[channel]->isUserOp(userNick))) {
 		sendClient(user->getSd(), ERR_CHANOPRIVSNEEDED(user->getNickName(), msg.getParam(0)));
 		return ;

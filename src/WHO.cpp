@@ -16,12 +16,10 @@ void	Server::whoCmd( Message msg, User* user ) {
         std::map<std::string, int>::iterator it;
         for (it = _channels[mask]->usersSd.begin(); it != _channels[mask]->usersSd.end(); ++it) {
             std::string nick = it->first;
-            std::cout << "nick: " << nick << std::endl;
             for(std::vector<User>::iterator it2 = _users.begin(); it2 != _users.end(); ++it2){
                 if (it2->getNickName() == nick)
                     sendClient(user->getSd(), RPL_WHOREPLY(userNick, mask, it2->getUserName(), nick, it2->getRealName()));
             }
-            //sendClient(user->getSd(), RPL_WHOREPLY(userNick, mask, , nick, user->getRealName()));
         }
         std::string nickOp = _channels[mask]->getChanNick(userNick);
         sendClient(user->getSd(), RPL_ENDOFWHO(nickOp, mask));

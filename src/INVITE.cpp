@@ -18,27 +18,27 @@ void	Server::inviteCmd( Message msg, User* user ) {
 		channel = msg.getParam(1);
 		target = msg.getParam(0);
 	}
-	// check if the channel name is valid
+
 	if (channel[0] != '#') {
 		sendClient(sd, ERR_NOSUCHCHANNEL(userNick, channel));
 		return ;
 	}
-	// check if the channel exists
+
 	if (_channels.find(channel) == _channels.end()) {
 		sendClient(sd, ERR_NOSUCHCHANNEL(userNick, channel));
 		return ;
 	}
-	// check if the user is in the channel
+
 	if (!_channels[channel]->isUserInChannel(userNick)) {
 		sendClient(sd, ERR_NOTONCHANNEL(userNick, channel));
 		return ;
 	}
-	// check if the target is already invited
+
 	if (_channels[channel]->isUserInChannel(target)) {
 		sendClient(sd, ERR_USERONCHANNEL(userNick, target, channel));
 		return ;
 	}
-	//check if the target is in server
+
 	if (isUserInServer(target) == false) {
 		sendClient(sd, ERR_NOSUCHNICK(userNick, target));
 	}

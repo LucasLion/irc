@@ -10,20 +10,20 @@ User::User( void ) {
     _passOk = false;
 }
 
-void User::printCommands( void ) {
-        for (std::vector<Message>::iterator it = messages.begin(); it != messages.end();) {
-        it->printCommand();
-        it = messages.erase(it);
-    }
-}
-
 void	User::getBuffer( char *buf ) {
 
 	size_t	                start = 0;
     size_t	                crlfPos;
     size_t                  lfPos;
 
+	if (strlen(buf) == 0) {
+		std::cout << "VIDE !!!!! buffer : " << _buffer << std::endl;
+        return;
+    }
 	_buffer.append(buf, strlen(buf));
+	std::cout << "buffer : " << _buffer << std::endl;
+	
+
 	while ((crlfPos = _buffer.find("\r\n", start)) != std::string::npos || (lfPos = _buffer.find("\n", start)) != std::string::npos) {
 		size_t pos;
 		if (crlfPos != std::string::npos && lfPos != std::string::npos)
@@ -32,15 +32,21 @@ void	User::getBuffer( char *buf ) {
 			pos = crlfPos;
 		else
 			pos = lfPos;
-		Message cmd;
-		cmd.rawMessage = (_buffer.substr(start, pos - start));
-		cmd.parseInput();
-		messages.push_back(cmd); 
-		start = pos + 2;
+		if (start < _buffer.size()) {
+			Message cmd;
+			cmd.rawMessage = (_buffer.substr(start, pos - start));
+			cmd.parseInput();
+			messages.push_back(cmd); 
+			start = pos + 2;
+		} else 
+			break;
 	}
-     if (start > 0)
+	if (start >= 0 && start <= _buffer.size())
         _buffer = _buffer.substr(start);
+    else 
+   		_buffer.clear();
 }
+
 
 void							User::addChannel( std::string chanName, Channel* channel ) { _channels[chanName] = channel; }
 void							User::removeChannel( std::string chanName ) { _channels.erase(chanName); }

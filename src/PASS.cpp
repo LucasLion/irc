@@ -9,6 +9,10 @@ void	Server::passCmd( Message msg, User *user ) {
 		else
 			user->setPassOK(false);
 	}
+	if (user->isNickNameSet() && user->isRealNameSet() && user->isPassOK()) {
+			user->setRegistered(true);
+			connectServer(user->getSd(), user);
+	}
 }
 
 
