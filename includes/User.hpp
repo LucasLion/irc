@@ -11,7 +11,7 @@ class User {
 
     public : 
 										User( void );
-		void                	        getBuffer( char * buf );
+		void                	        getBuffer( char * buf, ssize_t bytesRead );
 		void							setRealName( std::string realName );
 		void							setNickName( std::string nickName );
 		void                            setUserName(std::string userName);

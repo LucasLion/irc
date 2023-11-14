@@ -10,19 +10,16 @@ User::User( void ) {
     _passOk = false;
 }
 
-void	User::getBuffer( char *buf ) {
+void	User::getBuffer( char *buf,  ssize_t bytesRead ) {
 
 	size_t	                start = 0;
     size_t	                crlfPos;
     size_t                  lfPos;
 
-	if (strlen(buf) == 0) {
-		std::cout << "VIDE !!!!! buffer : " << _buffer << std::endl;
+	if (bytesRead <= 0) {
         return;
     }
-	_buffer.append(buf, strlen(buf));
-	std::cout << "buffer : " << _buffer << std::endl;
-	
+	_buffer.append(buf, bytesRead);
 
 	while ((crlfPos = _buffer.find("\r\n", start)) != std::string::npos || (lfPos = _buffer.find("\n", start)) != std::string::npos) {
 		size_t pos;

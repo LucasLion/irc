@@ -121,18 +121,16 @@ void	sigint( int sig ) {
 void Server::run( void ) {
 
 	int				valRead;
-	char			buffer[4608];
+	//char			buffer[4608];
 	
 	signal(SIGINT, sigint);
 	while (true) {
 		handleConnections();
 		for (size_t i = 0; i < _users.size(); i++) {
 			if (FD_ISSET(_users[i].getSd(), &_readfds)) {
-				bzero(buffer, 1025);
+				char			buffer[1025] = {0};
 				valRead = read(_users[i].getSd(), buffer, 1024);
-				//if (buffer[0] == '\0')
-				//	continue;
-				_users[i].getBuffer(buffer);
+				_users[i].getBuffer(buffer, valRead);
 
 				if (valRead != 0) {
 					if (generateResponse(&_users[i]) == false){
@@ -153,6 +151,8 @@ void Server::run( void ) {
 		}
 	}
 }
+
+
 
 bool	Server::createChannel( std::string channelName, std::string user ) {
 	Channel* newChannel = new Channel; 
