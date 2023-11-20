@@ -63,6 +63,8 @@ void	Server::nickPreRegistration( Message msg, User *user ) {
 			new_nick = generateDefaultNick();
 	user->setNickName(new_nick);
 	user->setNickNameSet(true);
+	if (user->isPassOK() == false)
+		sendClient(user->getSd(), ERR_PASSWDMISMATCH(user->getNickName()));
 	if(user->isPassOK() && user->isRealNameSet()){
 		user->setRegistered(true);
 		connectServer(sd, user);

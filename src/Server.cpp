@@ -121,7 +121,6 @@ void	sigint( int sig ) {
 void Server::run( void ) {
 
 	int				valRead;
-	//char			buffer[4608];
 	
 	signal(SIGINT, sigint);
 	while (true) {

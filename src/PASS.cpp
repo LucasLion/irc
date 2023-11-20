@@ -6,8 +6,11 @@ void	Server::passCmd( Message msg, User *user ) {
 		user->setPass(msg.getParam(0));
 		if(user->getPass() == _passwd)
 			user->setPassOK(true);
-		else
+		else{
 			user->setPassOK(false);
+			sendClient(user->getSd(), ERR_PASSWDMISMATCH(user->getNickName()));
+			return;
+		}
 	}
 	if (user->isNickNameSet() && user->isRealNameSet() && user->isPassOK()) {
 			user->setRegistered(true);
